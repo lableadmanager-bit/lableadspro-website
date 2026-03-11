@@ -7,9 +7,9 @@ const features = [
   },
   {
     icon: "🧠",
-    title: "AI Equipment Tagging",
+    title: "AI Equipment Tags",
     description:
-      "Our AI tags both stated and implied equipment needs from every grant abstract. You'll know what they need to buy before they do.",
+      "Our AI grant review tags both stated and implied equipment needs from each grant abstract.",
   },
   {
     icon: "📞",
