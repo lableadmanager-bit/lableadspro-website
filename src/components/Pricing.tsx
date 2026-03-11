@@ -19,7 +19,7 @@ const plans = [
     name: "Grant Alerts + New Lab Detection",
     price: "$99",
     period: "/state/month",
-    description: "The full picture — grants plus new labs before anyone else knows.",
+    description: "The full picture. Grants plus new labs before anyone else knows.",
     features: [
       "Everything in Grant Alerts",
       "New lab & faculty hire detection",

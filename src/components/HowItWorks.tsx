@@ -11,7 +11,7 @@ const steps = [
     icon: "🤖",
     title: "AI Anticipates Equipment Needs",
     description:
-      "Every grant abstract is analyzed by our AI — not just for keywords, but for context. If a lab is doing cell culture, they'll need incubators. Doing imaging? They'll need microscopes. We connect the dots so you don't have to.",
+      "Every grant abstract is analyzed by our AI. Not just for keywords, but for context. If a lab is doing cell culture, they'll need incubators. Doing imaging? They'll need microscopes. We connect the dots so you don't have to.",
   },
   {
     number: "03",
@@ -72,7 +72,7 @@ export default function HowItWorks() {
           </h3>
           <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
             We identify new labs before they even have a website. First-time grant recipients,
-            new faculty hires, lab openings — delivered the moment we find them.
+            new faculty hires, lab openings. All delivered the moment we find them.
             Be the first rep to reach out, not the fifth.
           </p>
         </div>

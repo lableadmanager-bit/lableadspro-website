@@ -6,12 +6,12 @@ const faqs = [
   {
     question: "What funding sources do you monitor?",
     answer:
-      "We currently track NIH Reporter and NSF awards — the two largest public research funding sources. We're adding university press releases, PubMed publications, and job postings soon.",
+      "We currently track NIH Reporter and NSF awards, the two largest public research funding sources. We're adding university press releases, PubMed publications, and job postings soon.",
   },
   {
     question: "How does AI equipment tagging work?",
     answer:
-      "Our AI reads every grant abstract and identifies specific equipment categories mentioned or implied — microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and dozens more. You can filter leads by the equipment categories you sell.",
+      "Our AI reads every grant abstract and identifies specific equipment categories mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and dozens more. You can filter leads by the equipment categories you sell.",
   },
   {
     question: "Why per-state pricing?",
@@ -26,7 +26,7 @@ const faqs = [
   {
     question: "Can I share my account with my team?",
     answer:
-      "Individual subscriptions are per-rep. If your team needs access, ask us about team pricing — it's more cost-effective and includes national coverage.",
+      "Individual subscriptions are per-rep. If your team needs access, ask us about team pricing. It's more cost-effective and includes national coverage.",
   },
   {
     question: "What if I sell equipment you don't tag yet?",

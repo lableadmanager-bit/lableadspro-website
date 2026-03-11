@@ -7,7 +7,7 @@ export default function Problem() {
             The Old Way Doesn&apos;t Scale
           </h2>
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto">
-            You&apos;re a great sales rep — so why are you spending hours finding leads
+            You&apos;re a great sales rep, so why are you spending hours finding leads
             instead of closing them? Every hour on prospecting is an hour you&apos;re not
             demoing, not selling, not earning.
           </p>
@@ -57,7 +57,7 @@ export default function Problem() {
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>PI name, contact info, and institution — ready to reach out</span>
+                <span>PI name, contact info, and institution. Ready to reach out.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>

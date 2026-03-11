@@ -9,7 +9,7 @@ const features = [
     icon: "🧠",
     title: "AI Equipment Anticipation",
     description:
-      "Our AI doesn't just search for keywords — it reads the science and anticipates what equipment each lab will need. Cell culture means incubators. Proteomics means mass specs. We make the connections for you.",
+      "Our AI doesn't just search for keywords. It reads the science and anticipates what equipment each lab will need. Cell culture means incubators. Proteomics means mass specs. We make the connections for you.",
   },
   {
     icon: "📞",
@@ -33,7 +33,7 @@ const features = [
     icon: "📊",
     title: "Weekly Intelligence Reports",
     description:
-      "Clean, actionable reports delivered every Monday. No dashboard to learn — just open your email and go.",
+      "Clean, actionable reports delivered every Monday. No dashboard to learn. Just open your email and go.",
   },
 ];
 
