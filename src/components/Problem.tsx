@@ -57,7 +57,7 @@ export default function Problem() {
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>PI name, contact info, and institution. Ready to reach out.</span>
+                <span>PI name, contact info, and institution, all at your fingertips</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
@@ -65,7 +65,7 @@ export default function Problem() {
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>Every Monday morning, a fresh list of your hottest prospects</span>
+                <span>Every Monday morning, a fresh list of your hottest leads</span>
               </li>
             </ul>
           </div>
