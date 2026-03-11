@@ -7,9 +7,9 @@ const features = [
   },
   {
     icon: "🧠",
-    title: "AI Equipment Anticipation",
+    title: "AI Equipment Tagging",
     description:
-      "Our AI doesn't just search for keywords. It reads the science and anticipates what equipment each lab will need. Cell culture means incubators. Proteomics means mass specs. We make the connections for you.",
+      "Our AI tags both stated and implied equipment needs from every grant abstract. You'll know what they need to buy before they do.",
   },
   {
     icon: "📞",
