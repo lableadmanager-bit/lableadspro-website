@@ -38,10 +38,10 @@ export default function Hero() {
 
         {/* Subheadline */}
         <p className="animate-fade-in-up-delay-1 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          AI-powered lead intelligence for life-science equipment sales.
-          We find new labs before the competition does. We monitor NIH &amp; NSF
-          grants to anticipate equipment needs. And we deliver qualified leads
-          to your inbox every Monday morning.
+          Lab Leads Pro is the AI-powered lead intelligence for life-science
+          equipment sales. We help you find new labs before the competition does.
+          We monitor NIH &amp; NSF grants to anticipate equipment needs, and we
+          deliver these qualified leads to your inbox every Monday morning.
         </p>
 
         {/* CTA */}
