@@ -70,10 +70,15 @@ export default function HowItWorks() {
           <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
             New Lab Detection
           </h3>
+          <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed mb-4">
+            After years in the life-science industry, one thing became clear: new labs are the
+            hottest commodity in equipment sales. Think about it. A completely empty lab
+            has to be filled up with something. Why not your equipment?
+          </p>
           <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            We identify new labs before they even have a website. First-time grant recipients,
-            new faculty hires, lab openings. All delivered the moment we find them.
-            Be the first rep to reach out, not the fifth.
+            Every rep in the space tries to think up clever ways to find new labs
+            before the competition. Our New Lab Detection is a proprietary system
+            built to do exactly that, so you can be the first rep to walk through the door.
           </p>
         </div>
       </div>
