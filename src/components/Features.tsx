@@ -15,7 +15,7 @@ const features = [
     icon: "📞",
     title: "PI Contact Information",
     description:
-      "PI name, email, institution, and department. Everything you need to start the conversation.",
+      "PI name, contact information, institution, and department. Everything you need to start the conversation.",
   },
   {
     icon: "💰",
