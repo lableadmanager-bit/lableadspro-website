@@ -1,6 +1,6 @@
 const plans = [
   {
-    name: "Newly Awarded Grant Alerts",
+    name: "Newly Awarded Grant List",
     price: "$79",
     period: "/state/month",
     description: "The essential lead intelligence for your territory.",
@@ -16,12 +16,12 @@ const plans = [
     featured: false,
   },
   {
-    name: "Newly Awarded Grant Alerts + New Lab Detection",
+    name: "Newly Awarded Grant List + New Lab Detection",
     price: "$99",
     period: "/state/month",
-    description: "The full picture. Grants plus new labs before anyone else knows.",
+    description: "The full picture. New grants and new labs, everything you need to hit President's Club this year.",
     features: [
-      "Everything in Newly Awarded Grant Alerts",
+      "Everything in Newly Awarded Grant List",
       "New lab & faculty hire detection",
       "First-time grant recipient alerts",
       "New lab setup signals & announcements",
