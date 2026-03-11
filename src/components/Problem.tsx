@@ -7,8 +7,9 @@ export default function Problem() {
             The Old Way Doesn&apos;t Scale
           </h2>
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto">
-            You&apos;re a great sales rep. But you&apos;re spending hours on lead research
-            that should take minutes.
+            You&apos;re a great sales rep — so why are you spending hours finding leads
+            instead of closing them? Every hour on prospecting is an hour you&apos;re not
+            demoing, not selling, not earning.
           </p>
         </div>
 
@@ -32,7 +33,7 @@ export default function Problem() {
               </li>
               <li className="flex gap-3">
                 <span className="text-red-400 mt-0.5">✗</span>
-                <span>Missing new labs until competitors find them first</span>
+                <span>Finding out about new labs after it&apos;s already too late</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-red-400 mt-0.5">✗</span>
@@ -48,23 +49,23 @@ export default function Problem() {
             <ul className="space-y-3 text-green-800">
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>New grants in your territory — delivered weekly</span>
+                <span>Every newly awarded NIH &amp; NSF grant in your territory</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>AI tags equipment needs from every abstract</span>
+                <span>AI anticipates equipment needs from each and every abstract</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>PI name, email, phone, and institution included</span>
+                <span>PI name, contact info, and institution — ready to reach out</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>New lab alerts from public announcements &amp; first-time grants</span>
+                <span>Be the first to know about new labs in your territory</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>Monday morning inbox — ready to prospect before coffee</span>
+                <span>Every Monday morning, a fresh list of your hottest prospects</span>
               </li>
             </ul>
           </div>

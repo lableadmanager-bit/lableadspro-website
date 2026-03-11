@@ -4,21 +4,21 @@ const steps = [
     icon: "🔬",
     title: "We Monitor the Funding",
     description:
-      "Our AI continuously scans NIH Reporter, NSF awards, university announcements, and public research databases for newly funded grants in your territory.",
+      "Our system continuously scans NIH Reporter, NSF awards, and public research databases for newly funded grants in your territory.",
   },
   {
     number: "02",
     icon: "🤖",
-    title: "AI Identifies Equipment Needs",
+    title: "AI Anticipates Equipment Needs",
     description:
-      "Every grant abstract is analyzed by our AI to identify specific equipment categories — microscopes, centrifuges, sequencers, flow cytometers, and more.",
+      "Every grant abstract is analyzed by our AI — not just for keywords, but for context. If a lab is doing cell culture, they'll need incubators. Doing imaging? They'll need microscopes. We connect the dots so you don't have to.",
   },
   {
     number: "03",
     icon: "📋",
     title: "We Find the Decision Maker",
     description:
-      "Each lead comes with the PI's name, email, phone number, institution, and department. No more digging through faculty directories.",
+      "Each lead comes with the PI's name, contact information, institution, and department. No more digging through faculty directories.",
   },
   {
     number: "04",
@@ -62,6 +62,19 @@ export default function HowItWorks() {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* New Lab Detection Teaser */}
+        <div className="mt-12 bg-gradient-to-r from-[var(--color-dark)] to-[#1a2d4a] rounded-2xl p-8 md:p-10 text-center">
+          <div className="text-3xl mb-4">🆕</div>
+          <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+            New Lab Detection
+          </h3>
+          <p className="text-gray-400 max-w-2xl mx-auto leading-relaxed">
+            We identify new labs before they even have a website. First-time grant recipients,
+            new faculty hires, lab openings — delivered the moment we find them.
+            Be the first rep to reach out, not the fifth.
+          </p>
         </div>
       </div>
     </section>

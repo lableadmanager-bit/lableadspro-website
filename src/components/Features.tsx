@@ -7,15 +7,15 @@ const features = [
   },
   {
     icon: "🧠",
-    title: "AI Equipment Tagging",
+    title: "AI Equipment Anticipation",
     description:
-      "Our AI reads every grant abstract and tags specific equipment categories — so you know exactly what they need to buy.",
+      "Our AI doesn't just search for keywords — it reads the science and anticipates what equipment each lab will need. Cell culture means incubators. Proteomics means mass specs. We make the connections for you.",
   },
   {
     icon: "📞",
-    title: "Complete Contact Info",
+    title: "PI Contact Information",
     description:
-      "PI name, email, phone, institution, and department. Everything you need to pick up the phone.",
+      "PI name, email, institution, and department. Everything you need to start the conversation.",
   },
   {
     icon: "💰",
@@ -43,10 +43,10 @@ export default function Features() {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-dark)] mb-4">
-            Everything You Need to Prospect Smarter
+            Everything You Need to Sell Smarter
           </h2>
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto">
-            Built by someone who spent 7 years doing this manually.
+            Built by someone who spent many years doing this manually.
             We automated the parts that don&apos;t need a human touch.
           </p>
         </div>
