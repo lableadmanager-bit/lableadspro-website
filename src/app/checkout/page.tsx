@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { PLANS, CATCH_UP_PRICE, type PlanTier } from "@/lib/plans";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { PLANS, CATCH_UP_PRICE, ADD_ON_PRICES, getAddOnPlanName } from "@/lib/plans";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -32,28 +32,42 @@ const US_STATES = [
   { code: "WI", name: "Wisconsin" }, { code: "WY", name: "Wyoming" },
 ];
 
+function CheckIcon() {
+  return (
+    <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
+      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const planParam = (searchParams.get("plan") as PlanTier) || "basic";
+  const planParam = searchParams.get("plan") || "basic";
+  const isPro = planParam === "pro";
 
-  const [activeTier, setActiveTier] = useState<PlanTier>(
-    planParam in PLANS ? planParam : "basic"
-  );
+  const [addAgencies, setAddAgencies] = useState(planParam === "plus" || planParam === "pro");
+  const [addNewLab, setAddNewLab] = useState(planParam === "pro");
   const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [stateSearch, setStateSearch] = useState("");
   const [addCatchUp, setAddCatchUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showNewLabTooltip, setShowNewLabTooltip] = useState(false);
+  const [priceFlash, setPriceFlash] = useState(false);
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    const tier = searchParams.get("plan") as PlanTier;
-    if (tier && tier in PLANS) setActiveTier(tier);
-  }, [searchParams]);
+  const pricePerState = isPro
+    ? PLANS.pro.pricePerState
+    : PLANS.basic.pricePerState +
+      (addAgencies ? ADD_ON_PRICES.agencies : 0) +
+      (addNewLab ? ADD_ON_PRICES.newLab : 0);
 
-  const plan = PLANS[activeTier];
+  const planName = isPro
+    ? "LabLeads Pro"
+    : getAddOnPlanName(addAgencies, addNewLab);
+
   const stateCount = selectedStates.length;
-  const monthlyTotal = stateCount * plan.pricePerState;
+  const monthlyTotal = stateCount * pricePerState;
   const catchUpTotal = addCatchUp ? stateCount * CATCH_UP_PRICE : 0;
 
   const filteredStates = US_STATES.filter(
@@ -61,6 +75,34 @@ function CheckoutContent() {
       s.name.toLowerCase().includes(stateSearch.toLowerCase()) ||
       s.code.toLowerCase().includes(stateSearch.toLowerCase())
   );
+
+  function triggerFlash() {
+    if (flashTimer.current) clearTimeout(flashTimer.current);
+    setPriceFlash(true);
+    flashTimer.current = setTimeout(() => setPriceFlash(false), 700);
+  }
+
+  useEffect(() => {
+    return () => {
+      if (flashTimer.current) clearTimeout(flashTimer.current);
+    };
+  }, []);
+
+  function handleToggleAgencies(checked: boolean) {
+    setAddAgencies(checked);
+    if (!checked) setAddNewLab(false);
+    triggerFlash();
+  }
+
+  function handleToggleNewLab(checked: boolean) {
+    if (checked && !addAgencies) {
+      setAddAgencies(true);
+      setShowNewLabTooltip(true);
+      setTimeout(() => setShowNewLabTooltip(false), 3000);
+    }
+    setAddNewLab(checked);
+    triggerFlash();
+  }
 
   function toggleState(code: string) {
     setSelectedStates((prev) =>
@@ -80,9 +122,11 @@ function CheckoutContent() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          priceId: plan.priceId,
+          addons: {
+            agencies: isPro || addAgencies,
+            newLab: isPro || addNewLab,
+          },
           states: selectedStates,
-          plan: activeTier,
           addCatchUp,
         }),
       });
@@ -97,6 +141,13 @@ function CheckoutContent() {
     }
   }
 
+  const planDescriptions: Record<string, string> = {
+    basic: "Start with NIH grant intelligence for your territory.",
+    plus: "Grants from 8 federal agencies — your territory, fully covered.",
+    pro: "The complete package. Grants + New Lab Detection.",
+  };
+  const headingDescription = planDescriptions[planParam] ?? planDescriptions.basic;
+
   return (
     <div className="min-h-screen bg-[var(--color-dark)] text-white">
       {/* Header */}
@@ -107,82 +158,127 @@ function CheckoutContent() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold mb-2">Complete Your Order</h1>
-        <p className="text-gray-400 mb-10">Pick your plan, select your states, and get started.</p>
+        <h1 className="text-3xl font-bold mb-2">
+          {isPro ? "Select Your States" : "Customize Your Plan"}
+        </h1>
+        <p className="text-gray-400 mb-10">{headingDescription}</p>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left: Plan + States */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Plan selector */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-              <h2 className="text-lg font-semibold mb-4">Select Plan</h2>
-              <div className="grid grid-cols-3 gap-3">
-                {(["basic", "plus", "pro"] as PlanTier[]).map((tier) => {
-                  const p = PLANS[tier];
-                  const active = activeTier === tier;
-                  return (
-                    <button
-                      key={tier}
-                      onClick={() => setActiveTier(tier)}
-                      className={`rounded-xl p-4 text-left transition-all border ${
-                        active
-                          ? "border-[var(--color-brand)] bg-[var(--color-brand)]/10"
-                          : "border-white/10 hover:border-white/30 bg-white/5"
+          {/* Left column */}
+          <div className="lg:col-span-2 space-y-6">
+
+            {/* Add-ons — hidden for Pro entry */}
+            {!isPro && (
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <h2 className="text-lg font-semibold mb-1">Optional Add-Ons</h2>
+                <p className="text-sm text-gray-400 mb-4">
+                  Base plan: LabLeads Basic — ${PLANS.basic.pricePerState}/state/mo
+                </p>
+                <div className="space-y-3">
+
+                  {/* Agencies add-on */}
+                  <label
+                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                      addAgencies
+                        ? "border-[var(--color-brand)] bg-[var(--color-brand)]/10"
+                        : "border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/8"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={addAgencies}
+                      onChange={(e) => handleToggleAgencies(e.target.checked)}
+                      className="sr-only"
+                    />
+                    <div
+                      className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 ${
+                        addAgencies
+                          ? "bg-[var(--color-brand)] border-[var(--color-brand)]"
+                          : "border-white/30 bg-transparent"
                       }`}
                     >
-                      <div className="font-semibold text-sm">{p.name}</div>
-                      <div className="text-2xl font-bold mt-1">${p.pricePerState}</div>
-                      <div className="text-xs text-gray-400">/state/mo</div>
-                    </button>
-                  );
-                })}
-              </div>
+                      {addAgencies && <CheckIcon />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm">Add 7 More Federal Agencies</p>
+                      <p className="text-xs text-gray-400 mt-0.5">NSF, DOD, DOE, NASA, VA, USDA, CDC</p>
+                    </div>
+                    <div className="text-sm font-medium whitespace-nowrap">
+                      {addAgencies ? (
+                        <span className="text-[var(--color-brand)]">Included</span>
+                      ) : (
+                        <span className="text-gray-300">+${ADD_ON_PRICES.agencies}/state/mo</span>
+                      )}
+                    </div>
+                  </label>
 
-              <ul className="mt-4 space-y-1.5">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex gap-2 text-sm text-gray-300">
-                    <span className="text-[var(--color-accent)]">✓</span> {f}
-                  </li>
-                ))}
-              </ul>
-            </div>
+                  {/* New Lab add-on */}
+                  <div className="relative">
+                    <label
+                      className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                        addNewLab
+                          ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10"
+                          : "border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/8"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={addNewLab}
+                        onChange={(e) => handleToggleNewLab(e.target.checked)}
+                        className="sr-only"
+                      />
+                      <div
+                        className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 ${
+                          addNewLab
+                            ? "bg-[var(--color-accent)] border-[var(--color-accent)]"
+                            : "border-white/30 bg-transparent"
+                        }`}
+                      >
+                        {addNewLab && <CheckIcon />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm">Add New Lab Detection</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          New lab &amp; faculty hire alerts, first-time grant recipients, new lab signals
+                        </p>
+                      </div>
+                      <div className="text-sm font-medium whitespace-nowrap">
+                        {addNewLab ? (
+                          <span className="text-[var(--color-accent)]">Included</span>
+                        ) : (
+                          <span className="text-gray-300">+${ADD_ON_PRICES.newLab}/state/mo</span>
+                        )}
+                      </div>
+                    </label>
 
-            {/* Upsell banner */}
-            {activeTier === "basic" && (
-              <div className="bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/40 rounded-2xl p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-[var(--color-brand)]">Upgrade to LabLeads Plus — just $10 more/state</p>
-                    <p className="text-sm text-gray-300 mt-1">
-                      Get grants from 7 additional federal agencies: NSF, DOD, DOE, NASA, VA, USDA, CDC
-                    </p>
+                    {showNewLabTooltip && (
+                      <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-gray-800 border border-white/20 text-white text-xs px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-20 pointer-events-none">
+                        New Lab Detection includes all 8 federal agency grants
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
+                      </div>
+                    )}
                   </div>
-                  <button
-                    onClick={() => setActiveTier("plus")}
-                    className="shrink-0 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Upgrade
-                  </button>
                 </div>
               </div>
             )}
 
-            {activeTier === "plus" && (
-              <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/40 rounded-2xl p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-[var(--color-accent)]">Go Pro — just $20 more/state</p>
-                    <p className="text-sm text-gray-300 mt-1">
-                      Add New Lab Detection and be the first rep to reach new PIs
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setActiveTier("pro")}
-                    className="shrink-0 bg-[var(--color-accent)] hover:bg-[var(--color-accent-dark)] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Upgrade
-                  </button>
+            {/* Pro clean summary */}
+            {isPro && (
+              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-2xl font-bold">LabLeads Pro</span>
+                  <span className="text-sm bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-0.5 rounded-full font-medium">
+                    Full Package
+                  </span>
                 </div>
+                <p className="text-gray-400 text-sm mb-4">Everything included. No add-ons needed.</p>
+                <ul className="space-y-2">
+                  {PLANS.pro.features.map((f) => (
+                    <li key={f} className="flex gap-2 text-sm text-gray-300">
+                      <span className="text-[var(--color-accent)] mt-0.5">✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
@@ -190,9 +286,14 @@ function CheckoutContent() {
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Select States</h2>
-                <span className="text-sm text-[var(--color-brand)] font-medium">
+                <span
+                  className={`text-sm font-medium transition-colors duration-300 ${
+                    priceFlash ? "text-[var(--color-brand)]" : "text-[var(--color-brand)]"
+                  }`}
+                >
                   {stateCount} state{stateCount !== 1 ? "s" : ""} selected
-                  {stateCount > 0 && ` — ${stateCount} × $${plan.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
+                  {stateCount > 0 &&
+                    ` — ${stateCount} × $${pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
                 </span>
               </div>
               <input
@@ -230,42 +331,27 @@ function CheckoutContent() {
                 </button>
               )}
             </div>
-
-            {/* Catch-up add-on */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={addCatchUp}
-                  onChange={(e) => setAddCatchUp(e.target.checked)}
-                  className="mt-1 h-4 w-4 accent-[var(--color-brand)]"
-                />
-                <div>
-                  <p className="font-semibold">
-                    Add 3-Month Catch-Up Report{" "}
-                    <span className="text-[var(--color-accent)]">+${CATCH_UP_PRICE}/state, one-time</span>
-                  </p>
-                  <p className="text-sm text-gray-400 mt-0.5">
-                    Get up to speed instantly with 3 months of historical grant data
-                  </p>
-                </div>
-              </label>
-            </div>
           </div>
 
           {/* Right: Order summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10 sticky top-6">
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10 lg:sticky lg:top-6">
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Plan</span>
-                  <span className="font-medium">{plan.name}</span>
+                  <span className="font-medium text-right max-w-[60%]">{planName}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-400">Price/state</span>
-                  <span className="font-medium">${plan.pricePerState}/mo</span>
+                  <span
+                    className={`font-medium tabular-nums transition-colors duration-300 ${
+                      priceFlash ? "text-[var(--color-brand)]" : "text-white"
+                    }`}
+                  >
+                    ${pricePerState}/mo
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">States</span>
@@ -277,7 +363,10 @@ function CheckoutContent() {
                     <p className="text-gray-400 text-xs mb-1.5">Selected:</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedStates.map((s) => (
-                        <span key={s} className="bg-[var(--color-brand)]/20 text-[var(--color-brand)] text-xs px-2 py-0.5 rounded">
+                        <span
+                          key={s}
+                          className="bg-[var(--color-brand)]/20 text-[var(--color-brand)] text-xs px-2 py-0.5 rounded"
+                        >
                           {s}
                         </span>
                       ))}
@@ -285,29 +374,69 @@ function CheckoutContent() {
                   </div>
                 )}
 
-                <div className="pt-2 border-t border-white/10 flex justify-between font-semibold">
+                <div
+                  className={`pt-3 border-t border-white/10 flex justify-between font-bold text-base tabular-nums transition-colors duration-300 ${
+                    priceFlash ? "text-[var(--color-brand)]" : "text-white"
+                  }`}
+                >
                   <span>Monthly total</span>
                   <span>${monthlyTotal.toLocaleString()}/mo</span>
                 </div>
 
-                {addCatchUp && stateCount > 0 && (
-                  <div className="flex justify-between text-[var(--color-accent)]">
-                    <span>Catch-Up Report</span>
-                    <span>+${catchUpTotal.toLocaleString()} one-time</span>
-                  </div>
-                )}
+                {/* Catch-up add-on */}
+                <div className="pt-2 border-t border-white/10">
+                  <label
+                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
+                      addCatchUp
+                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10"
+                        : "border-white/10 bg-white/5 hover:border-white/20"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={addCatchUp}
+                      onChange={(e) => setAddCatchUp(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 accent-[var(--color-accent)]"
+                    />
+                    <div>
+                      <p className="font-medium text-xs">3-Month Catch-Up Report</p>
+                      <p className="text-xs text-gray-400 mt-0.5">
+                        +${CATCH_UP_PRICE}/state, one-time
+                      </p>
+                    </div>
+                  </label>
+
+                  {addCatchUp && stateCount > 0 && (
+                    <div className="flex justify-between text-[var(--color-accent)] text-sm mt-2 font-medium">
+                      <span>Catch-Up Report</span>
+                      <span>+${catchUpTotal.toLocaleString()} one-time</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {error && (
-                <p className="mt-4 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>
+                <p className="mt-4 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
+                  {error}
+                </p>
               )}
 
               <button
                 onClick={handleSubscribe}
                 disabled={loading || stateCount === 0}
-                className="mt-6 w-full bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-colors"
+                className="mt-6 w-full bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                {loading ? "Redirecting to Stripe…" : "Subscribe →"}
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Redirecting to Stripe…
+                  </>
+                ) : (
+                  "Continue to Payment →"
+                )}
               </button>
 
               <p className="text-center text-xs text-gray-500 mt-3">
@@ -323,11 +452,13 @@ function CheckoutContent() {
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-[var(--color-dark)] flex items-center justify-center">
-        <div className="text-white text-lg">Loading…</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[var(--color-dark)] flex items-center justify-center">
+          <div className="text-white text-lg">Loading…</div>
+        </div>
+      }
+    >
       <CheckoutContent />
     </Suspense>
   );

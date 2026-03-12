@@ -59,3 +59,21 @@ export const PLANS: Record<PlanTier, Plan> = {
 export const VALID_PRICE_IDS = new Set(
   Object.values(PLANS).map((p) => p.priceId)
 );
+
+export const ADD_ON_PRICES = {
+  agencies: 10,
+  newLab: 20,
+} as const;
+
+export function getAddOnPriceId(agencies: boolean, newLab: boolean): string {
+  if (agencies && newLab) return PLANS.pro.priceId;
+  if (agencies) return PLANS.plus.priceId;
+  return PLANS.basic.priceId;
+}
+
+export function getAddOnPlanName(agencies: boolean, newLab: boolean): string {
+  if (agencies && newLab) return "LabLeads Pro";
+  if (agencies) return "LabLeads Plus";
+  if (newLab) return "LabLeads Basic + New Lab Detection";
+  return "LabLeads Basic";
+}

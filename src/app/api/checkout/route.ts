@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { CATCH_UP_PRICE_ID, VALID_PRICE_IDS } from "@/lib/plans";
+import { CATCH_UP_PRICE_ID, VALID_PRICE_IDS, getAddOnPriceId, getAddOnPlanName } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { priceId, states, plan, addCatchUp } = body as {
-      priceId: string;
+    const { addons, states, addCatchUp } = body as {
+      addons: { agencies: boolean; newLab: boolean };
       states: string[];
-      plan: string;
       addCatchUp: boolean;
     };
+
+    const agencies = Boolean(addons?.agencies);
+    const newLab = Boolean(addons?.newLab);
+    const priceId = getAddOnPriceId(agencies, newLab);
+    const planName = getAddOnPlanName(agencies, newLab);
 
     if (!VALID_PRICE_IDS.has(priceId)) {
       return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
@@ -22,9 +26,11 @@ export async function POST(req: NextRequest) {
 
     const stateCount = states.length;
     const metadata = {
-      plan,
+      plan: planName,
       states: states.join(","),
       stateCount: String(stateCount),
+      addAgencies: String(agencies),
+      addNewLab: String(newLab),
     };
 
     const lineItems: { price: string; quantity: number }[] = [
@@ -45,7 +51,7 @@ export async function POST(req: NextRequest) {
       allow_promotion_codes: true,
       customer_email: undefined,
       success_url: `${origin}/checkout/success`,
-      cancel_url: `${origin}/checkout?plan=${plan}`,
+      cancel_url: `${origin}/checkout`,
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
