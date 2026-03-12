@@ -1,11 +1,11 @@
 const plans = [
   {
-    name: "Newly Awarded Grant List",
-    price: "$79",
+    name: "LabLeads Basic",
+    price: "$69",
     period: "/state/month",
-    description: "The essential lead intelligence for your territory.",
+    description: "NIH grant intelligence for your territory. The foundation every rep needs.",
     features: [
-      "All newly awarded federal research grants",
+      "All newly awarded NIH grants",
       "AI equipment need anticipation",
       "PI name, contact info & institution",
       "Full funding details & grant amounts",
@@ -16,12 +16,28 @@ const plans = [
     featured: false,
   },
   {
-    name: "Newly Awarded Grant List + New Lab Detection",
+    name: "LabLeads Plus",
+    price: "$79",
+    period: "/state/month",
+    description: "All 8 federal agencies. The grants your competition doesn't even know exist.",
+    features: [
+      "Everything in LabLeads Basic",
+      "NSF, DOD, DOE, USDA, VA, CDC & NASA grants",
+      "7 additional funding agencies for +$10/mo",
+      "Full funding details & grant amounts",
+      "Weekly email delivery every Monday",
+      "Pick as many states as you need",
+    ],
+    cta: "Get Early Access",
+    featured: false,
+  },
+  {
+    name: "LabLeads Pro",
     price: "$99",
     period: "/state/month",
-    description: "The full picture. New grants and new labs, everything you need to hit President's Club this year.",
+    description: "The full picture. New grants, new labs, everything you need to hit President's Club this year.",
     features: [
-      "Everything in Newly Awarded Grant List",
+      "Everything in LabLeads Plus",
       "New lab & faculty hire detection",
       "First-time grant recipient alerts",
       "New lab setup signals & announcements",
@@ -36,7 +52,7 @@ const plans = [
 export default function Pricing() {
   return (
     <section id="pricing" className="py-20 px-6 bg-[var(--color-gray-50)]">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-dark)] mb-4">
             Simple, Per-State Pricing
@@ -46,7 +62,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
