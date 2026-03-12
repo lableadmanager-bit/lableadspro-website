@@ -29,15 +29,21 @@ export default function Hero() {
       </div>
 
       <div className="relative max-w-4xl mx-auto text-center">
+        {/* Badge */}
+        <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[var(--color-gray-300)] text-sm text-[var(--color-gray-700)] mb-8">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
+          Currently monitoring $275.1 billion in active grants
+        </div>
+
         {/* Headline */}
-        <h1 className="animate-fade-in-up text-4xl md:text-6xl font-extrabold text-[var(--color-dark)] leading-tight tracking-tight mb-6">
+        <h1 className="animate-fade-in-up-delay-1 text-4xl md:text-6xl font-extrabold text-[var(--color-dark)] leading-tight tracking-tight mb-6">
           Know Who&apos;s Buying
           <br />
           <span className="text-[var(--color-brand)]">Before They Start Shopping</span>
         </h1>
 
         {/* Subheadline */}
-        <p className="animate-fade-in-up-delay-1 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p className="animate-fade-in-up-delay-2 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
           Lab Leads Pro is the AI-powered lead intelligence solution
           for <span className="whitespace-nowrap">life-science equipment sales.</span> We help you find new labs before the competition does.
           We monitor NIH &amp; NSF grants to anticipate equipment needs, and we
@@ -45,7 +51,7 @@ export default function Hero() {
         </p>
 
         {/* CTA */}
-        <div className="animate-fade-in-up-delay-2 flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
             href="#cta"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
@@ -61,7 +67,7 @@ export default function Hero() {
         </div>
 
         {/* Social proof hint */}
-        <p className="animate-fade-in-up-delay-3 mt-10 text-sm text-[var(--color-gray-500)]">
+        <p className="mt-10 text-sm text-[var(--color-gray-500)]">
           Built by a life-science sales veteran. Made for reps who want to sell smarter.
         </p>
       </div>
