@@ -4,7 +4,7 @@ const steps = [
     icon: "🔬",
     title: "We Monitor the Funding",
     description:
-      "Our system continuously scans NIH Reporter, NSF awards, and public research databases for newly funded grants in your territory.",
+      "Our system continuously scans NIH, NSF, DOD, DOE, USDA, VA, CDC, NASA, and other public research databases for newly funded grants in your territory.",
   },
   {
     number: "02",

@@ -5,7 +5,7 @@ const plans = [
     period: "/state/month",
     description: "The essential lead intelligence for your territory.",
     features: [
-      "All newly awarded NIH & NSF grants",
+      "All newly awarded federal research grants",
       "AI equipment need anticipation",
       "PI name, contact info & institution",
       "Full funding details & grant amounts",
