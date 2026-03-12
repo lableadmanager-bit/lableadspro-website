@@ -6,11 +6,29 @@ export default function CTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Connect to email service (Resend, ConvertKit, etc.)
-    console.log("Email submitted:", email);
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      await fetch(
+        "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec",
+        {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        }
+      );
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,11 +62,13 @@ export default function CTA() {
             />
             <button
               type="submit"
-              className="px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-500/20 whitespace-nowrap"
+              disabled={loading}
+              className="px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl transition-colors shadow-lg shadow-blue-500/20 whitespace-nowrap disabled:opacity-50"
             >
-              Get Early Access
+              {loading ? "Submitting..." : "Get Early Access"}
             </button>
           </form>
+          {error && <p className="mt-3 text-red-400 text-sm">{error}</p>}
         )}
 
         <p className="mt-6 text-sm text-gray-500">
