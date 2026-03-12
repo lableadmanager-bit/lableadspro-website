@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 
 const agencies = [
-  { name: "NIH", logo: "/logos/nih.png", height: "h-14" },
-  { name: "NSF", logo: "/logos/nsf.png", height: "h-12" },
-  { name: "DOD", logo: "/logos/dod.png", height: "h-12" },
-  { name: "DOE", logo: "/logos/doe.png", height: "h-12" },
-  { name: "NASA", logo: "/logos/nasa.png", height: "h-12" },
-  { name: "VA", logo: "/logos/va.png", height: "h-8" },
-  { name: "USDA", logo: "/logos/usda.png", height: "h-12" },
-  { name: "CDC", logo: "/logos/cdc.png", height: "h-12" },
+  { name: "NIH", logo: "/logos/nih.png" },
+  { name: "NSF", logo: "/logos/nsf.png" },
+  { name: "DOD", logo: "/logos/dod.png" },
+  { name: "DOE", logo: "/logos/doe.png" },
+  { name: "NASA", logo: "/logos/nasa.png" },
+  { name: "VA", logo: "/logos/va.png" },
+  { name: "USDA", logo: "/logos/usda.png" },
+  { name: "CDC", logo: "/logos/cdc.png" },
 ];
 
 // Double the array for seamless loop
@@ -36,7 +36,7 @@ export default function AgencyBar() {
             <img
               src={agency.logo}
               alt={agency.name}
-              className={`${agency.height} w-auto object-contain opacity-70 hover:opacity-100 transition-opacity`}
+              className="h-10 w-auto max-w-[120px] object-contain opacity-70 hover:opacity-100 transition-opacity"
               loading="lazy"
             />
           </div>
