@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 
 const agencies = [
+  { name: "VA", logo: "/logos/va.png" },
+  { name: "USDA", logo: "/logos/usda.png" },
+  { name: "CDC", logo: "/logos/cdc.png" },
   { name: "NIH", logo: "/logos/nih.png" },
   { name: "NSF", logo: "/logos/nsf.png" },
   { name: "DOD", logo: "/logos/dod.png" },
   { name: "DOE", logo: "/logos/doe.png" },
   { name: "NASA", logo: "/logos/nasa.png" },
-  { name: "VA", logo: "/logos/va.png" },
-  { name: "USDA", logo: "/logos/usda.png" },
-  { name: "CDC", logo: "/logos/cdc.png" },
 ];
 
 // Double the array for seamless loop
