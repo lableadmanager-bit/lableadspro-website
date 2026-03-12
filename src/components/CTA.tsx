@@ -14,15 +14,15 @@ export default function CTA() {
     setLoading(true);
     setError("");
     try {
-      const url = new URL("https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec");
-      url.searchParams.set("email", email);
-      const res = await fetch(url.toString(), { method: "GET" });
-      const data = await res.json();
-      if (data.result === "success") {
-        setSubmitted(true);
-      } else {
-        setError("Something went wrong. Please try again.");
-      }
+      const scriptUrl = "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec";
+      await fetch(scriptUrl, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify({ email }),
+      });
+      // no-cors means we can't read the response, but if it didn't throw, it sent
+      setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
