@@ -19,7 +19,7 @@ const plans = [
     name: "LabLeads Plus",
     price: "$79",
     period: "/state/month",
-    description: "All 8 federal agencies. The grants your competition doesn't even know exist.",
+    description: "Step up your game with all 8 federal agencies. We'll deliver the grants your competition doesn't even know exist.",
     features: [
       "Everything in LabLeads Basic",
       "NSF, DOD, DOE, USDA, VA, CDC & NASA grants",
