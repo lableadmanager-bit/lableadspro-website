@@ -3,14 +3,14 @@
 import { useEffect, useState } from "react";
 
 const agencies = [
-  { name: "NIH", logo: "/logos/nih.svg" },
-  { name: "NSF", logo: "/logos/nsf.svg" },
-  { name: "DOD", logo: "/logos/dod.svg" },
-  { name: "DOE", logo: "/logos/doe.svg" },
-  { name: "NASA", logo: "/logos/nasa.svg" },
-  { name: "VA", logo: "/logos/va.svg" },
-  { name: "USDA", logo: "/logos/usda.svg" },
-  { name: "CDC", logo: "/logos/cdc.svg" },
+  { name: "NIH", logo: "/logos/nih.png" },
+  { name: "NSF", logo: "/logos/nsf.png" },
+  { name: "DOD", logo: "/logos/dod.png" },
+  { name: "DOE", logo: "/logos/doe.png" },
+  { name: "NASA", logo: "/logos/nasa.png" },
+  { name: "VA", logo: "/logos/va.png" },
+  { name: "USDA", logo: "/logos/usda.png" },
+  { name: "CDC", logo: "/logos/cdc.png" },
 ];
 
 // Double the array for seamless loop
@@ -21,26 +21,24 @@ export default function AgencyBar() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="mt-4 mb-2 w-full max-w-2xl mx-auto overflow-hidden">
+    <div className="mt-4 mb-4 w-full max-w-2xl mx-auto overflow-hidden mask-fade">
       <div
-        className={`flex items-center gap-12 ${mounted ? "animate-scroll" : ""}`}
+        className={`flex items-center gap-14 ${mounted ? "animate-scroll" : ""}`}
         style={{ width: "max-content" }}
       >
         {doubled.map((agency, i) => (
           <div
             key={`${agency.name}-${i}`}
-            className="flex items-center gap-2 flex-shrink-0"
+            className="flex-shrink-0"
+            title={agency.name}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={agency.logo}
               alt={agency.name}
-              className="h-10 w-auto object-contain"
+              className="h-12 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity"
               loading="lazy"
             />
-            <span className="text-sm font-semibold text-[var(--color-gray-500)]">
-              {agency.name}
-            </span>
           </div>
         ))}
       </div>
