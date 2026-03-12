@@ -66,7 +66,7 @@ export default function Pricing() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-2xl p-8 ${
+              className={`rounded-2xl p-8 flex flex-col ${
                 plan.featured
                   ? "bg-[var(--color-dark)] text-white ring-2 ring-[var(--color-brand)] shadow-2xl shadow-blue-500/10 relative"
                   : "bg-white border border-[var(--color-gray-100)]"
@@ -85,7 +85,7 @@ export default function Pricing() {
                 {plan.name}
               </h3>
               <p
-                className={`text-sm mb-6 ${
+                className={`text-sm min-h-[4rem] ${
                   plan.featured ? "text-gray-400" : "text-[var(--color-gray-500)]"
                 }`}
               >
@@ -101,7 +101,7 @@ export default function Pricing() {
                   {plan.period}
                 </span>
               </div>
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature) => (
                   <li key={feature} className="flex gap-3 text-sm">
                     <span className={plan.featured ? "text-[var(--color-accent)]" : "text-[var(--color-brand)]"}>
@@ -115,7 +115,7 @@ export default function Pricing() {
               </ul>
               <a
                 href="#cta"
-                className={`block text-center font-semibold py-3 px-6 rounded-xl transition-colors ${
+                className={`block text-center font-semibold py-3 px-6 rounded-xl transition-colors mt-auto ${
                   plan.featured
                     ? "bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white"
                     : "bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-300)] text-[var(--color-dark)]"
