@@ -35,7 +35,7 @@ const plans = [
     name: "LabLeads Pro",
     price: "$99",
     period: "/state/month",
-    description: "The full picture. New grants, new labs, everything you need to hit President's Club this year.",
+    description: "Every federal grant and early intel on new labs — everything you need to hit President's Club year after year.",
     features: [
       "Everything in LabLeads Plus",
       "New lab & faculty hire detection",
