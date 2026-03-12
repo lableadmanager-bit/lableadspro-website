@@ -85,7 +85,7 @@ export default function Pricing() {
                 {plan.name}
               </h3>
               <p
-                className={`text-sm min-h-[4rem] ${
+                className={`text-sm min-h-[5rem] mb-6 ${
                   plan.featured ? "text-gray-400" : "text-[var(--color-gray-500)]"
                 }`}
               >
