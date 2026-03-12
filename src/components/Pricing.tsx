@@ -23,7 +23,6 @@ const plans = [
     features: [
       "Everything in LabLeads Basic",
       "NSF, DOD, DOE, USDA, VA, CDC & NASA grants",
-      "7 additional funding agencies for +$10/mo",
       "Full funding details & grant amounts",
       "Weekly email delivery every Monday",
       "Pick as many states as you need",
