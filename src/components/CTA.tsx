@@ -15,13 +15,15 @@ export default function CTA() {
     setError("");
     try {
       const scriptUrl = "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec";
-      await fetch(scriptUrl, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ email }),
+      // Use an image ping to bypass CORS entirely — GET request via img tag
+      await new Promise<void>((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve();
+        img.onerror = () => resolve(); // Apps Script won't return an image, so onerror fires but the request still goes through
+        img.src = `${scriptUrl}?email=${encodeURIComponent(email)}&t=${Date.now()}`;
+        // Timeout fallback
+        setTimeout(() => resolve(), 3000);
       });
-      // no-cors means we can't read the response, but if it didn't throw, it sent
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");
