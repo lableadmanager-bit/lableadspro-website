@@ -60,7 +60,7 @@ export default function AgencyBar() {
   return (
     <div
       ref={scrollRef}
-      className="mt-4 mb-4 w-full max-w-2xl mx-auto overflow-hidden mask-fade"
+      className="mt-4 mb-4 w-full max-w-2xl mx-auto overflow-hidden mask-fade rounded-xl bg-white py-4"
     >
       <div
         ref={innerRef}
