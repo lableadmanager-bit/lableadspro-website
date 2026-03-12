@@ -14,16 +14,15 @@ export default function CTA() {
     setLoading(true);
     setError("");
     try {
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        }
-      );
-      setSubmitted(true);
+      const url = new URL("https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec");
+      url.searchParams.set("email", email);
+      const res = await fetch(url.toString(), { method: "GET" });
+      const data = await res.json();
+      if (data.result === "success") {
+        setSubmitted(true);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
