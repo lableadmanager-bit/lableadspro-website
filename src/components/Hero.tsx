@@ -34,8 +34,11 @@ export default function Hero() {
         {/* Badge */}
         <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[var(--color-gray-300)] text-sm text-[var(--color-gray-700)] mb-8">
           <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
-          Monitoring $602.8 billion in active research funding across 8 federal agencies
+          Monitoring $602.8 billion in active research funding from
         </div>
+
+        {/* Scrolling agency logo bar */}
+        <AgencyBar />
 
         {/* Headline */}
         <h1 className="animate-fade-in-up-delay-1 text-4xl md:text-6xl font-extrabold text-[var(--color-dark)] leading-tight tracking-tight mb-6">
@@ -73,8 +76,7 @@ export default function Hero() {
           Built by a life-science sales veteran. Made for reps who want to sell smarter.
         </p>
 
-        {/* Agency logo bar */}
-        <AgencyBar />
+
       </div>
     </section>
   );
