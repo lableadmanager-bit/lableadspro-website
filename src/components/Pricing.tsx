@@ -12,7 +12,8 @@ const plans = [
       "Weekly email delivery every Monday",
       "Pick as many states as you need",
     ],
-    cta: "Get Early Access",
+    cta: "Get Started",
+    href: "/checkout?plan=basic",
     featured: false,
   },
   {
@@ -27,7 +28,8 @@ const plans = [
       "Weekly email delivery every Monday",
       "Pick as many states as you need",
     ],
-    cta: "Get Early Access",
+    cta: "Get Started",
+    href: "/checkout?plan=plus",
     featured: false,
   },
   {
@@ -43,7 +45,8 @@ const plans = [
       "Be the first rep to reach out",
       "Priority Monday AM delivery",
     ],
-    cta: "Get Early Access",
+    cta: "Get Started",
+    href: "/checkout?plan=pro",
     featured: true,
   },
 ];
@@ -113,7 +116,7 @@ export default function Pricing() {
                 ))}
               </ul>
               <a
-                href="#cta"
+                href={plan.href}
                 className={`block text-center font-semibold py-3 px-6 rounded-xl transition-colors mt-auto ${
                   plan.featured
                     ? "bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white"
