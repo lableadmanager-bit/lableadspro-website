@@ -32,7 +32,7 @@ export default function Hero() {
         {/* Badge */}
         <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[var(--color-gray-300)] text-sm text-[var(--color-gray-700)] mb-8">
           <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse" />
-          Currently monitoring $275.1 billion in active grants
+          Monitoring $602.8 billion in active research funding across 8 federal agencies
         </div>
 
         {/* Headline */}
@@ -70,6 +70,18 @@ export default function Hero() {
         <p className="mt-10 text-sm text-[var(--color-gray-500)]">
           Built by a life-science sales veteran. Made for reps who want to sell smarter.
         </p>
+
+        {/* Agency logo bar */}
+        <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[var(--color-gray-500)]">
+          <span>🏛️ NIH</span>
+          <span>🔬 NSF</span>
+          <span>🎖️ DOD</span>
+          <span>⚡ DOE</span>
+          <span>🚀 NASA</span>
+          <span>🏥 VA</span>
+          <span>🌾 USDA</span>
+          <span>🦠 CDC</span>
+        </div>
       </div>
     </section>
   );
