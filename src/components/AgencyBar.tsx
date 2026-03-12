@@ -3,14 +3,14 @@
 import { useEffect, useRef } from "react";
 
 const agencies = [
-  { name: "VA", logo: "/logos/va.png" },
-  { name: "USDA", logo: "/logos/usda.png" },
-  { name: "CDC", logo: "/logos/cdc.png" },
-  { name: "NIH", logo: "/logos/nih.png" },
-  { name: "NSF", logo: "/logos/nsf.png" },
-  { name: "DOD", logo: "/logos/dod.png" },
-  { name: "DOE", logo: "/logos/doe.png" },
-  { name: "NASA", logo: "/logos/nasa.png" },
+  { name: "VA", logo: "/logos/va.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "USDA", logo: "/logos/usda.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "CDC", logo: "/logos/cdc.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "NIH", logo: "/logos/nih.png", className: "h-14 w-auto max-w-[120px]" },
+  { name: "NSF", logo: "/logos/nsf.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "DOD", logo: "/logos/dod.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "DOE", logo: "/logos/doe.png", className: "h-10 w-auto max-w-[120px]" },
+  { name: "NASA", logo: "/logos/nasa.png", className: "h-10 w-auto max-w-[120px]" },
 ];
 
 export default function AgencyBar() {
@@ -77,7 +77,7 @@ export default function AgencyBar() {
             <img
               src={agency.logo}
               alt={agency.name}
-              className="h-10 w-auto max-w-[120px] object-contain opacity-70"
+              className={`${agency.className} object-contain opacity-70`}
               loading="eager"
             />
           </div>
