@@ -1,35 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec";
 
 export default function CTA() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
-
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    try {
-      const scriptUrl = "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec";
-      // Use an image ping to bypass CORS entirely — GET request via img tag
-      await new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve();
-        img.onerror = () => resolve(); // Apps Script won't return an image, so onerror fires but the request still goes through
-        img.src = `${scriptUrl}?email=${encodeURIComponent(email)}&t=${Date.now()}`;
-        // Timeout fallback
-        setTimeout(() => resolve(), 3000);
-      });
+
+    // Create a real form and submit it into a hidden iframe
+    // This bypasses all CORS issues completely
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = SCRIPT_URL;
+    form.target = "hidden-iframe";
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "email";
+    input.value = email;
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+    // Show success after a short delay (form submitted into iframe)
+    setTimeout(() => {
       setSubmitted(true);
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
-    }
+    }, 2000);
   };
 
   return (
@@ -69,12 +75,17 @@ export default function CTA() {
               {loading ? "Submitting..." : "Get Early Access"}
             </button>
           </form>
-          {error && <p className="mt-3 text-red-400 text-sm">{error}</p>}
         )}
 
         <p className="mt-6 text-sm text-gray-500">
           No spam. No nonsense. Just early access to better leads.
         </p>
+        <iframe
+          ref={iframeRef}
+          name="hidden-iframe"
+          style={{ display: "none" }}
+          title="form-target"
+        />
       </div>
     </section>
   );
