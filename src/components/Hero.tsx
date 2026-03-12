@@ -1,3 +1,5 @@
+import AgencyBar from "./AgencyBar";
+
 export default function Hero() {
   return (
     <section className="relative pt-32 pb-20 px-6 overflow-hidden">
@@ -72,16 +74,7 @@ export default function Hero() {
         </p>
 
         {/* Agency logo bar */}
-        <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-[var(--color-gray-500)]">
-          <span>🏛️ NIH</span>
-          <span>🔬 NSF</span>
-          <span>🎖️ DOD</span>
-          <span>⚡ DOE</span>
-          <span>🚀 NASA</span>
-          <span>🏥 VA</span>
-          <span>🌾 USDA</span>
-          <span>🦠 CDC</span>
-        </div>
+        <AgencyBar />
       </div>
     </section>
   );
