@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     "scientific equipment leads",
     "lab sales intelligence",
   ],
+  metadataBase: new URL("https://lableadspro.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Lab Leads Pro — Life-Science Lead Intelligence",
     description:
@@ -30,6 +34,16 @@ export const metadata: Metadata = {
     url: "https://lableadspro.com",
     siteName: "Lab Leads Pro",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lab Leads Pro — Life-Science Lead Intelligence",
+    description:
+      "Weekly alerts on newly funded labs with equipment purchase signals. Built for life-science sales reps.",
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 
