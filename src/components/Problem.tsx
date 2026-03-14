@@ -1,3 +1,5 @@
+import { ThumbsDown, ArrowUpRight } from "lucide-react";
+
 export default function Problem() {
   return (
     <section className="py-20 px-6 bg-white">
@@ -16,7 +18,7 @@ export default function Problem() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Old Way */}
           <div className="bg-red-50 border border-red-100 rounded-2xl p-8">
-            <div className="text-2xl mb-4">😤</div>
+            <div className="flex mb-4"><ThumbsDown className="w-6 h-6 text-red-400" /></div>
             <h3 className="text-lg font-bold text-red-900 mb-3">Without Lab Leads Pro</h3>
             <ul className="space-y-3 text-red-800">
               <li className="flex gap-3">
@@ -44,7 +46,7 @@ export default function Problem() {
 
           {/* New Way */}
           <div className="bg-green-50 border border-green-100 rounded-2xl p-8">
-            <div className="text-2xl mb-4">🚀</div>
+            <div className="flex mb-4"><ArrowUpRight className="w-6 h-6 text-green-500" /></div>
             <h3 className="text-lg font-bold text-green-900 mb-3">With Lab Leads Pro</h3>
             <ul className="space-y-3 text-green-800">
               <li className="flex gap-3">

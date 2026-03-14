@@ -1,36 +1,39 @@
-const features = [
+import { Target, Brain, Phone, DollarSign, Sparkles, BarChart3 } from "lucide-react";
+import { ReactNode } from "react";
+
+const features: { icon: ReactNode; title: string; description: string }[] = [
   {
-    icon: "🎯",
+    icon: <Target className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "Territory-Based Filtering",
     description:
       "Pick your states. Get leads only in your territory. No noise from regions you don't cover.",
   },
   {
-    icon: "🧠",
+    icon: <Brain className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "AI Equipment Tags",
     description:
       "Our AI grant review tags both stated and implied equipment needs from each grant abstract.",
   },
   {
-    icon: "📞",
+    icon: <Phone className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "PI Contact Information",
     description:
       "PI name, contact information, institution, and department. Everything you need to start the conversation.",
   },
   {
-    icon: "💰",
+    icon: <DollarSign className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "Grant Funding Details",
     description:
       "Award amount, funding agency, project dates, and grant type. Know their budget before you call.",
   },
   {
-    icon: "🆕",
+    icon: <Sparkles className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "New Lab Detection",
     description:
       "First-time grants, new faculty appointments, and lab announcements. Be the first rep to reach out.",
   },
   {
-    icon: "📊",
+    icon: <BarChart3 className="w-8 h-8 text-[var(--color-brand)]" />,
     title: "Weekly Intelligence Reports",
     description:
       "Clean, actionable reports delivered every Monday. No dashboard to learn. Just open your email and go.",
@@ -54,7 +57,7 @@ export default function Features() {
         <div className="grid md:grid-cols-3 gap-8">
           {features.map((feature) => (
             <div key={feature.title} className="text-center p-6">
-              <div className="text-4xl mb-4">{feature.icon}</div>
+              <div className="flex justify-center mb-4">{feature.icon}</div>
               <h3 className="text-lg font-bold text-[var(--color-dark)] mb-2">
                 {feature.title}
               </h3>
