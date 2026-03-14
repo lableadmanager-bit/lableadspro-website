@@ -1,4 +1,4 @@
-import { ThumbsDown, ArrowUpRight } from "lucide-react";
+import { X, Check } from "lucide-react";
 
 export default function Problem() {
   return (
@@ -18,7 +18,7 @@ export default function Problem() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Old Way */}
           <div className="bg-red-50 border border-red-100 rounded-2xl p-8">
-            <div className="flex mb-4"><ThumbsDown className="w-6 h-6 text-red-400" /></div>
+            <div className="flex mb-4"><X className="w-8 h-8 text-red-400" strokeWidth={3} /></div>
             <h3 className="text-lg font-bold text-red-900 mb-3">Without Lab Leads Pro</h3>
             <ul className="space-y-3 text-red-800">
               <li className="flex gap-3">
@@ -46,7 +46,7 @@ export default function Problem() {
 
           {/* New Way */}
           <div className="bg-green-50 border border-green-100 rounded-2xl p-8">
-            <div className="flex mb-4"><ArrowUpRight className="w-6 h-6 text-green-500" /></div>
+            <div className="flex mb-4"><Check className="w-8 h-8 text-green-500" strokeWidth={3} /></div>
             <h3 className="text-lg font-bold text-green-900 mb-3">With Lab Leads Pro</h3>
             <ul className="space-y-3 text-green-800">
               <li className="flex gap-3">
