@@ -11,7 +11,7 @@ const faqs = [
   {
     question: "How does AI equipment tagging work?",
     answer:
-      "Our AI reads every grant abstract and identifies specific equipment categories mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and more — nearly 100 unique tags in total. You can filter leads by the equipment categories you sell. Want to verify that your equipment is something we tag? Reach out to info@lableadspro.com.",
+      "Our AI reads every grant abstract and identifies specific equipment needs mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and more, with nearly 100 unique tags in total. You can filter leads by the equipment categories you sell. Want to verify that your equipment is something we tag? Reach out to info@lableadspro.com.",
   },
   {
     question: "Why per-state pricing?",
