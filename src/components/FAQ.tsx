@@ -31,7 +31,7 @@ const faqs = [
   {
     question: "What if I sell equipment you don't tag yet?",
     answer:
-      "Tell us. We're constantly expanding our equipment taxonomy based on what our customers sell. If you need a category we don't cover yet, we'll add it.",
+      "Reach out to us at info@lableadspro.com. We're constantly expanding our equipment taxonomy based on what our customers sell. If you need a category we don't cover yet, we'll add it.",
   },
 ];
 
