@@ -51,7 +51,7 @@ export default function Problem() {
             <ul className="space-y-3 text-green-800">
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
-                <span>Every newly awarded federal grant in your territory</span>
+                <span>Every newly awarded federal grant in your territory, delivered every Monday morning</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-green-500 mt-0.5">✓</span>
