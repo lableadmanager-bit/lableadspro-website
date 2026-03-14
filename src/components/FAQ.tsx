@@ -6,7 +6,7 @@ const faqs = [
   {
     question: "What funding sources do you monitor?",
     answer:
-      "We track grants from NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA — covering the major federal research funding agencies. We're adding university press releases, PubMed publications, and job postings soon.",
+      "We track grants from NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA — covering the major federal research funding agencies.",
   },
   {
     question: "How does AI equipment tagging work?",
