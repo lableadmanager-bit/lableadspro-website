@@ -21,7 +21,7 @@ const faqs = [
   {
     question: "How fresh is the data?",
     answer:
-      "Grants are processed within days of being awarded. Your Monday report includes everything from the previous week. You'll know about new funding before most reps even think to check.",
+      "NIH, VA, and NSF grants are typically processed the same day they are awarded. Other agencies may have a slight delay due to their release schedules, but rest assured — your Monday report includes every newly awarded grant detected during the prior week.",
   },
   {
     question: "Can I share my account with my team?",
