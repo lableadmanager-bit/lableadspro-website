@@ -10,7 +10,7 @@ export default function Problem() {
           </h2>
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto">
             You&apos;re a great sales rep, so why are you spending hours finding leads
-            instead of closing them? Every hour on prospecting is an hour you&apos;re not
+            instead of closing them? Every hour spent prospecting is an hour you&apos;re not
             demoing, not selling, not earning.
           </p>
         </div>
