@@ -6,12 +6,12 @@ const faqs = [
   {
     question: "What funding sources do you monitor?",
     answer:
-      "We track grants from NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA — covering the major federal research funding agencies.",
+      "We currently monitor and deliver newly awarded grants from NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA.",
   },
   {
     question: "How does AI equipment tagging work?",
     answer:
-      "Our AI reads every grant abstract and identifies specific equipment categories mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and dozens more. You can filter leads by the equipment categories you sell.",
+      "Our AI reads every grant abstract and identifies specific equipment categories mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and more — nearly 100 unique tags in total. You can filter leads by the equipment categories you sell. Want to verify that your equipment is something we tag? Reach out to info@lableadspro.com.",
   },
   {
     question: "Why per-state pricing?",
