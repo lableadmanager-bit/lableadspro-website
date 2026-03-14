@@ -1,10 +1,10 @@
-import { Microscope, Bot, ClipboardList, Mail, Sparkles } from "lucide-react";
+import { Search, Bot, ClipboardList, Mail, Sparkles } from "lucide-react";
 import { ReactNode } from "react";
 
 const steps: { number: string; icon: ReactNode; title: string; description: string }[] = [
   {
     number: "01",
-    icon: <Microscope className="w-7 h-7 text-[var(--color-brand)]" />,
+    icon: <Search className="w-7 h-7 text-[var(--color-brand)]" />,
     title: "We Monitor the Funding",
     description:
       "Our system continuously scans NIH, NSF, DOD, DOE, USDA, VA, CDC, NASA, and other public research databases for newly funded grants in your territory.",
