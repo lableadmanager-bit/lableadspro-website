@@ -31,7 +31,7 @@ export default function Problem() {
               </li>
               <li className="flex gap-3">
                 <span className="text-red-400 mt-0.5">✗</span>
-                <span>Tracking down PI contact info one by one</span>
+                <span>Tracking down each PI&apos;s contact info one at a time</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-red-400 mt-0.5">✗</span>
