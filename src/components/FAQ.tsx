@@ -16,7 +16,7 @@ const faqs = [
   {
     question: "Why per-state pricing?",
     answer:
-      "Because that's how territories work. You shouldn't pay for data in states you don't cover. Pick exactly the states in your territory, and only pay for those. Add or remove states anytime.",
+      "Because that's how territories work. You shouldn't pay for data in states you don't cover. Pick the states in your territory, and only pay for those. Add or remove states anytime.",
   },
   {
     question: "How fresh is the data?",
