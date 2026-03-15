@@ -12,8 +12,8 @@ const plans = [
       "Weekly email delivery every Monday",
       "Pick as many states as you need",
     ],
-    cta: "Get Started",
-    href: "/checkout?plan=basic",
+    cta: "Get Early Access",
+    href: "#cta",
     featured: false,
   },
   {
@@ -28,8 +28,8 @@ const plans = [
       "Weekly email delivery every Monday",
       "Pick as many states as you need",
     ],
-    cta: "Get Started",
-    href: "/checkout?plan=plus",
+    cta: "Get Early Access",
+    href: "#cta",
     featured: false,
   },
   {
@@ -45,8 +45,8 @@ const plans = [
       "Be the first rep to reach out",
       "Priority Monday AM delivery",
     ],
-    cta: "Get Started",
-    href: "/checkout?plan=pro",
+    cta: "Get Early Access",
+    href: "#cta",
     featured: true,
   },
 ];

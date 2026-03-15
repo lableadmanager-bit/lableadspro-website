@@ -64,8 +64,12 @@ export default function Header() {
       </div>
 
       {/* Mobile Nav */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 space-y-4">
+      <div
+        className={`md:hidden bg-white border-t border-gray-100 overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-6 py-4 space-y-4">
           <a href="#how-it-works" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             How It Works
           </a>
@@ -83,7 +87,7 @@ export default function Header() {
             Get Early Access
           </a>
         </div>
-      )}
+      </div>
     </header>
   );
 }

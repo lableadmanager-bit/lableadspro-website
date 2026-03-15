@@ -25,7 +25,7 @@ export default function Footer() {
         </p>
 
         <div className="flex gap-6">
-          <a href="mailto:hello@lableadspro.com" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
+          <a href="mailto:info@lableadspro.com" className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
             Contact
           </a>
         </div>

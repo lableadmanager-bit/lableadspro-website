@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { PartyPopper } from "lucide-react";
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbybP6SsgfZ7L2nIuPTNPzoT9VY4D9UZqZ4HL2BmECStfsHq2fz7ECPbsaCuLcs-ICaTjQ/exec";
 
@@ -51,7 +52,7 @@ export default function CTA() {
 
         {submitted ? (
           <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-8">
-            <div className="text-4xl mb-3">🎉</div>
+            <div className="flex justify-center mb-3"><PartyPopper className="w-10 h-10 text-[var(--color-accent)]" /></div>
             <h3 className="text-xl font-bold text-white mb-2">You&apos;re on the list!</h3>
             <p className="text-gray-400">
               We&apos;ll reach out soon with early access details. Keep an eye on your inbox.
