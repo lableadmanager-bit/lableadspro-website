@@ -36,12 +36,21 @@ export const metadata: Metadata = {
     url: "https://lableadspro.com",
     siteName: "Lab Leads Pro",
     type: "website",
+    images: [
+      {
+        url: "https://lableadspro.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Lab Leads Pro — Know Who's Buying Before They Start Shopping",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Lab Leads Pro — Life-Science Lead Intelligence",
     description:
       "Weekly alerts on newly funded labs with equipment purchase signals. Built for life-science sales reps.",
+    images: ["https://lableadspro.com/og-image.png"],
   },
   robots: {
     index: true,
