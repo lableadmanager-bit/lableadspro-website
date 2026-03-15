@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const faqs = [
   {
@@ -35,8 +35,59 @@ const faqs = [
   },
 ];
 
+function FAQItem({ faq, isOpen, onToggle }: { faq: typeof faqs[0]; isOpen: boolean; onToggle: () => void }) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setHeight(contentRef.current.scrollHeight);
+    }
+  }, [isOpen]);
+
+  return (
+    <div className="border border-[var(--color-gray-100)] rounded-xl overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-[var(--color-gray-50)] transition-colors"
+      >
+        <span className="font-semibold text-[var(--color-dark)] pr-4">
+          {faq.question}
+        </span>
+        <span
+          className="text-[var(--color-gray-500)] flex-shrink-0 text-xl transition-transform duration-300"
+          style={{ transform: isOpen ? "rotate(45deg)" : "rotate(0deg)" }}
+        >
+          +
+        </span>
+      </button>
+      <div
+        ref={contentRef}
+        className="transition-all duration-300 ease-in-out overflow-hidden"
+        style={{ maxHeight: isOpen ? `${height}px` : "0px", opacity: isOpen ? 1 : 0 }}
+      >
+        <div className="px-6 pb-5 text-[var(--color-gray-500)] leading-relaxed">
+          {faq.answer}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndices, setOpenIndices] = useState<Set<number>>(new Set());
+
+  const toggleIndex = (index: number) => {
+    setOpenIndices((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
 
   return (
     <section className="py-20 px-6 bg-white">
@@ -49,27 +100,12 @@ export default function FAQ() {
 
         <div className="space-y-3">
           {faqs.map((faq, index) => (
-            <div
+            <FAQItem
               key={index}
-              className="border border-[var(--color-gray-100)] rounded-xl overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full text-left px-6 py-5 flex items-center justify-between hover:bg-[var(--color-gray-50)] transition-colors"
-              >
-                <span className="font-semibold text-[var(--color-dark)] pr-4">
-                  {faq.question}
-                </span>
-                <span className="text-[var(--color-gray-500)] flex-shrink-0 text-xl">
-                  {openIndex === index ? "−" : "+"}
-                </span>
-              </button>
-              {openIndex === index && (
-                <div className="px-6 pb-5 text-[var(--color-gray-500)] leading-relaxed">
-                  {faq.answer}
-                </div>
-              )}
-            </div>
+              faq={faq}
+              isOpen={openIndices.has(index)}
+              onToggle={() => toggleIndex(index)}
+            />
           ))}
         </div>
       </div>
