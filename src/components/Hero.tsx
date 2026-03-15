@@ -69,6 +69,13 @@ export default function Hero() {
           >
             See How It Works
           </a>
+          <a
+            href="/api/sample-report?state=NC"
+            target="_blank"
+            className="text-sm text-[var(--color-brand)] hover:text-[var(--color-brand-dark)] font-medium transition-colors underline underline-offset-4"
+          >
+            See a Sample Report
+          </a>
         </div>
 
         {/* Social proof hint */}
