@@ -173,7 +173,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    // Log the lead
+    // Log the lead (console for Vercel function logs + filesystem attempt)
+    console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | source: sample-funnel`);
     await logLead(email.toLowerCase(), validStates);
 
     // Enroll in warm-sample email sequence
