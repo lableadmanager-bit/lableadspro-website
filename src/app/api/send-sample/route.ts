@@ -53,6 +53,61 @@ async function logLead(email: string, states: string[]) {
   }
 }
 
+function enrollInWarmSequence(email: string, states: string[]) {
+  const contactsDir = path.join(process.cwd(), "..", "data", "email-marketing");
+  const contactsFile = path.join(contactsDir, "contacts.json");
+  const suppressionFile = path.join(contactsDir, "suppression-list.json");
+
+  try {
+    if (!fs.existsSync(contactsDir)) fs.mkdirSync(contactsDir, { recursive: true });
+
+    // Check suppression list
+    let suppressed: string[] = [];
+    if (fs.existsSync(suppressionFile)) {
+      try {
+        const list = JSON.parse(fs.readFileSync(suppressionFile, "utf-8"));
+        suppressed = list.map((entry: { email: string }) => entry.email.toLowerCase());
+      } catch { /* ignore parse errors */ }
+    }
+    if (suppressed.includes(email)) return;
+
+    // Load existing contacts
+    let contacts: Array<Record<string, unknown>> = [];
+    if (fs.existsSync(contactsFile)) {
+      try {
+        contacts = JSON.parse(fs.readFileSync(contactsFile, "utf-8"));
+      } catch { contacts = []; }
+    }
+
+    // Check for duplicate
+    if (contacts.some((c) => (c.email as string)?.toLowerCase() === email)) return;
+
+    // Extract first name from email (best effort)
+    const localPart = email.split("@")[0];
+    const firstName = localPart.split(/[._-]/)[0];
+    const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+
+    contacts.push({
+      email,
+      first_name: capitalizedName,
+      company: "",
+      state: states[0] || "",
+      sequence: "warm-sample",
+      step: 1, // Step 0 (sample delivery) is handled by existing send-sample code
+      enrolled_at: new Date().toISOString(),
+      last_sent_at: new Date().toISOString(), // Mark as just sent (the sample email)
+      status: "active",
+      source: "sample-funnel",
+      ab_variant: null,
+      states_of_interest: states,
+    });
+
+    fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2) + "\n");
+  } catch {
+    console.error("Failed to enroll contact in warm sequence");
+  }
+}
+
 async function sendSampleEmail(email: string, state: string): Promise<boolean> {
   const stateName = STATE_NAMES[state] || state;
   const filePath = path.join(process.cwd(), "public", "samples", `${state.toLowerCase()}.html`);
@@ -104,6 +159,9 @@ export async function POST(request: NextRequest) {
 
     // Log the lead
     await logLead(email.toLowerCase(), validStates);
+
+    // Enroll in warm-sample email sequence
+    enrollInWarmSequence(email.toLowerCase(), validStates);
 
     // Send sample reports — one email per state
     const results = await Promise.all(
