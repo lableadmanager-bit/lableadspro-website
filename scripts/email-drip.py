@@ -48,7 +48,7 @@ SEQUENCES = {
         "days": [0, 3, 6, 10, 14],
         "template_prefix": "cold-grinder",
         "subjects": [
-            "You're probably tracking NIH grants manually",
+            "Fresh Leads",
             "6 hours/week × 50 weeks = 300 hours of prospecting",
             "The $2M grant you didn't know about",
             "Built by a rep, for reps",
@@ -59,7 +59,7 @@ SEQUENCES = {
         "days": [0, 3, 6, 10, 14],
         "template_prefix": "cold-skimmer",
         "subjects": [
-            "Funded labs are buying equipment — and nobody's calling them",
+            "Fresh Leads",
             "$47M in equipment grants were awarded last quarter",
             "What if someone just handed you a list of buyers?",
             "Your competitors are already tracking this data",
