@@ -110,11 +110,32 @@ function enrollInWarmSequence(email: string, states: string[]) {
 
 async function sendSampleEmail(email: string, state: string): Promise<boolean> {
   const stateName = STATE_NAMES[state] || state;
-  const filePath = path.join(process.cwd(), "public", "samples", `${state.toLowerCase()}.html`);
+  const stateLC = state.toLowerCase();
+  const filePath = path.join(process.cwd(), "public", "samples", `${stateLC}.html`);
+  const xlsxPath = path.join(process.cwd(), "public", "samples", `${stateLC}.xlsx`);
 
   if (!fs.existsSync(filePath)) return false;
 
   const html = fs.readFileSync(filePath, "utf-8");
+
+  // Build payload with optional Excel attachment
+  const payload: Record<string, unknown> = {
+    from: FROM_EMAIL,
+    to: [email],
+    subject: `Your Sample Report: NIH Grants in ${stateName}`,
+    html,
+  };
+
+  if (fs.existsSync(xlsxPath)) {
+    const xlsxBuffer = fs.readFileSync(xlsxPath);
+    const xlsxBase64 = xlsxBuffer.toString("base64");
+    payload.attachments = [
+      {
+        filename: `LabLeadsPro-${state.toUpperCase()}-Sample-Report.xlsx`,
+        content: xlsxBase64,
+      },
+    ];
+  }
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -122,12 +143,7 @@ async function sendSampleEmail(email: string, state: string): Promise<boolean> {
       Authorization: `Bearer ${RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: FROM_EMAIL,
-      to: [email],
-      subject: `Your Sample Report: NIH Grants in ${stateName}`,
-      html,
-    }),
+    body: JSON.stringify(payload),
   });
 
   return res.ok;
