@@ -212,6 +212,7 @@ def send_email(to: str, subject: str, html: str, test_email: str = None) -> bool
         headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
             "Content-Type": "application/json",
+            "User-Agent": "LabLeadsPro/1.0",
         },
         method="POST",
     )
