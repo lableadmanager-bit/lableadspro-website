@@ -3,6 +3,8 @@ import fs from "fs";
 import path from "path";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const FROM_EMAIL = "Lab Leads Pro <freshleads@lableadspro.com>";
 
 const STATE_NAMES: Record<string, string> = {
@@ -34,77 +36,24 @@ function isRateLimited(email: string): boolean {
   return false;
 }
 
-async function logLead(email: string, states: string[]) {
-  // Append to a leads log file for the marketing pipeline
-  const logDir = path.join(process.cwd(), "..", "data", "sample-leads");
-  try {
-    if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-    const entry = {
-      email,
-      states,
-      timestamp: new Date().toISOString(),
-      source: "sample-report-funnel",
-    };
-    const logFile = path.join(logDir, "leads.jsonl");
-    fs.appendFileSync(logFile, JSON.stringify(entry) + "\n");
-  } catch {
-    // Non-critical — don't fail the request if logging fails
-    console.error("Failed to log lead");
-  }
-}
+async function notifyTelegram(email: string, states: string[]) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
 
-function enrollInWarmSequence(email: string, states: string[]) {
-  const contactsDir = path.join(process.cwd(), "..", "data", "email-marketing");
-  const contactsFile = path.join(contactsDir, "contacts.json");
-  const suppressionFile = path.join(contactsDir, "suppression-list.json");
+  const stateList = states.map(s => STATE_NAMES[s] || s).join(", ");
+  const message = `🔬 *New Sample Report Request*\n\n📧 ${email}\n🗺️ ${stateList}\n🕐 ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}`;
 
   try {
-    if (!fs.existsSync(contactsDir)) fs.mkdirSync(contactsDir, { recursive: true });
-
-    // Check suppression list
-    let suppressed: string[] = [];
-    if (fs.existsSync(suppressionFile)) {
-      try {
-        const list = JSON.parse(fs.readFileSync(suppressionFile, "utf-8"));
-        suppressed = list.map((entry: { email: string }) => entry.email.toLowerCase());
-      } catch { /* ignore parse errors */ }
-    }
-    if (suppressed.includes(email)) return;
-
-    // Load existing contacts
-    let contacts: Array<Record<string, unknown>> = [];
-    if (fs.existsSync(contactsFile)) {
-      try {
-        contacts = JSON.parse(fs.readFileSync(contactsFile, "utf-8"));
-      } catch { contacts = []; }
-    }
-
-    // Check for duplicate
-    if (contacts.some((c) => (c.email as string)?.toLowerCase() === email)) return;
-
-    // Extract first name from email (best effort)
-    const localPart = email.split("@")[0];
-    const firstName = localPart.split(/[._-]/)[0];
-    const capitalizedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-
-    contacts.push({
-      email,
-      first_name: capitalizedName,
-      company: "",
-      state: states[0] || "",
-      sequence: "warm-sample",
-      step: 1, // Step 0 (sample delivery) is handled by existing send-sample code
-      enrolled_at: new Date().toISOString(),
-      last_sent_at: new Date().toISOString(), // Mark as just sent (the sample email)
-      status: "active",
-      source: "sample-funnel",
-      ab_variant: null,
-      states_of_interest: states,
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "Markdown",
+      }),
     });
-
-    fs.writeFileSync(contactsFile, JSON.stringify(contacts, null, 2) + "\n");
   } catch {
-    console.error("Failed to enroll contact in warm sequence");
+    console.error("Failed to send Telegram notification");
   }
 }
 
@@ -173,12 +122,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
-    // Log the lead (console for Vercel function logs + filesystem attempt)
+    // Log to Vercel function logs
     console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | source: sample-funnel`);
-    await logLead(email.toLowerCase(), validStates);
 
-    // Enroll in warm-sample email sequence
-    enrollInWarmSequence(email.toLowerCase(), validStates);
+    // Notify George via Telegram
+    await notifyTelegram(email.toLowerCase(), validStates);
 
     // Send sample reports — one email per state
     const results = await Promise.all(
