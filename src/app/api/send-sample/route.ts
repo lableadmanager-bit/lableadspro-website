@@ -5,6 +5,7 @@ import path from "path";
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const TELEGRAM_TOPIC_ID = process.env.TELEGRAM_TOPIC_ID;
 const FROM_EMAIL = "Lab Leads Pro <freshleads@lableadspro.com>";
 
 const STATE_NAMES: Record<string, string> = {
@@ -43,14 +44,18 @@ async function notifyTelegram(email: string, states: string[]) {
   const message = `🔬 *New Sample Report Request*\n\n📧 ${email}\n🗺️ ${stateList}\n🕐 ${new Date().toLocaleString("en-US", { timeZone: "America/New_York" })}`;
 
   try {
+    const payload: Record<string, unknown> = {
+      chat_id: TELEGRAM_CHAT_ID,
+      text: message,
+      parse_mode: "Markdown",
+    };
+    if (TELEGRAM_TOPIC_ID) {
+      payload.message_thread_id = parseInt(TELEGRAM_TOPIC_ID, 10);
+    }
     await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: "Markdown",
-      }),
+      body: JSON.stringify(payload),
     });
   } catch {
     console.error("Failed to send Telegram notification");
