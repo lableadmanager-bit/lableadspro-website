@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, User } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail } from "lucide-react";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
@@ -810,13 +810,49 @@ export default function DatabasePage() {
                             {/* PI & Institution */}
                             <p className="text-sm text-[var(--color-gray-500)] mt-2">
                               {grant.pi_name && (
-                                <span className="font-semibold text-[var(--color-gray-900)] cursor-pointer hover:text-[var(--color-brand)] transition-colors">
+                                <span className="font-semibold text-[var(--color-gray-900)]">
                                   {grant.pi_name}
                                 </span>
                               )}
-                              {grant.pi_name && (grant.institution || grant.city || grant.state) && " | "}
+                              {grant.pi_name && (grant.institution || grant.city || grant.state) && " · "}
                               {[grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(", ")}
                             </p>
+
+                            {/* PI Email — always visible on collapsed card */}
+                            {(() => {
+                              const email = grant.pis?.email || grant.pi_email;
+                              if (email) {
+                                return (
+                                  <div className="flex items-center gap-1.5 mt-1.5 text-sm">
+                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
+                                    <a
+                                      href={`mailto:${email}`}
+                                      className="text-[var(--color-brand)] font-medium hover:underline"
+                                    >
+                                      {email}
+                                    </a>
+                                  </div>
+                                );
+                              }
+                              if (grant.source === "nih" && grant.source_url) {
+                                return (
+                                  <div className="flex items-center gap-1.5 mt-1.5 text-sm">
+                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
+                                    <span className="text-[var(--color-gray-400)] italic">Email available through source</span>
+                                    <span className="text-[var(--color-gray-300)]">·</span>
+                                    <a
+                                      href={grant.source_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
+                                    >
+                                      View Source <ExternalLink size={12} />
+                                    </a>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            })()}
 
                             {/* Badges row */}
                             <div className="flex flex-wrap items-center gap-2 mt-3">
@@ -862,49 +898,6 @@ export default function DatabasePage() {
                                     {tag}
                                   </span>
                                 ))}
-                              </div>
-                            )}
-
-                            {/* PI Contact — shown when expanded */}
-                            {expanded && (
-                              <div className="mt-4 bg-[var(--color-gray-50)] rounded-lg p-4 border border-[var(--color-gray-100)]">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <User size={16} className="text-[var(--color-brand)]" />
-                                  <span className="text-sm font-semibold text-[var(--color-gray-900)]">PI Contact</span>
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                                  {grant.pi_name && (
-                                    <div>
-                                      <span className="text-[var(--color-gray-500)]">Name: </span>
-                                      <span className="font-medium text-[var(--color-gray-900)]">{grant.pi_name}</span>
-                                    </div>
-                                  )}
-                                  <div className="flex items-center gap-1.5">
-                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
-                                    {(grant.pis?.email || grant.pi_email) ? (
-                                      <a
-                                        href={`mailto:${grant.pis?.email || grant.pi_email}`}
-                                        className="text-[var(--color-brand)] font-medium hover:underline"
-                                      >
-                                        {grant.pis?.email || grant.pi_email}
-                                      </a>
-                                    ) : (
-                                      <span className="text-[var(--color-gray-400)] italic">Email not available</span>
-                                    )}
-                                  </div>
-                                  {grant.institution && (
-                                    <div>
-                                      <span className="text-[var(--color-gray-500)]">Institution: </span>
-                                      <span className="text-[var(--color-gray-700)]">{grant.institution}</span>
-                                    </div>
-                                  )}
-                                  {grant.department && (
-                                    <div>
-                                      <span className="text-[var(--color-gray-500)]">Department: </span>
-                                      <span className="text-[var(--color-gray-700)]">{grant.department}</span>
-                                    </div>
-                                  )}
-                                </div>
                               </div>
                             )}
 
