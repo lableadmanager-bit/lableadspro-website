@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const offset = (page - 1) * pageSize;
 
     // Build the query
-    let q = supabase.from("grants").select("*", { count: "exact" });
+    let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country", { count: "exact" });
 
     // Full-text search
     if (query.trim()) {
