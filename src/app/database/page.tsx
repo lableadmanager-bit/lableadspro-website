@@ -103,6 +103,8 @@ function isActive(endDate: string | null): boolean {
 
 export default function DatabasePage() {
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [planTier, setPlanTier] = useState<string | null>(null);
+  const [subscribedStates, setSubscribedStates] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [results, setResults] = useState<Grant[]>([]);
@@ -118,12 +120,23 @@ export default function DatabasePage() {
   const [stateSearch, setStateSearch] = useState("");
   const stateDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Get user session
+  // Get user session and subscription
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUserEmail(user?.email ?? null);
     });
+
+    // Fetch subscription details
+    fetch("/api/subscription")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.subscribedStates) {
+          setSubscribedStates(data.subscribedStates);
+          setPlanTier(data.planTier);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const handleLogout = async () => {
@@ -246,9 +259,11 @@ export default function DatabasePage() {
     filters.amountMax ||
     filters.fiscalYear;
 
+  // Only show states the user is subscribed to
+  const availableStates = subscribedStates.length > 0 ? subscribedStates : US_STATES;
   const filteredStates = stateSearch
-    ? US_STATES.filter((s) => s.toLowerCase().includes(stateSearch.toLowerCase()))
-    : US_STATES;
+    ? availableStates.filter((s) => s.toLowerCase().includes(stateSearch.toLowerCase()))
+    : availableStates;
 
   const currentYear = new Date().getFullYear();
   const fiscalYears = Array.from({ length: currentYear - 2014 }, (_, i) => currentYear - i);
@@ -481,7 +496,12 @@ export default function DatabasePage() {
               </div>
               {userEmail && (
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-sm text-[var(--color-gray-500)] hidden sm:inline">
+                  {planTier && (
+                    <span className="text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2.5 py-1 rounded-full hidden sm:inline-flex items-center gap-1">
+                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)} · {subscribedStates.join(", ")}
+                    </span>
+                  )}
+                  <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
                     {userEmail}
                   </span>
                   <button

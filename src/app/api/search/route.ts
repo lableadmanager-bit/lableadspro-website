@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 import { supabase } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
@@ -13,6 +15,46 @@ export async function POST(req: NextRequest) {
     } = body;
 
     const offset = (page - 1) * pageSize;
+
+    // --- Subscription-based state filtering ---
+    // Get the user's session from cookies to find their subscription
+    let subscribedStates: string[] | null = null;
+
+    try {
+      const supabaseAuth = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return req.cookies.getAll();
+            },
+            setAll() {
+              // Read-only in API routes
+            },
+          },
+        }
+      );
+
+      const { data: { user } } = await supabaseAuth.auth.getUser();
+
+      if (user) {
+        // Look up their subscription using admin client (bypasses RLS)
+        const { data: subscription } = await supabaseAdmin
+          .from("subscriptions")
+          .select("subscribed_states, plan_tier, status")
+          .eq("user_id", user.id)
+          .eq("status", "active")
+          .single();
+
+        if (subscription?.subscribed_states?.length) {
+          subscribedStates = subscription.subscribed_states;
+        }
+      }
+    } catch {
+      // If auth fails, continue without state restriction (will show nothing useful)
+      console.error("Auth check failed in search API");
+    }
 
     // Build the query
     let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country", { count: "exact" });
@@ -29,8 +71,23 @@ export async function POST(req: NextRequest) {
       q = q.textSearch("search_vector", tsquery);
     }
 
-    // Filters
-    if (filters.states?.length) {
+    // --- State filtering: subscription enforced server-side ---
+    if (subscribedStates) {
+      // User has a subscription — restrict to their states
+      if (filters.states?.length) {
+        // User selected specific states in UI — intersect with their subscription
+        const allowedStates = filters.states.filter((s: string) => subscribedStates!.includes(s));
+        if (allowedStates.length === 0) {
+          // They tried to filter to states they don't have access to
+          return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
+        }
+        q = q.in("state", allowedStates);
+      } else {
+        // No state filter selected — show all their subscribed states
+        q = q.in("state", subscribedStates);
+      }
+    } else if (filters.states?.length) {
+      // No subscription found — still apply their filter (for admin/testing)
       q = q.in("state", filters.states);
     }
     if (filters.agencies?.length) {
