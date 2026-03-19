@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, User } from "lucide-react";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
@@ -40,6 +40,7 @@ interface Grant {
   title: string;
   abstract: string | null;
   pi_name: string | null;
+  pi_email: string | null;
   institution: string | null;
   city: string | null;
   state: string | null;
@@ -53,6 +54,8 @@ interface Grant {
   fiscal_year: number | null;
   source_url: string | null;
   equipment_tags: string[] | null;
+  department: string | null;
+  pis: { email: string | null; phone: string | null } | null;
 }
 
 interface SearchResponse {
@@ -806,7 +809,13 @@ export default function DatabasePage() {
 
                             {/* PI & Institution */}
                             <p className="text-sm text-[var(--color-gray-500)] mt-2">
-                              {[grant.pi_name, grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(" | ")}
+                              {grant.pi_name && (
+                                <span className="font-semibold text-[var(--color-gray-900)] cursor-pointer hover:text-[var(--color-brand)] transition-colors">
+                                  {grant.pi_name}
+                                </span>
+                              )}
+                              {grant.pi_name && (grant.institution || grant.city || grant.state) && " | "}
+                              {[grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(", ")}
                             </p>
 
                             {/* Badges row */}
@@ -853,6 +862,49 @@ export default function DatabasePage() {
                                     {tag}
                                   </span>
                                 ))}
+                              </div>
+                            )}
+
+                            {/* PI Contact — shown when expanded */}
+                            {expanded && (
+                              <div className="mt-4 bg-[var(--color-gray-50)] rounded-lg p-4 border border-[var(--color-gray-100)]">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <User size={16} className="text-[var(--color-brand)]" />
+                                  <span className="text-sm font-semibold text-[var(--color-gray-900)]">PI Contact</span>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                                  {grant.pi_name && (
+                                    <div>
+                                      <span className="text-[var(--color-gray-500)]">Name: </span>
+                                      <span className="font-medium text-[var(--color-gray-900)]">{grant.pi_name}</span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center gap-1.5">
+                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
+                                    {(grant.pis?.email || grant.pi_email) ? (
+                                      <a
+                                        href={`mailto:${grant.pis?.email || grant.pi_email}`}
+                                        className="text-[var(--color-brand)] font-medium hover:underline"
+                                      >
+                                        {grant.pis?.email || grant.pi_email}
+                                      </a>
+                                    ) : (
+                                      <span className="text-[var(--color-gray-400)] italic">Email not available</span>
+                                    )}
+                                  </div>
+                                  {grant.institution && (
+                                    <div>
+                                      <span className="text-[var(--color-gray-500)]">Institution: </span>
+                                      <span className="text-[var(--color-gray-700)]">{grant.institution}</span>
+                                    </div>
+                                  )}
+                                  {grant.department && (
+                                    <div>
+                                      <span className="text-[var(--color-gray-500)]">Department: </span>
+                                      <span className="text-[var(--color-gray-700)]">{grant.department}</span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             )}
 
