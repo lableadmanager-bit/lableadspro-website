@@ -116,6 +116,12 @@ export async function POST(req: NextRequest) {
     if (filters.fiscalYear) {
       q = q.eq("fiscal_year", filters.fiscalYear);
     }
+    if (filters.activityCodes?.length) {
+      q = q.in("activity_code", filters.activityCodes);
+    }
+    if (filters.institution) {
+      q = q.ilike("institution", `%${filters.institution}%`);
+    }
 
     // Sort
     if (sort === "date") {

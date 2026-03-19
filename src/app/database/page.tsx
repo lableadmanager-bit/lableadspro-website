@@ -24,6 +24,15 @@ const AGENCIES = [
   { value: "cdc", label: "CDC" },
 ];
 
+const ACTIVITY_CODES = [
+  "R01","R21","R03","R15","R35","R43","R44",
+  "U01","U19","U54",
+  "P01","P30","P50",
+  "K01","K08","K23","K99",
+  "F31","F32","T32",
+  "UG3","UH3",
+];
+
 interface Grant {
   id: number;
   grant_id: string;
@@ -57,6 +66,8 @@ interface SearchResponse {
 interface Filters {
   states: string[];
   agencies: string[];
+  activityCodes: string[];
+  institution: string;
   dateFrom: string;
   dateTo: string;
   status: string;
@@ -69,6 +80,8 @@ interface Filters {
 const defaultFilters: Filters = {
   states: [],
   agencies: ["nih", "nsf", "dod", "doe", "nasa", "va", "usda", "cdc"],
+  activityCodes: [],
+  institution: "",
   dateFrom: "",
   dateTo: "",
   status: "all",
@@ -119,6 +132,12 @@ export default function DatabasePage() {
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
   const stateDropdownRef = useRef<HTMLDivElement>(null);
+  const [agencyDropdownOpen, setAgencyDropdownOpen] = useState(false);
+  const [agencySearch, setAgencySearch] = useState("");
+  const agencyDropdownRef = useRef<HTMLDivElement>(null);
+  const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
+  const [activitySearch, setActivitySearch] = useState("");
+  const activityDropdownRef = useRef<HTMLDivElement>(null);
 
   // Get user session and subscription
   useEffect(() => {
@@ -145,11 +164,17 @@ export default function DatabasePage() {
     window.location.href = "/database/login";
   };
 
-  // Close state dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (stateDropdownRef.current && !stateDropdownRef.current.contains(e.target as Node)) {
         setStateDropdownOpen(false);
+      }
+      if (agencyDropdownRef.current && !agencyDropdownRef.current.contains(e.target as Node)) {
+        setAgencyDropdownOpen(false);
+      }
+      if (activityDropdownRef.current && !activityDropdownRef.current.contains(e.target as Node)) {
+        setActivityDropdownOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -194,6 +219,8 @@ export default function DatabasePage() {
               amountMax: filters.amountMax ? Number(filters.amountMax) : undefined,
               fiscalYear: filters.fiscalYear ? Number(filters.fiscalYear) : undefined,
               status: filters.status === "all" ? undefined : filters.status,
+              activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
+              institution: filters.institution || undefined,
             },
             page: p,
             sort,
@@ -245,6 +272,15 @@ export default function DatabasePage() {
     }));
   };
 
+  const toggleActivityCode = (code: string) => {
+    setFilters((prev) => ({
+      ...prev,
+      activityCodes: prev.activityCodes.includes(code)
+        ? prev.activityCodes.filter((c) => c !== code)
+        : [...prev.activityCodes, code],
+    }));
+  };
+
   const clearFilters = () => {
     setFilters(defaultFilters);
   };
@@ -252,6 +288,8 @@ export default function DatabasePage() {
   const hasActiveFilters =
     filters.states.length > 0 ||
     filters.agencies.length > 0 ||
+    filters.activityCodes.length > 0 ||
+    filters.institution ||
     filters.dateFrom ||
     filters.dateTo ||
     filters.status !== "all" ||
@@ -264,6 +302,14 @@ export default function DatabasePage() {
   const filteredStates = stateSearch
     ? availableStates.filter((s) => s.toLowerCase().includes(stateSearch.toLowerCase()))
     : availableStates;
+
+  const filteredAgencies = agencySearch
+    ? AGENCIES.filter((a) => a.label.toLowerCase().includes(agencySearch.toLowerCase()))
+    : AGENCIES;
+
+  const filteredActivityCodes = activitySearch
+    ? ACTIVITY_CODES.filter((c) => c.toLowerCase().includes(activitySearch.toLowerCase()))
+    : ACTIVITY_CODES;
 
   const currentYear = new Date().getFullYear();
   const fiscalYears = Array.from({ length: currentYear - 2014 }, (_, i) => currentYear - i);
@@ -349,27 +395,138 @@ export default function DatabasePage() {
         )}
       </div>
 
+      {/* Institution filter */}
+      <div>
+        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
+          Institution
+        </label>
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-gray-400)]" />
+          <input
+            type="text"
+            placeholder="Filter by institution..."
+            value={filters.institution}
+            onChange={(e) => setFilters((prev) => ({ ...prev, institution: e.target.value }))}
+            className="w-full pl-8 pr-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
+          />
+        </div>
+      </div>
+
       {/* Agency filter */}
       <div>
         <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
           Agency
         </label>
-        <div className="space-y-1.5">
-          {AGENCIES.map((ag) => (
-            <label
-              key={ag.value}
-              className="flex items-center gap-2 text-sm cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                checked={filters.agencies.includes(ag.value)}
-                onChange={() => toggleAgency(ag.value)}
-                className="accent-[var(--color-brand)]"
-              />
-              <span className="text-[var(--color-gray-700)]">{ag.label}</span>
-            </label>
-          ))}
+        <div ref={agencyDropdownRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setAgencyDropdownOpen(!agencyDropdownOpen)}
+            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white hover:border-[var(--color-gray-500)] transition-colors"
+          >
+            <span className="text-[var(--color-gray-500)]">
+              {filters.agencies.length === AGENCIES.length
+                ? "All agencies"
+                : filters.agencies.length
+                  ? `${filters.agencies.length} selected`
+                  : "No agencies"}
+            </span>
+            <ChevronDown size={16} />
+          </button>
+          {agencyDropdownOpen && (
+            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-60 overflow-hidden">
+              <div className="p-2 border-b border-[var(--color-gray-100)]">
+                <input
+                  type="text"
+                  placeholder="Search agencies..."
+                  value={agencySearch}
+                  onChange={(e) => setAgencySearch(e.target.value)}
+                  className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
+                />
+              </div>
+              <div className="overflow-y-auto max-h-48 p-2 space-y-1">
+                {filteredAgencies.map((ag) => (
+                  <label
+                    key={ag.value}
+                    className="flex items-center gap-2 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.agencies.includes(ag.value)}
+                      onChange={() => toggleAgency(ag.value)}
+                      className="accent-[var(--color-brand)]"
+                    />
+                    {ag.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
+      </div>
+
+      {/* Activity Code (Grant Type) filter */}
+      <div>
+        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
+          Grant Type
+        </label>
+        <div ref={activityDropdownRef} className="relative">
+          <button
+            type="button"
+            onClick={() => setActivityDropdownOpen(!activityDropdownOpen)}
+            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white hover:border-[var(--color-gray-500)] transition-colors"
+          >
+            <span className="text-[var(--color-gray-500)]">
+              {filters.activityCodes.length
+                ? `${filters.activityCodes.length} selected`
+                : "All grant types"}
+            </span>
+            <ChevronDown size={16} />
+          </button>
+          {activityDropdownOpen && (
+            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-60 overflow-hidden">
+              <div className="p-2 border-b border-[var(--color-gray-100)]">
+                <input
+                  type="text"
+                  placeholder="Search codes..."
+                  value={activitySearch}
+                  onChange={(e) => setActivitySearch(e.target.value)}
+                  className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
+                />
+              </div>
+              <div className="overflow-y-auto max-h-48 p-2 grid grid-cols-3 gap-1">
+                {filteredActivityCodes.map((code) => (
+                  <label
+                    key={code}
+                    className="flex items-center gap-1.5 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.activityCodes.includes(code)}
+                      onChange={() => toggleActivityCode(code)}
+                      className="accent-[var(--color-brand)]"
+                    />
+                    {code}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        {filters.activityCodes.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {filters.activityCodes.map((code) => (
+              <span
+                key={code}
+                className="inline-flex items-center gap-1 text-xs bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2 py-0.5 rounded-full"
+              >
+                {code}
+                <button onClick={() => toggleActivityCode(code)} className="hover:text-[var(--color-brand-dark)]">
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Date range */}
