@@ -141,6 +141,7 @@ export default function DatabasePage() {
   const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
   const [activitySearch, setActivitySearch] = useState("");
   const activityDropdownRef = useRef<HTMLDivElement>(null);
+  const [activePiFilter, setActivePiFilter] = useState<string | null>(null);
 
   // Get user session and subscription
   useEffect(() => {
@@ -204,7 +205,7 @@ export default function DatabasePage() {
     }, 400);
     return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, filters, sort]);
+  }, [query, filters, sort, activePiFilter]);
 
   const doSearch = useCallback(
     async (p: number = 1) => {
@@ -224,6 +225,7 @@ export default function DatabasePage() {
               status: filters.status === "all" ? undefined : filters.status,
               activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
               institution: filters.institution || undefined,
+              piName: activePiFilter || undefined,
             },
             page: p,
             sort,
@@ -240,7 +242,7 @@ export default function DatabasePage() {
         setLoading(false);
       }
     },
-    [query, filters, sort]
+    [query, filters, sort, activePiFilter]
   );
 
   const handleSearch = (e: React.FormEvent) => {
@@ -286,6 +288,7 @@ export default function DatabasePage() {
 
   const clearFilters = () => {
     setFilters(defaultFilters);
+    setActivePiFilter(null);
   };
 
   const hasActiveFilters =
@@ -767,6 +770,22 @@ export default function DatabasePage() {
                     </select>
                   </div>
 
+                  {/* Active PI filter pill */}
+                  {activePiFilter && (
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="inline-flex items-center gap-1.5 text-sm bg-[var(--color-brand-light)] text-[var(--color-brand)] px-3 py-1.5 rounded-full font-medium">
+                        PI: {activePiFilter}
+                        <button
+                          onClick={() => setActivePiFilter(null)}
+                          className="hover:text-[var(--color-brand-dark)] ml-0.5"
+                          title="Clear PI filter"
+                        >
+                          <X size={14} />
+                        </button>
+                      </span>
+                    </div>
+                  )}
+
                   {/* Result cards */}
                   {loading ? (
                     <div className="space-y-4">
@@ -810,9 +829,17 @@ export default function DatabasePage() {
                             {/* PI & Institution */}
                             <p className="text-sm text-[var(--color-gray-500)] mt-2">
                               {grant.pi_name && (
-                                <span className="font-semibold text-[var(--color-gray-900)]">
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActivePiFilter(grant.pi_name);
+                                  }}
+                                  className="font-semibold text-[var(--color-gray-900)] hover:text-[var(--color-brand)] hover:underline cursor-pointer"
+                                  title={`Show all grants by ${grant.pi_name}`}
+                                >
                                   {grant.pi_name}
-                                </span>
+                                </button>
                               )}
                               {grant.pi_name && (grant.institution || grant.city || grant.state) && " · "}
                               {[grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(", ")}
@@ -839,15 +866,6 @@ export default function DatabasePage() {
                                   <div className="flex items-center gap-1.5 mt-1.5 text-sm">
                                     <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
                                     <span className="text-[var(--color-gray-400)] italic">Email available through source</span>
-                                    <span className="text-[var(--color-gray-300)]">·</span>
-                                    <a
-                                      href={grant.source_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
-                                    >
-                                      View Source <ExternalLink size={12} />
-                                    </a>
                                   </div>
                                 );
                               }

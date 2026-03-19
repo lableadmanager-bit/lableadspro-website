@@ -122,6 +122,9 @@ export async function POST(req: NextRequest) {
     if (filters.institution) {
       q = q.ilike("institution", `%${filters.institution}%`);
     }
+    if (filters.piName) {
+      q = q.ilike("pi_name", `%${filters.piName}%`);
+    }
 
     // Sort
     if (sort === "date") {
