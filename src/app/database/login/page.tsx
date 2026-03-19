@@ -5,11 +5,17 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lableadspro.com";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMessage, setForgotMessage] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +34,24 @@ export default function LoginPage() {
     } else {
       window.location.href = "/database";
     }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotLoading(true);
+    setForgotMessage("");
+
+    const supabase = createSupabaseBrowserClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${SITE_URL}/database/set-password`,
+    });
+
+    if (error) {
+      setForgotMessage(error.message);
+    } else {
+      setForgotMessage("Check your email for a password reset link.");
+    }
+    setForgotLoading(false);
   };
 
   return (
@@ -72,9 +96,18 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-[var(--color-gray-700)] mb-1.5">
-                  Password
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="password" className="block text-sm font-medium text-[var(--color-gray-700)]">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => { setShowForgotPassword(true); setForgotEmail(email); }}
+                    className="text-xs text-[var(--color-brand)] hover:underline font-medium"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
                 <input
                   id="password"
                   type="password"
@@ -108,6 +141,48 @@ export default function LoginPage() {
               </a>
             </p>
           </div>
+
+          {showForgotPassword && (
+            <div className="bg-white rounded-2xl border border-[var(--color-gray-100)] shadow-sm p-8 mt-6">
+              <h2 className="text-lg font-bold text-[var(--color-gray-900)] mb-2">
+                Reset your password
+              </h2>
+              <p className="text-sm text-[var(--color-gray-500)] mb-4">
+                Enter your email and we&apos;ll send you a reset link.
+              </p>
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <input
+                  type="email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                  placeholder="you@company.com"
+                  className="w-full px-4 py-3 text-sm border border-[var(--color-gray-300)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent transition-shadow"
+                />
+                {forgotMessage && (
+                  <p className={`text-sm px-4 py-2 rounded-lg ${forgotMessage.includes("Check your email") ? "text-green-700 bg-green-50" : "text-red-600 bg-red-50"}`}>
+                    {forgotMessage}
+                  </p>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    disabled={forgotLoading}
+                    className="flex-1 py-3 text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    {forgotLoading ? "Sending..." : "Send reset link"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setShowForgotPassword(false); setForgotMessage(""); }}
+                    className="px-4 py-3 text-sm font-medium text-[var(--color-gray-600)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] rounded-lg transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </main>
       <Footer />

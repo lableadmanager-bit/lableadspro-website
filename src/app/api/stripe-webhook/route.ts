@@ -83,7 +83,11 @@ function buildWelcomeEmail(params: {
             </td></tr>
           </table>
 
-          <p style="margin:0 0 8px;color:#374151;font-size:14px;line-height:1.6;">
+          <p style="margin:0 0 8px;color:#6b7280;font-size:13px;line-height:1.5;text-align:center;">
+            This link expires in 24 hours. If it expires, use the forgot password option on the <a href="${SITE_URL}/database/login" style="color:#16a34a;text-decoration:none;font-weight:500;">login page</a>.
+          </p>
+
+          <p style="margin:16px 0 8px;color:#374151;font-size:14px;line-height:1.6;">
             Once you set your password, you can log in at <a href="${SITE_URL}/database" style="color:#16a34a;text-decoration:none;font-weight:500;">${SITE_URL}/database</a> anytime.
           </p>
 
@@ -208,6 +212,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
     type: "recovery",
     email,
+    options: { redirectTo: `${SITE_URL}/database/set-password` },
   });
 
   if (linkError) {
@@ -215,12 +220,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // The hashed_token from generateLink needs to be used to construct the actual redirect URL
-  // Supabase generates a token that the client uses to verify the recovery
-  const token = linkData?.properties?.hashed_token;
-  const resetLink = token
-    ? `${SITE_URL}/database/login?type=recovery&token_hash=${token}`
-    : `${SITE_URL}/database/login`;
+  // Use the action_link directly — it goes through Supabase's /auth/v1/verify endpoint
+  // which validates the token, creates a session, then redirects to our set-password page
+  const resetLink = linkData?.properties?.action_link || `${SITE_URL}/database/login`;
 
   // Send welcome email
   await sendWelcomeEmail(email, {
