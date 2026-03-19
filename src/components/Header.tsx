@@ -9,7 +9,7 @@ export default function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-[var(--color-brand)] rounded-lg flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               {/* Microscope icon */}
@@ -28,20 +28,20 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#how-it-works" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+          <a href="/#how-it-works" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             How It Works
           </a>
-          <a href="#features" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+          <a href="/#features" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Features
           </a>
-          <a href="#pricing" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+          <a href="/#pricing" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Pricing
           </a>
           <a href="/database" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Database
           </a>
           <a
-            href="#cta"
+            href="/#cta"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
           >
             Get Early Access
@@ -73,20 +73,20 @@ export default function Header() {
         }`}
       >
         <div className="px-6 py-4 space-y-4">
-          <a href="#how-it-works" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+          <a href="/#how-it-works" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             How It Works
           </a>
-          <a href="#features" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+          <a href="/#features" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Features
           </a>
-          <a href="#pricing" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+          <a href="/#pricing" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Pricing
           </a>
           <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Database
           </a>
           <a
-            href="#cta"
+            href="/#cta"
             onClick={() => setMobileOpen(false)}
             className="block text-center text-sm font-semibold text-white bg-[var(--color-brand)] px-5 py-2.5 rounded-lg"
           >
