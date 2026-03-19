@@ -68,7 +68,7 @@ interface Filters {
 
 const defaultFilters: Filters = {
   states: [],
-  agencies: [],
+  agencies: ["nih", "nsf", "dod", "doe", "nasa", "va", "usda", "cdc"],
   dateFrom: "",
   dateTo: "",
   status: "all",
