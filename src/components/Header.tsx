@@ -37,6 +37,9 @@ export default function Header() {
           <a href="#pricing" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Pricing
           </a>
+          <a href="/database" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+            Database
+          </a>
           <a
             href="#cta"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
@@ -78,6 +81,9 @@ export default function Header() {
           </a>
           <a href="#pricing" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Pricing
+          </a>
+          <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+            Database
           </a>
           <a
             href="#cta"
