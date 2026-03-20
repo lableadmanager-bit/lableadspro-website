@@ -166,7 +166,7 @@ function AgencySection({
                   <span className="font-semibold text-[var(--color-gray-900)]">
                     {p.name}
                   </span>{" "}
-                  — {p.detail}
+                  - {p.detail}
                 </li>
               ))}
             </ul>
@@ -209,16 +209,16 @@ const agencies: AgencySectionProps[] = [
     name: "National Institutes of Health",
     budget: "~$48B annual budget",
     overview:
-      "The largest biomedical research funder in the world. Funds basic and clinical biomedical research across 27 institutes and centers.",
+      "The biggest biomedical research funder in the world. 27 institutes and centers funding basic and clinical research across every disease area you can think of.",
     who: "Universities, medical schools, research hospitals, some biotech companies.",
     whyItMatters:
-      "NIH is the foundation of the lab equipment market. The vast majority of academic research labs in the US are funded at least partially by NIH. Every institute funds research that requires equipment — from microscopes (NIGMS, NEI, NICHD) to sequencers (NHGRI, NCI) to mass specs (NIDDK, NIEHS).",
+      "NIH is the foundation of the lab equipment market. Most academic research labs in the US run on NIH funding. Every institute funds research that needs equipment, from microscopes to sequencers to mass specs. If you're in life-science sales, NIH is your bread and butter.",
     programs: [
-      { name: "NCI", detail: "National Cancer Institute — largest NIH institute, ~$7B/year. Funds imaging, sequencing, flow cytometry, everything." },
-      { name: "NIAID", detail: "Allergy & Infectious Diseases — ~$6B. BSL-3/4 labs, advanced imaging, sequencing." },
-      { name: "NIGMS", detail: "General Medical Sciences — ~$3B. Broad basic research. Microscopy, structural biology, biochemistry." },
-      { name: "NHLBI", detail: "Heart, Lung, Blood — ~$4B. Imaging, physiology equipment, animal facility instrumentation." },
-      { name: "NINDS", detail: "Neurological Disorders — ~$2.5B. Electrophysiology, two-photon microscopy, optogenetics rigs." },
+      { name: "NCI", detail: "National Cancer Institute, largest NIH institute at ~$7B/year. These labs buy imaging, sequencing, flow cytometry, everything." },
+      { name: "NIAID", detail: "Allergy & Infectious Diseases, ~$6B. BSL-3/4 labs, advanced imaging, sequencing." },
+      { name: "NIGMS", detail: "General Medical Sciences, ~$3B. Broad basic research. Microscopy, structural biology, biochemistry." },
+      { name: "NHLBI", detail: "Heart, Lung, Blood, ~$4B. Imaging, physiology equipment, animal facility instrumentation." },
+      { name: "NINDS", detail: "Neurological Disorders, ~$2.5B. Electrophysiology, two-photon microscopy, optogenetics rigs." },
     ],
     dataNote:
       "Full grant details, PI contact info, equipment need classification, weekly updates.",
@@ -230,15 +230,15 @@ const agencies: AgencySectionProps[] = [
     name: "National Science Foundation",
     budget: "~$9B annual budget",
     overview:
-      "Funds fundamental research across ALL sciences — not just biomedical. Physics, chemistry, engineering, computer science, earth science, and biology.",
+      "Funds fundamental research across ALL sciences, not just biomedical. Physics, chemistry, engineering, computer science, earth science, and biology.",
     who: "Primarily universities. Very academic-focused.",
     whyItMatters:
-      "NSF's biological sciences directorate (BIO) funds plant biology, ecology, evolutionary biology, and molecular biology labs that often get overlooked by NIH-focused reps. NSF also has a Major Research Instrumentation (MRI) program — essentially their version of NIH's S10 program — that directly funds equipment purchases.",
+      "NSF's biological sciences directorate (BIO) funds plant biology, ecology, evolutionary biology, and molecular biology labs that NIH-focused reps often miss. The big one to know about: NSF's Major Research Instrumentation (MRI) program directly funds equipment purchases, $100K-$4M. Basically their version of NIH's S10.",
     programs: [
-      { name: "BIO", detail: "Biological Sciences — microscopy, sequencing, environmental chambers." },
-      { name: "MPS", detail: "Math & Physical Sciences — spectroscopy, mass spec, analytical instruments." },
-      { name: "ENG", detail: "Engineering — biomedical engineering, materials testing, fabrication equipment." },
-      { name: "MRI Program", detail: "Dedicated equipment grants, $100K–$4M. These are purchase orders." },
+      { name: "BIO", detail: "Biological Sciences. Microscopy, sequencing, environmental chambers." },
+      { name: "MPS", detail: "Math & Physical Sciences. Spectroscopy, mass spec, analytical instruments." },
+      { name: "ENG", detail: "Engineering. Biomedical engineering, materials testing, fabrication equipment." },
+      { name: "MRI Program", detail: "Dedicated equipment grants, $100K-$4M. These are basically purchase orders." },
     ],
     dataNote:
       "Full grant details with abstracts (NSF API provides complete data), PI info, equipment classification.",
@@ -250,12 +250,12 @@ const agencies: AgencySectionProps[] = [
     name: "Department of Defense",
     budget: "~$17B research budget",
     overview:
-      "Defense-relevant research — but this includes a LOT of biomedical and materials science work. Traumatic brain injury, infectious disease, cancer (CDMRP), prosthetics, advanced materials.",
+      "Defense-relevant research, but this includes a LOT of biomedical and materials science work. Traumatic brain injury, infectious disease, cancer (CDMRP), prosthetics, advanced materials.",
     whyItMatters:
-      "DOD research labs are some of the best-funded in the country, and CDMRP (Congressionally Directed Medical Research Programs) funds billions in biomedical research at universities — essentially parallel to NIH but focused on military-relevant health. Labs doing DOD-funded work buy the same microscopes, sequencers, and mass specs as NIH-funded labs.",
+      "DOD research labs are some of the best-funded in the country. CDMRP (Congressionally Directed Medical Research Programs) funds billions in biomedical research at universities, basically parallel to NIH but focused on military-relevant health. Labs doing DOD-funded work buy the same microscopes, sequencers, and mass specs as NIH-funded labs.",
     programs: [
       { name: "CDMRP", detail: "Breast Cancer, Prostate Cancer, Neurotrauma, Tick-Borne Disease programs." },
-      { name: "DARPA", detail: "Biological Technologies Office funds cutting-edge biotech." },
+      { name: "DARPA", detail: "Biological Technologies Office. Funds advanced biotech and bio-related engineering." },
       { name: "Army/Naval Research Labs", detail: "Materials science, optics, chemistry." },
     ],
     dataNote:
@@ -270,10 +270,10 @@ const agencies: AgencySectionProps[] = [
     overview:
       "Energy research, but also major investments in structural biology, genomics, materials science, and environmental science.",
     whyItMatters:
-      "DOE runs the national labs (Argonne, Brookhaven, Oak Ridge, Lawrence Berkeley, etc.) — massive research facilities with enormous equipment budgets. DOE also funds university research in bioenergy, environmental genomics, and structural biology. Their BER (Biological and Environmental Research) program is a direct overlap with life-science equipment needs.",
+      "DOE runs the national labs (Argonne, Brookhaven, Oak Ridge, Lawrence Berkeley, etc.), which are massive research facilities with huge equipment budgets. DOE also funds university research in bioenergy, environmental genomics, and structural biology. Their BER program is a direct overlap with life-science equipment needs.",
     programs: [
-      { name: "BER", detail: "Biological & Environmental Research — genomics, proteomics, imaging." },
-      { name: "BES", detail: "Basic Energy Sciences — spectroscopy, X-ray, materials characterization." },
+      { name: "BER", detail: "Biological & Environmental Research. Genomics, proteomics, imaging." },
+      { name: "BES", detail: "Basic Energy Sciences. Spectroscopy, X-ray, materials characterization." },
       { name: "National Labs", detail: "Institutional buyers with dedicated procurement." },
     ],
     dataNote:
@@ -288,7 +288,7 @@ const agencies: AgencySectionProps[] = [
     overview:
       "Space biology, astrobiology, earth science, human health in space, materials science.",
     whyItMatters:
-      "NASA-funded labs study the effects of microgravity on cells, grow plants in controlled environments, do advanced imaging of biological samples, and run analytical chemistry on everything from Martian soil analogs to astronaut biospecimens. These are real labs with real equipment budgets — just with cooler mission statements.",
+      "NASA-funded labs study microgravity effects on cells, grow plants in controlled environments, do advanced imaging, and run analytical chemistry on everything from Martian soil analogs to astronaut biospecimens. These are real labs with real equipment budgets. Just with cooler mission statements.",
     programs: [
       { name: "Space Biology", detail: "Cell culture, microscopy, environmental chambers." },
       { name: "Human Research Program", detail: "Clinical and translational equipment." },
@@ -304,9 +304,9 @@ const agencies: AgencySectionProps[] = [
     name: "Department of Veterans Affairs",
     budget: "~$1.9B research budget",
     overview:
-      "Research directly tied to veteran health — PTSD, traumatic brain injury, prosthetics, cancer, infectious disease, aging.",
+      "Research directly tied to veteran health. PTSD, traumatic brain injury, prosthetics, cancer, infectious disease, aging.",
     whyItMatters:
-      "VA medical centers have research wings that function like university labs. They buy the same equipment, but procurement is federal (which can mean longer sales cycles but more predictable budgets). VA researchers often hold joint appointments at nearby universities.",
+      "VA medical centers have research wings that work just like university labs. They buy the same equipment, but procurement is federal, which means longer sales cycles but more predictable budgets. VA researchers often hold joint appointments at nearby universities, so you might already know them.",
     programs: [
       { name: "Biomedical Laboratory R&D", detail: "Basic science, same equipment as academic labs." },
       { name: "Clinical Science R&D", detail: "Clinical trials infrastructure." },
@@ -324,11 +324,11 @@ const agencies: AgencySectionProps[] = [
     overview:
       "Agricultural research, food safety, animal health, plant biology, environmental science.",
     whyItMatters:
-      "USDA-funded labs do serious molecular biology — genomics, proteomics, microscopy, analytical chemistry. Land-grant universities (every state has one) are major USDA research recipients. These labs need the same sequencers, microscopes, and mass specs as any biomedical lab, but they're studying crops, livestock, and food pathogens instead of human disease.",
+      "USDA-funded labs do serious molecular biology: genomics, proteomics, microscopy, analytical chemistry. Land-grant universities (every state has one) are major USDA research recipients. These labs need the same sequencers, microscopes, and mass specs as any biomedical lab. They're just studying crops, livestock, and food pathogens instead of human disease.",
     programs: [
-      { name: "NIFA", detail: "National Institute of Food & Agriculture — competitive grants to universities." },
-      { name: "ARS", detail: "Agricultural Research Service — USDA's own research labs (100+ locations)." },
-      { name: "AFRI", detail: "Agriculture & Food Research Initiative — NIFA's largest competitive grant program." },
+      { name: "NIFA", detail: "National Institute of Food & Agriculture. Competitive grants to universities." },
+      { name: "ARS", detail: "Agricultural Research Service. USDA's own research labs (100+ locations)." },
+      { name: "AFRI", detail: "Agriculture & Food Research Initiative. NIFA's largest competitive grant program." },
     ],
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
@@ -346,7 +346,7 @@ const agencies: AgencySectionProps[] = [
     programs: [
       { name: "Emerging Infections Programs", detail: "Surveillance networks with lab components." },
       { name: "Advanced Molecular Detection (AMD)", detail: "Genomic sequencing for public health." },
-      { name: "Environmental Health Laboratory", detail: "Analytical chemistry, toxicology." },
+      { name: "Environmental Health Lab", detail: "Analytical chemistry, toxicology." },
     ],
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
@@ -397,10 +397,9 @@ export default function AgenciesGuide() {
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl">
             NIH gets all the attention, but it&apos;s not the only agency
             funding labs. Federal research spending is spread across 8 major
-            agencies — each with different missions, different types of
-            research, and different buying patterns. If you&apos;re only watching
-            NIH, you&apos;re missing roughly 30–40% of federal research funding
-            that touches life-science equipment.
+            agencies, each with different missions, different research, and
+            different buying patterns. If you&apos;re only watching NIH,
+            you&apos;re leaving 30-40% of federal research funding on the table.
           </p>
         </div>
       </section>
@@ -498,7 +497,7 @@ export default function AgenciesGuide() {
             Lab Leads Pro tracks new awards from all 8 agencies every week
           </h2>
           <p className="text-gray-400 mb-6 max-w-xl mx-auto">
-            See a sample report for your state — filtered to your territory and
+            See a sample report for your state, filtered to your territory and
             scored for equipment purchasing signals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

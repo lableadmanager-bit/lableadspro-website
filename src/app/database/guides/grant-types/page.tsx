@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title:
     "NIH Grant Types Guide for Equipment Sales Reps | Lab Leads Pro",
   description:
-    "Understand every NIH grant type (activity code) and what each means for lab equipment sales. Learn which grants signal purchases — R01, R21, R35, S10, SBIR, and more.",
+    "Understand every NIH grant type (activity code) and what each means for lab equipment sales. Learn which grants signal purchases: R01, R21, R35, S10, SBIR, and more.",
   keywords:
     "NIH grant types, R01 grant, R21 grant, S10 grant, SBIR grant, lab equipment sales, NIH activity codes, research grants, equipment purchasing signals, life science sales",
   openGraph: {
@@ -269,15 +269,15 @@ export default function GrantTypesGuide() {
             Research Grants
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            The bread and butter of NIH funding — and the core of your
+            The bread and butter of NIH funding, and the core of your
             prospecting pipeline.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="R01"
               name="Research Project Grant"
-              what="The gold standard. Multi-year (3–5 years), typically $250K–$500K/year in direct costs. Funds a specific research project."
-              why="R01s are where most major equipment purchases happen. Especially in Year 1 (startup buying) and renewal years (upgrading aging equipment). A new R01 in your territory = a warm lead."
+              what="The workhorse grant. Multi-year (3-5 years), typically $250K-$500K/year in direct costs. Funds a specific research project."
+              why="This is where most major equipment purchases happen. Watch for Year 1 awards (startup buying) and renewals (upgrading aging gear). A new R01 in your territory is a warm lead."
               budget="$250K–$500K/yr"
               duration="3–5 years"
               stars={4}
@@ -285,8 +285,8 @@ export default function GrantTypesGuide() {
             <GrantCard
               code="R21"
               name="Exploratory / Developmental Research Grant"
-              what="Smaller, shorter grants for preliminary/pilot studies. Testing a new idea before going for the R01."
-              why="Lower equipment budgets, but signals where a lab is heading. An R21 in single-cell sequencing today often becomes an R01 with a sequencer purchase in 18 months."
+              what="Smaller, shorter grants for pilot studies. Basically testing a new idea before going for the R01."
+              why="Don't expect a big equipment purchase here, but pay attention to what they're working on. An R21 in single-cell sequencing today often turns into an R01 with a sequencer purchase 18 months later."
               budget="Up to $275K total"
               duration="Up to 2 years"
               stars={2}
@@ -294,8 +294,8 @@ export default function GrantTypesGuide() {
             <GrantCard
               code="R03"
               name="Small Research Grant"
-              what="Very small grants for discrete, well-defined projects. Common in secondary analysis of existing data."
-              why="Rarely leads to equipment purchases. Low priority for prospecting unless the PI also holds larger grants."
+              what="Very small grants for narrow, well-defined projects. Often just data analysis, no wet lab work."
+              why="Skip these unless the PI also holds bigger grants. Almost never leads to equipment purchases."
               budget="Up to $50K/yr"
               duration="Up to 2 years"
               stars={1}
@@ -303,8 +303,8 @@ export default function GrantTypesGuide() {
             <GrantCard
               code="R35"
               name="Outstanding Investigator Award (MIRA)"
-              what="Large, flexible, long-term funding for established investigators. Replaces multiple R01s with a single larger award."
-              why="Big budgets, long timelines, and flexibility to buy equipment without justifying it to a specific aim. These PIs are well-funded and making purchasing decisions."
+              what="Big, flexible, long-term funding for established investigators. Replaces multiple R01s with one larger award."
+              why="Big budgets, long timelines, and the PI has flexibility to buy equipment without tying it to a specific aim. These are well-funded labs that are actively making purchasing decisions."
               budget="$750K/yr"
               duration="7 years"
               stars={5}
@@ -312,8 +312,8 @@ export default function GrantTypesGuide() {
             <GrantCard
               code="R15"
               name="Academic Research Enhancement Award (AREA)"
-              what="Specifically for smaller schools that don't get a lot of NIH funding. Designed to boost research capacity."
-              why="These schools are often underequipped. An R15 grant frequently includes equipment line items because the institution doesn't already own what's needed."
+              what="For smaller schools that don't get much NIH funding. The whole point is to boost their research capacity."
+              why="These schools are usually underequipped, which is good news for you. R15 grants frequently include equipment line items because the institution doesn't already own what's needed."
               budget="Up to $300K total"
               duration="Up to 3 years"
               stars={3}
@@ -327,15 +327,15 @@ export default function GrantTypesGuide() {
             SBIR / STTR
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            Industry and startup grants — fast-moving buyers building out their
-            first labs.
+            Industry and startup grants. These are fast-moving buyers building
+            out their first labs.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="R43 / R44"
               name="SBIR (Small Business Innovation Research)"
-              what="R43 = Phase I (feasibility, ~$150K over 6–12 months). R44 = Phase II (full development, up to $1M over 2 years)."
-              why="Biotech startups building out their first labs. Phase II companies are often purchasing their first major instruments. High-value leads — startups buy fast and don't have legacy vendor relationships."
+              what="R43 is Phase I (feasibility, ~$150K over 6-12 months). R44 is Phase II (full development, up to $1M over 2 years)."
+              why="Biotech startups building out their first labs. Phase II companies are often buying their first major instruments. Great leads because startups buy fast and don't have legacy vendor relationships."
               budget="$150K–$1M"
               duration="6 months – 2 years"
               stars={4}
@@ -343,8 +343,8 @@ export default function GrantTypesGuide() {
             <GrantCard
               code="R41 / R42"
               name="STTR (Small Business Technology Transfer)"
-              what="Similar to SBIR but requires a university partner."
-              why="Same equipment signals as SBIR. The university partnership sometimes means the equipment goes to the academic lab, sometimes to the company."
+              what="Same idea as SBIR but requires a university partner."
+              why="Same equipment signals as SBIR. Just figure out whether the equipment is going to the academic lab or the company, because that changes who you're selling to."
               budget="$150K–$1M"
               duration="6 months – 2 years"
               stars={4}
@@ -358,15 +358,15 @@ export default function GrantTypesGuide() {
             Program &amp; Center Grants
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            Big money — multi-project grants that fund core facilities and
+            Big money. Multi-project grants that fund core facilities and
             shared equipment.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="P01"
               name="Research Program Project Grant"
-              what="Multi-project grants with shared cores. Large collaborative efforts, often $1M+/year."
-              why="P01s fund core facilities and shared equipment. If a P01 includes a microscopy core, that's a potential multi-instrument deal."
+              what="Multi-project grants with shared cores. Big collaborative efforts, often $1M+/year."
+              why="P01s fund core facilities and shared equipment. If a P01 includes a microscopy core, you could be looking at a multi-instrument deal."
               budget="$1M+/yr"
               stars={4}
             />
@@ -374,15 +374,15 @@ export default function GrantTypesGuide() {
               code="P30"
               name="Center Core Grant"
               what="Supports shared resources and core facilities at an institution."
-              why="Directly funds core labs. These are the grants that buy the $500K confocal or the $2M cryo-EM."
+              why="Directly funds core labs. These are the grants behind the $500K confocal or the $2M cryo-EM purchase."
               budget="Varies"
               stars={5}
             />
             <GrantCard
               code="P20"
               name="Exploratory Grants (COBRE / IDeA)"
-              what="NIH program to build research capacity at institutions in states that historically receive less NIH funding (IDeA states)."
-              why="Explicit equipment building. These grants exist to equip labs in underserved states. If you cover an IDeA state (WV, KY, NE, NM, etc.), P20s are gold."
+              what="NIH program to build research capacity at institutions in states that historically get less NIH funding (IDeA states)."
+              why="These grants exist to equip labs in underserved states. If you cover an IDeA state (WV, KY, NE, NM, etc.), P20s are gold. They're literally buying equipment to get these labs off the ground."
               budget="Varies"
               stars={4}
             />
@@ -395,23 +395,23 @@ export default function GrantTypesGuide() {
             Cooperative Agreements
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            Like research grants but with substantial NIH involvement — often
-            larger budgets.
+            Like research grants but with substantial NIH involvement. Budgets
+            tend to be bigger.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="U01"
               name="Research Project Cooperative Agreement"
-              what="Like an R01 but with substantial NIH involvement in the research."
-              why="Similar equipment purchasing patterns to R01s. Budgets are often larger due to the collaborative nature."
+              what="Like an R01 but NIH is more hands-on with the research direction."
+              why="Similar equipment purchasing patterns to R01s. Budgets are often bigger because of the collaborative setup."
               budget="Varies"
               stars={3}
             />
             <GrantCard
               code="U54"
               name="Specialized Center Cooperative Agreement"
-              what="Large center-scale cooperative agreements, often multi-institutional."
-              why="Large budgets, core facilities, shared equipment purchases. Think of these as P30s with even more NIH involvement."
+              what="Big center-scale cooperative agreements, often spanning multiple institutions."
+              why="Big budgets, core facilities, shared equipment purchases. Think of these as P30s with even more NIH oversight."
               budget="Varies"
               stars={4}
             />
@@ -424,30 +424,30 @@ export default function GrantTypesGuide() {
             Training &amp; Fellowship Grants
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            Lower priority for equipment sales — these fund people, not labs.
+            Lower priority for equipment sales. These fund people, not labs.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="T32"
               name="Institutional Training Grant"
-              what="Funds training programs for predoctoral and postdoctoral researchers at an institution."
-              why="Funds training programs, not equipment. Low priority for prospecting."
+              what="Funds training programs for grad students and postdocs at an institution."
+              why="These fund training, not equipment. Low priority for prospecting."
               budget="Varies"
               stars={1}
             />
             <GrantCard
               code="F31 / F32"
               name="Individual Fellowships"
-              what="Predoctoral (F31) and postdoctoral (F32) fellowships that fund individual researchers."
-              why="These fund people, not labs. Very rarely involve equipment purchases."
+              what="Predoctoral (F31) and postdoctoral (F32) fellowships for individual researchers."
+              why="These fund people, not labs. Almost never involve equipment purchases. Skip them."
               budget="Varies"
               stars={1}
             />
             <GrantCard
               code="K Awards"
               name="Career Development Awards (K01, K08, K23, K99/R00)"
-              what="Career development awards providing protected research time and modest budgets."
-              why="Small budgets, usually for protected research time. Occasionally include modest equipment needs but not a primary prospecting target."
+              what="Career development awards that give junior faculty protected research time and a small budget."
+              why="Small budgets, mostly for salary support. Once in a while they'll buy a small piece of equipment, but don't build your pipeline around these."
               budget="Small"
               stars={1}
             />
@@ -460,22 +460,22 @@ export default function GrantTypesGuide() {
             Equipment-Specific Grants
           </h2>
           <p className="text-[var(--color-gray-500)] mb-8">
-            The holy grail — grants that exist specifically to buy instruments.
+            Your favorite grants. These exist specifically to buy instruments.
           </p>
           <div className="grid gap-6">
             <GrantCard
               code="S10"
               name="Shared Instrumentation Grant"
-              what="THE equipment grant. Explicitly funds a single piece of shared equipment costing $50K–$600K."
-              why="This is literally a purchase order with NIH funding attached. If an S10 is awarded in your territory, someone is buying exactly one major instrument. The abstract usually names what it is."
+              what="THE equipment grant. Explicitly funds one piece of shared equipment costing $50K-$600K."
+              why="This is basically a purchase order with NIH funding attached. If an S10 gets awarded in your territory, someone is buying exactly one major instrument. The abstract usually names what it is."
               budget="$50K–$600K"
               stars={5}
             />
             <GrantCard
               code="S10OD"
               name="High-End Instrumentation (HEI) Grant"
-              what="The big brother of S10. For instruments costing $600K+."
-              why="Cryo-EMs, high-end mass specs, advanced imaging systems. These are the whale deals."
+              what="The bigger version of S10. For instruments costing $600K+."
+              why="Cryo-EMs, high-end mass specs, advanced imaging systems. These are the whale deals. If you see one, drop everything and call."
               budget="$600K–$2M+"
               stars={5}
             />
@@ -483,7 +483,7 @@ export default function GrantTypesGuide() {
               code="C06"
               name="Construction Grant"
               what="Funds facility construction and renovation at research institutions."
-              why="If a new research building is going up, every lab in it will need equipment."
+              why="New building going up? Every lab in it will need equipment. Get in early."
               budget="Varies"
               stars={3}
             />
@@ -566,7 +566,7 @@ export default function GrantTypesGuide() {
           </h2>
           <p className="text-gray-400 mb-6 max-w-xl mx-auto">
             Lab Leads Pro tracks new awards every week from NIH and 7 other
-            federal agencies — filtered to your territory and scored for
+            federal agencies, filtered to your territory and scored for
             equipment purchasing signals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
