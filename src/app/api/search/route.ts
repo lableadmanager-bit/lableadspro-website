@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
     // --- State filtering: subscription enforced server-side ---
     if (subscribedStates) {
       // User has a subscription — restrict to their states
+      const allStatesCount = 51; // 50 states + DC
       if (filters.states?.length) {
         // User selected specific states in UI — intersect with their subscription
         const allowedStates = filters.states.filter((s: string) => subscribedStates!.includes(s));
@@ -82,10 +83,11 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
         }
         q = q.in("state", allowedStates);
-      } else {
-        // No state filter selected — show all their subscribed states
+      } else if (subscribedStates.length < allStatesCount) {
+        // Partial subscription — filter to their states
         q = q.in("state", subscribedStates);
       }
+      // If subscribed to all states, skip the filter entirely (same as no filter)
     } else if (filters.states?.length) {
       // No subscription found — still apply their filter (for admin/testing)
       q = q.in("state", filters.states);
