@@ -181,10 +181,10 @@ function CheckoutContent() {
               ) : (
                 <>
                   <p className="text-[var(--color-brand)] font-semibold text-sm">
-                    Get 2 states for just $249/mo (save $49!)
+                    Select a second state to receive $50 off per month
                   </p>
                   <p className="text-[var(--color-gray-600)] text-xs mt-1">
-                    Select 2 states and get the Pro bundle discount. Add a 3rd for only $49 more.
+                    Two Pro states for $249/mo instead of $298.
                   </p>
                 </>
               )}
@@ -311,7 +311,7 @@ function CheckoutContent() {
                       <span className="line-through">${fullPrice.toLocaleString()}/mo</span>
                     </div>
                     <p className="text-[var(--color-brand)] text-xs mt-1 font-medium">
-                      Pro 2-state bundle. You save ${fullPrice - monthlyTotal}/mo!
+                      $50 off promo for two Pro states!
                     </p>
                   </div>
                 )}
