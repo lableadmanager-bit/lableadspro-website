@@ -783,7 +783,7 @@ export default function DatabasePage() {
                 <div className="flex items-center gap-3 shrink-0">
                   {planTier && (
                     <span className="text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2.5 py-1 rounded-full hidden sm:inline-flex items-center gap-1">
-                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)}{subscribedStates.length <= 5 ? ` · ${subscribedStates.join(", ")}` : ` · ${subscribedStates.length} states`}
+                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)}{subscribedStates.length <= 5 ? ` · ${subscribedStates.join(", ")}` : " · All States"}
                     </span>
                   )}
                   <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
