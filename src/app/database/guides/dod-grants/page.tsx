@@ -192,21 +192,23 @@ interface NoiseItemProps {
   name: string;
   description: string;
   verdict: string;
+  level?: "skip" | "caution";
 }
 
-function NoiseItem({ name, description, verdict }: NoiseItemProps) {
+function NoiseItem({ name, description, verdict, level = "skip" }: NoiseItemProps) {
+  const isSkip = level === "skip";
   return (
-    <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6 hover:border-red-300 hover:shadow-lg hover:shadow-red-500/5 transition-all">
+    <div className={`rounded-xl border border-[var(--color-gray-100)] bg-white p-6 transition-all ${isSkip ? "hover:border-red-300 hover:shadow-lg hover:shadow-red-500/5" : "hover:border-yellow-400 hover:shadow-lg hover:shadow-yellow-500/5"}`}>
       <div className="flex flex-wrap items-center gap-3 mb-2">
-        <span className="text-sm font-bold bg-red-50 text-red-600 px-3 py-1 rounded-full">
-          Skip
+        <span className={`text-sm font-bold px-3 py-1 rounded-full ${isSkip ? "bg-red-50 text-red-600" : "bg-yellow-50 text-yellow-700"}`}>
+          {isSkip ? "Skip" : "Mostly Skip"}
         </span>
         <h3 className="text-lg font-bold text-[var(--color-gray-900)]">
           {name}
         </h3>
       </div>
       <p className="text-sm text-[var(--color-gray-700)] mb-2">{description}</p>
-      <p className="text-sm font-medium text-red-600">{verdict}</p>
+      <p className={`text-sm font-medium ${isSkip ? "text-red-600" : "text-yellow-700"}`}>{verdict}</p>
     </div>
   );
 }
@@ -305,6 +307,7 @@ const noisePrograms: NoiseItemProps[] = [
     name: "Facilities Maintenance and Construction",
     description: "Base construction, building maintenance, HVAC repairs, road work. Shows up constantly in DOD spending data.",
     verdict: "General construction is noise, but keep an eye out for lab renovations. Those often come with capital budget for new equipment.",
+    level: "caution" as const,
   },
   {
     name: "IT and Cybersecurity Contracts",
