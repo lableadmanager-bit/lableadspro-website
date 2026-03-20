@@ -48,7 +48,7 @@ const guides = [
     href: "/database/guides/nsf-grants",
   },
   {
-    emoji: "🎖️",
+    emoji: "🛡️",
     title: "DOD Research Guide",
     description: "Defense research labs, DARPA, and the military research funding landscape.",
     href: "/database/guides/dod-grants",
