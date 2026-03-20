@@ -80,7 +80,7 @@ export default function HowItWorks() {
               Want to search the data yourself?
             </h3>
             <p className="text-[var(--color-gray-500)] leading-relaxed">
-              Our database has over 450,000 federal research grants across 8 agencies, searchable by state, keyword, and agency. Filter by what matters to your territory and find leads on your own schedule.
+              Our database covers all actively funded federal research grants and then some, currently totaling over 450,000 grants across 8 agencies. Search by state, keyword, and agency to find leads on your own schedule.
             </p>
           </div>
           <Link
