@@ -40,7 +40,7 @@ export const PLANS: Record<PlanTier, Plan> = {
     features: [
       "Everything in Standard",
       "NSF, DOD, DOE, NASA, VA, USDA & CDC grants",
-      "Full database access — all 8 agencies",
+      "Full database access for all 8 agencies",
       "New lab & faculty hire detection",
       "New PI alerts",
       "Priority Monday AM delivery",

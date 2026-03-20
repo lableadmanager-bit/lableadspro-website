@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { PLANS, AUTO_UPGRADE_THRESHOLD, getEffectivePlan } from "@/lib/plans";
 import type { PlanTier } from "@/lib/plans";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -110,24 +112,19 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-dark)] text-white">
-      {/* Header */}
-      <div className="border-b border-white/10 px-6 py-4">
-        <a href="/" className="text-lg font-bold text-white hover:text-[var(--color-brand)] transition-colors">
-          Lab Leads Pro
-        </a>
-      </div>
+    <div className="min-h-screen bg-[var(--color-gray-50)] text-[var(--color-dark)]">
+      <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold mb-2">Build Your Plan</h1>
-        <p className="text-gray-400 mb-10">Choose your plan, then pick your states.</p>
+        <p className="text-[var(--color-gray-500)] mb-10">Choose your plan, then pick your states.</p>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
 
             {/* Plan selector — FIRST */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)]">
               <h2 className="text-lg font-semibold mb-4">Select Plan</h2>
               <div className="grid grid-cols-2 gap-3">
                 {(["standard", "pro"] as PlanTier[]).map((tier) => {
@@ -140,12 +137,12 @@ function CheckoutContent() {
                       className={`text-left p-4 rounded-xl border transition-all duration-200 ${
                         isSelected
                           ? "border-[var(--color-brand)] bg-[var(--color-brand)]/10"
-                          : "border-white/10 bg-white/5 hover:border-white/30"
+                          : "border-[var(--color-gray-200)] bg-[var(--color-gray-50)] hover:border-[var(--color-gray-400)]"
                       }`}
                     >
                       <p className="font-semibold text-sm">{plan.name}</p>
-                      <p className="text-2xl font-bold mt-1">${plan.pricePerState}<span className="text-sm font-normal text-gray-400">/state/mo</span></p>
-                      <p className="text-xs text-gray-400 mt-2">{plan.description}</p>
+                      <p className="text-2xl font-bold mt-1">${plan.pricePerState}<span className="text-sm font-normal text-[var(--color-gray-500)]">/state/mo</span></p>
+                      <p className="text-xs text-[var(--color-gray-500)] mt-2">{plan.description}</p>
                     </button>
                   );
                 })}
@@ -153,7 +150,7 @@ function CheckoutContent() {
             </div>
 
             {/* Plan features */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)]">
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-lg font-bold">{displayPlan.name}</span>
                 {effective.autoUpgraded && (
@@ -164,7 +161,7 @@ function CheckoutContent() {
               </div>
               <ul className="space-y-2">
                 {displayPlan.features.map((f) => (
-                  <li key={f} className="flex gap-2 text-sm text-gray-300">
+                  <li key={f} className="flex gap-2 text-sm text-[var(--color-gray-600)]">
                     <span className="text-[var(--color-accent)] mt-0.5">✓</span> {f}
                   </li>
                 ))}
@@ -176,18 +173,18 @@ function CheckoutContent() {
               {selectedTier === "standard" ? (
                 <>
                   <p className="text-[var(--color-brand)] font-semibold text-sm">
-                    💡 Pick 3 or more states and get upgraded to Pro automatically!
+                    Pick 3 or more states and get upgraded to Pro automatically!
                   </p>
-                  <p className="text-gray-300 text-xs mt-1">
-                    All Pro features — 8 agencies, new lab detection, full database — at the Standard price.
+                  <p className="text-[var(--color-gray-600)] text-xs mt-1">
+                    All Pro features (8 agencies, new lab detection, full database) at the Standard price.
                   </p>
                 </>
               ) : (
                 <>
                   <p className="text-[var(--color-brand)] font-semibold text-sm">
-                    🎁 Pick any 2 states, get the 3rd state free!
+                    Pick any 2 states, get the 3rd state free!
                   </p>
-                  <p className="text-gray-300 text-xs mt-1">
+                  <p className="text-[var(--color-gray-600)] text-xs mt-1">
                     3 states of Pro coverage for the price of 2. That&apos;s ${PLANS.pro.pricePerState * 2}/mo instead of ${PLANS.pro.pricePerState * 3}/mo.
                   </p>
                 </>
@@ -198,22 +195,22 @@ function CheckoutContent() {
             {effective.autoUpgraded && (
               <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-5">
                 <p className="text-[var(--color-accent)] font-semibold text-sm">
-                  🎉 Congratulations! You&apos;re being upgraded to Pro automatically!
+                  Congratulations! You&apos;re being upgraded to Pro automatically!
                 </p>
-                <p className="text-gray-300 text-xs mt-1">
-                  {stateCount} states selected — you&apos;re getting all Pro features at ${PLANS.standard.pricePerState}/state.
+                <p className="text-[var(--color-gray-600)] text-xs mt-1">
+                  {stateCount} states selected. You&apos;re getting all Pro features at ${PLANS.standard.pricePerState}/state.
                 </p>
               </div>
             )}
 
             {/* State selector */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+            <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Select Your States</h2>
                 <span className="text-sm font-medium text-[var(--color-brand)]">
                   {stateCount} state{stateCount !== 1 ? "s" : ""} selected
                   {stateCount > 0 &&
-                    ` — ${stateCount} × $${effective.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
+                    ` · ${stateCount} × $${effective.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
                 </span>
               </div>
               <input
@@ -221,7 +218,7 @@ function CheckoutContent() {
                 placeholder="Search states…"
                 value={stateSearch}
                 onChange={(e) => setStateSearch(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-[var(--color-brand)] placeholder-gray-500"
+                className="w-full bg-[var(--color-gray-50)] border border-[var(--color-gray-200)] rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-[var(--color-brand)] placeholder-[var(--color-gray-400)] text-[var(--color-dark)]"
               />
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">
                 {filteredStates.map((s) => {
@@ -233,7 +230,7 @@ function CheckoutContent() {
                       className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
                         selected
                           ? "bg-[var(--color-brand)] border-[var(--color-brand)] text-white"
-                          : "bg-white/5 border-white/10 hover:border-white/30 text-gray-300"
+                          : "bg-[var(--color-gray-50)] border-[var(--color-gray-200)] hover:border-[var(--color-gray-400)] text-[var(--color-gray-700)]"
                       }`}
                     >
                       <span className="font-mono font-bold text-xs">{s.code}</span>
@@ -245,7 +242,7 @@ function CheckoutContent() {
               {selectedStates.length > 0 && (
                 <button
                   onClick={() => setSelectedStates([])}
-                  className="mt-3 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                  className="mt-3 text-xs text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)] transition-colors"
                 >
                   Clear all
                 </button>
@@ -255,32 +252,32 @@ function CheckoutContent() {
 
           {/* Right: Order summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10 lg:sticky lg:top-6">
+            <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] lg:sticky lg:top-6">
               <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Plan</span>
+                  <span className="text-[var(--color-gray-500)]">Plan</span>
                   <span className="font-medium text-right max-w-[60%]">{displayPlan.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Price/state</span>
+                  <span className="text-[var(--color-gray-500)]">Price/state</span>
                   <span
                     className={`font-medium tabular-nums transition-colors duration-300 ${
-                      priceFlash ? "text-[var(--color-brand)]" : "text-white"
+                      priceFlash ? "text-[var(--color-brand)]" : "text-[var(--color-dark)]"
                     }`}
                   >
                     ${effective.pricePerState}/mo
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">States</span>
+                  <span className="text-[var(--color-gray-500)]">States</span>
                   <span className="font-medium">{stateCount || "—"}</span>
                 </div>
 
                 {selectedStates.length > 0 && (
-                  <div className="pt-2 border-t border-white/10">
-                    <p className="text-gray-400 text-xs mb-1.5">Selected:</p>
+                  <div className="pt-2 border-t border-[var(--color-gray-100)]">
+                    <p className="text-[var(--color-gray-500)] text-xs mb-1.5">Selected:</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedStates.map((s) => (
                         <span
@@ -296,33 +293,33 @@ function CheckoutContent() {
 
                 {/* Auto-upgrade crossed-out pricing */}
                 {effective.autoUpgraded && stateCount > 0 && (
-                  <div className="pt-2 border-t border-white/10">
-                    <div className="flex justify-between text-gray-500">
+                  <div className="pt-2 border-t border-[var(--color-gray-100)]">
+                    <div className="flex justify-between text-[var(--color-gray-500)]">
                       <span>Pro price</span>
                       <span className="line-through">${proTotal.toLocaleString()}/mo</span>
                     </div>
                     <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
-                      Auto-upgraded to Pro — {stateCount} states get Pro features at Standard pricing!
+                      Auto-upgraded to Pro. {stateCount} states get Pro features at Standard pricing!
                     </p>
                   </div>
                 )}
 
                 {/* Pro free state discount */}
                 {!effective.autoUpgraded && effective.freeStates > 0 && (
-                  <div className="pt-2 border-t border-white/10">
-                    <div className="flex justify-between text-gray-500">
+                  <div className="pt-2 border-t border-[var(--color-gray-100)]">
+                    <div className="flex justify-between text-[var(--color-gray-500)]">
                       <span>Full price ({stateCount} states)</span>
                       <span className="line-through">${fullProTotal.toLocaleString()}/mo</span>
                     </div>
                     <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
-                      🎁 {effective.freeStates} free state{effective.freeStates > 1 ? "s" : ""} — paying for {effective.billedStates} of {stateCount}!
+                      {effective.freeStates} free state{effective.freeStates > 1 ? "s" : ""}! Paying for {effective.billedStates} of {stateCount}!
                     </p>
                   </div>
                 )}
 
                 <div
-                  className={`pt-3 border-t border-white/10 flex justify-between font-bold text-base tabular-nums transition-colors duration-300 ${
-                    priceFlash ? "text-[var(--color-brand)]" : "text-white"
+                  className={`pt-3 border-t border-[var(--color-gray-200)] flex justify-between font-bold text-base tabular-nums transition-colors duration-300 ${
+                    priceFlash ? "text-[var(--color-brand)]" : "text-[var(--color-dark)]"
                   }`}
                 >
                   <span>Monthly total</span>
@@ -331,7 +328,7 @@ function CheckoutContent() {
               </div>
 
               {error && (
-                <p className="mt-4 text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
+                <p className="mt-4 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">
                   {error}
                 </p>
               )}
@@ -354,13 +351,15 @@ function CheckoutContent() {
                 )}
               </button>
 
-              <p className="text-center text-xs text-gray-500 mt-3">
+              <p className="text-center text-xs text-[var(--color-gray-500)] mt-3">
                 Secure checkout powered by Stripe. Cancel anytime.
               </p>
             </div>
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
@@ -369,8 +368,8 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[var(--color-dark)] flex items-center justify-center">
-          <div className="text-white text-lg">Loading…</div>
+        <div className="min-h-screen bg-[var(--color-gray-50)] flex items-center justify-center">
+          <div className="text-[var(--color-dark)] text-lg">Loading…</div>
         </div>
       }
     >
