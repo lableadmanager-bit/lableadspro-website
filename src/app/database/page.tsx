@@ -20,154 +20,65 @@ export const metadata: Metadata = {
   },
 };
 
-/* ── shared SVG props ────────────────────────────────────── */
-
-const svgProps = {
-  width: 24,
-  height: 24,
-  viewBox: "0 0 24 24",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: 2,
-  strokeLinecap: "round" as const,
-  strokeLinejoin: "round" as const,
-};
-
 /* ── guide card data ─────────────────────────────────────── */
 
 const guides = [
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
-        <rect x="9" y="3" width="6" height="4" rx="1" />
-        <path d="M9 14l2 2 4-4" />
-      </svg>
-    ),
+    emoji: "📋",
     title: "Grant Types Guide",
     description: "R01, R21, S10, SBIR and more. What each grant type means for equipment sales.",
     href: "/database/guides/grant-types",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M3 21h18" />
-        <path d="M5 21V7l7-4 7 4v14" />
-        <path d="M9 21v-4h6v4" />
-        <path d="M10 10h4" />
-        <path d="M12 10v4" />
-      </svg>
-    ),
+    emoji: "🏛️",
     title: "Federal Agencies Overview",
     description: "8 agencies that fund lab research. Budgets, priorities, and what reps need to know.",
     href: "/database/guides/agencies",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M6 18h8" />
-        <path d="M3 22h18" />
-        <path d="M14 22a7 7 0 0 0 3-6" />
-        <path d="M9 14h2" />
-        <path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" />
-        <path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" />
-      </svg>
-    ),
+    emoji: "🔬",
     title: "NIH Institutes Guide",
     description: "27 institutes and centers. Which ones buy equipment and where the money flows.",
     href: "/database/guides/nih-institutes",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <circle cx="12" cy="12" r="3" />
-        <path d="M12 2v4" />
-        <path d="M12 18v4" />
-        <path d="M4.93 4.93l2.83 2.83" />
-        <path d="M16.24 16.24l2.83 2.83" />
-        <path d="M2 12h4" />
-        <path d="M18 12h4" />
-        <path d="M4.93 19.07l2.83-2.83" />
-        <path d="M16.24 7.76l2.83-2.83" />
-      </svg>
-    ),
+    emoji: "⚛️",
     title: "NSF Grants Guide",
     description: "How NSF funds research differently from NIH and what it means for your pipeline.",
     href: "/database/guides/nsf-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-      </svg>
-    ),
+    emoji: "🎖️",
     title: "DOD Research Guide",
     description: "Defense research labs, DARPA, and the military research funding landscape.",
     href: "/database/guides/dod-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-      </svg>
-    ),
+    emoji: "⚡",
     title: "DOE Research Guide",
     description: "National labs, energy research, and the DOE equipment procurement cycle.",
     href: "/database/guides/doe-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
-        <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
-        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
-        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
-      </svg>
-    ),
+    emoji: "🚀",
     title: "NASA Research Guide",
     description: "Space science grants, planetary research, and NASA lab equipment needs.",
     href: "/database/guides/nasa-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M8 2v4" />
-        <path d="M16 2v4" />
-        <rect x="4" y="4" width="16" height="16" rx="2" />
-        <path d="M9 12h6" />
-        <path d="M12 9v6" />
-      </svg>
-    ),
+    emoji: "🏥",
     title: "VA Research Guide",
     description: "Veterans health research. A smaller agency with consistent equipment budgets.",
     href: "/database/guides/va-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M12 2a7 7 0 0 0-3 13.32V17h6v-1.68A7 7 0 0 0 12 2z" />
-        <path d="M10 21h4" />
-        <path d="M12 17v4" />
-        <path d="M7 8H3" />
-        <path d="M21 8h-4" />
-        <path d="M5.64 4.64l2.12 2.12" />
-        <path d="M16.24 6.76l2.12-2.12" />
-      </svg>
-    ),
+    emoji: "🌾",
     title: "USDA Grants Guide",
     description: "Agricultural research funding, NIFA grants, and opportunities in food science.",
     href: "/database/guides/usda-grants",
   },
   {
-    icon: (
-      <svg {...svgProps}>
-        <path d="M10 2v7.31" />
-        <path d="M14 9.3V2" />
-        <path d="M8.5 2h7" />
-        <path d="M14 9.3a6.5 6.5 0 1 1-4 0" />
-        <path d="M5.52 16h12.96" />
-      </svg>
-    ),
+    emoji: "🦠",
     title: "CDC Research Guide",
     description: "Public health research grants and CDC lab equipment purchasing patterns.",
     href: "/database/guides/cdc-grants",
@@ -248,9 +159,7 @@ export default function DatabaseHubPage() {
                 href={guide.href}
                 className="group rounded-xl border border-[var(--color-gray-100)] bg-white p-6 hover:border-[var(--color-brand)] hover:shadow-lg hover:shadow-blue-500/5 transition-all"
               >
-                <div className="w-11 h-11 rounded-xl bg-[var(--color-brand-light)] text-[var(--color-brand)] flex items-center justify-center mb-3">
-                  {guide.icon}
-                </div>
+                <span className="text-2xl mb-3 block">{guide.emoji}</span>
                 <h3 className="text-lg font-bold text-[var(--color-gray-900)] mb-1 group-hover:text-[var(--color-brand)] transition-colors">
                   {guide.title}
                 </h3>
