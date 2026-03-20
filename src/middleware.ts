@@ -29,10 +29,10 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protect /database (but not /database/login or /database/signup)
+  // Protect /database/search (but not /database, /database/login, or /database/signup)
   if (
     !user &&
-    request.nextUrl.pathname === "/database"
+    request.nextUrl.pathname === "/database/search"
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/database/login";
@@ -43,5 +43,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/database"],
+  matcher: ["/database/search"],
 };

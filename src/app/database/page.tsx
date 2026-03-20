@@ -1,1132 +1,216 @@
-"use client";
-
-import { useState, useCallback, useEffect, useRef } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
+import type { Metadata } from "next";
+import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail } from "lucide-react";
+import AuthActions from "./AuthActions";
 
-const US_STATES = [
-  "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
-  "IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH",
-  "NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT",
-  "VT","VA","WA","WV","WI","WY",
-];
-
-const AGENCIES = [
-  { value: "nih", label: "NIH" },
-  { value: "nsf", label: "NSF" },
-  { value: "dod", label: "DOD" },
-  { value: "doe", label: "DOE" },
-  { value: "nasa", label: "NASA" },
-  { value: "va", label: "VA" },
-  { value: "usda", label: "USDA" },
-  { value: "cdc", label: "CDC" },
-];
-
-const NIH_INSTITUTES = [
-  { abbr: "NCI", fullName: "National Cancer Institute" },
-  { abbr: "NIGMS", fullName: "National Institute of General Medical Sciences" },
-  { abbr: "NIAID", fullName: "National Institute of Allergy and Infectious Diseases" },
-  { abbr: "NHLBI", fullName: "National Heart Lung and Blood Institute" },
-  { abbr: "NIA", fullName: "National Institute on Aging" },
-  { abbr: "NINDS", fullName: "National Institute of Neurological Disorders and Stroke" },
-  { abbr: "NIDDK", fullName: "National Institute of Diabetes and Digestive and Kidney Diseases" },
-  { abbr: "NIMH", fullName: "National Institute of Mental Health" },
-  { abbr: "NICHD", fullName: "Eunice Kennedy Shriver National Institute of Child Health and Human Development" },
-  { abbr: "NIDA", fullName: "National Institute on Drug Abuse" },
-  { abbr: "NEI", fullName: "National Eye Institute" },
-  { abbr: "NIAMS", fullName: "National Institute of Arthritis and Musculoskeletal and Skin Diseases" },
-  { abbr: "NIAAA", fullName: "National Institute on Alcohol Abuse and Alcoholism" },
-  { abbr: "NIDCD", fullName: "National Institute on Deafness and Other Communication Disorders" },
-  { abbr: "NIEHS", fullName: "National Institute of Environmental Health Sciences" },
-  { abbr: "NIDCR", fullName: "National Institute of Dental and Craniofacial Research" },
-  { abbr: "NIBIB", fullName: "National Institute of Biomedical Imaging and Bioengineering" },
-  { abbr: "NHGRI", fullName: "National Human Genome Research Institute" },
-  { abbr: "NIMHD", fullName: "National Institute on Minority Health and Health Disparities" },
-  { abbr: "NCATS", fullName: "National Center for Advancing Translational Sciences" },
-  { abbr: "NLM", fullName: "National Library of Medicine" },
-  { abbr: "OD", fullName: "NIH Office of the Director" },
-  { abbr: "VA", fullName: "VA Medical Centers" },
-];
-
-const ACTIVITY_CODES = [
-  "R01","R21","R03","R15","R35","R43","R44",
-  "U01","U19","U54",
-  "P01","P30","P50",
-  "K01","K08","K23","K99",
-  "F31","F32","T32",
-  "UG3","UH3",
-];
-
-interface Grant {
-  id: number;
-  grant_id: string;
-  source: string;
-  title: string;
-  abstract: string | null;
-  pi_name: string | null;
-  pi_email: string | null;
-  institution: string | null;
-  city: string | null;
-  state: string | null;
-  award_amount: number | null;
-  award_date: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  status: string | null;
-  agency: string | null;
-  activity_code: string | null;
-  fiscal_year: number | null;
-  source_url: string | null;
-  equipment_tags: string[] | null;
-  department: string | null;
-  pis: { email: string | null; phone: string | null } | null;
-}
-
-interface SearchResponse {
-  results: Grant[];
-  total: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-interface Filters {
-  states: string[];
-  agencies: string[];
-  nihInstitutes: string[];
-  activityCodes: string[];
-  institution: string;
-  dateFrom: string;
-  dateTo: string;
-  status: string;
-  equipmentTags: string[];
-  amountMin: string;
-  amountMax: string;
-  fiscalYear: string;
-}
-
-const defaultFilters: Filters = {
-  states: [],
-  agencies: ["nih", "nsf", "dod", "doe", "nasa", "va", "usda", "cdc"],
-  nihInstitutes: [],
-  activityCodes: [],
-  institution: "",
-  dateFrom: "",
-  dateTo: "",
-  status: "all",
-  equipmentTags: [],
-  amountMin: "",
-  amountMax: "",
-  fiscalYear: "",
+export const metadata: Metadata = {
+  title: "Federal Research Grants Database | Lab Leads Pro",
+  description:
+    "Explore 350,000+ actively funded federal research grants across 8 agencies. Guides, grant types, and search tools built for life-science equipment sales reps.",
+  keywords:
+    "federal grants database, NIH grants, NSF grants, DOD research grants, lab equipment sales, research funding database, grant search, life science sales",
+  openGraph: {
+    title: "Federal Research Grants Database | Lab Leads Pro",
+    description:
+      "350,000+ grants across 8 agencies. The research funding database built for equipment sales.",
+    url: "https://lableadspro.com/database",
+    siteName: "Lab Leads Pro",
+    type: "website",
+  },
 };
 
-function formatCurrency(amount: number | null): string {
-  if (!amount) return "—";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+/* ── guide card data ─────────────────────────────────────── */
 
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "—";
-  return new Date(dateStr).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+const guides = [
+  {
+    emoji: "📋",
+    title: "Grant Types Guide",
+    description: "R01, R21, S10, SBIR and more. What each grant type means for equipment sales.",
+    href: "/database/guides/grant-types",
+  },
+  {
+    emoji: "🏛️",
+    title: "Federal Agencies Overview",
+    description: "8 agencies that fund lab research. Budgets, priorities, and what reps need to know.",
+    href: "/database/guides/agencies",
+  },
+  {
+    emoji: "🔬",
+    title: "NIH Institutes Guide",
+    description: "27 institutes and centers. Which ones buy equipment and where the money flows.",
+    href: "/database/guides/nih-institutes",
+  },
+  {
+    emoji: "⚛️",
+    title: "NSF Grants Guide",
+    description: "How NSF funds research differently from NIH and what it means for your pipeline.",
+    href: "/database/guides/nsf-grants",
+  },
+  {
+    emoji: "🎖️",
+    title: "DOD Research Guide",
+    description: "Defense research labs, DARPA, and the military research funding landscape.",
+    href: "/database/guides/dod-grants",
+  },
+  {
+    emoji: "⚡",
+    title: "DOE Research Guide",
+    description: "National labs, energy research, and the DOE equipment procurement cycle.",
+    href: "/database/guides/doe-grants",
+  },
+  {
+    emoji: "🚀",
+    title: "NASA Research Guide",
+    description: "Space science grants, planetary research, and NASA lab equipment needs.",
+    href: "/database/guides/nasa-grants",
+  },
+  {
+    emoji: "🏥",
+    title: "VA Research Guide",
+    description: "Veterans health research. A smaller agency with consistent equipment budgets.",
+    href: "/database/guides/va-grants",
+  },
+  {
+    emoji: "🌾",
+    title: "USDA Grants Guide",
+    description: "Agricultural research funding, NIFA grants, and opportunities in food science.",
+    href: "/database/guides/usda-grants",
+  },
+  {
+    emoji: "🦠",
+    title: "CDC Research Guide",
+    description: "Public health research grants and CDC lab equipment purchasing patterns.",
+    href: "/database/guides/cdc-grants",
+  },
+];
 
-function isActive(endDate: string | null): boolean {
-  if (!endDate) return false;
-  return new Date(endDate) >= new Date();
-}
+/* ── molecular background ────────────────────────────────── */
 
-export default function DatabasePage() {
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [planTier, setPlanTier] = useState<string | null>(null);
-  const [subscribedStates, setSubscribedStates] = useState<string[]>([]);
-  const [query, setQuery] = useState("");
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
-  const [results, setResults] = useState<Grant[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [sort, setSort] = useState("relevance");
-  const [loading, setLoading] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
-  const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
-  const [stateSearch, setStateSearch] = useState("");
-  const stateDropdownRef = useRef<HTMLDivElement>(null);
-  const [agencyDropdownOpen, setAgencyDropdownOpen] = useState(false);
-  const [agencySearch, setAgencySearch] = useState("");
-  const [nihExpanded, setNihExpanded] = useState(false);
-  const agencyDropdownRef = useRef<HTMLDivElement>(null);
-  const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
-  const [activitySearch, setActivitySearch] = useState("");
-  const activityDropdownRef = useRef<HTMLDivElement>(null);
-  const [activePiFilter, setActivePiFilter] = useState<string | null>(null);
-
-  // Get user session and subscription
-  useEffect(() => {
-    const supabase = createSupabaseBrowserClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserEmail(user?.email ?? null);
-    });
-
-    // Fetch subscription details
-    fetch("/api/subscription")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.subscribedStates) {
-          setSubscribedStates(data.subscribedStates);
-          setPlanTier(data.planTier);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleLogout = async () => {
-    const supabase = createSupabaseBrowserClient();
-    await supabase.auth.signOut();
-    window.location.href = "/database/login";
-  };
-
-  // Close dropdowns on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (stateDropdownRef.current && !stateDropdownRef.current.contains(e.target as Node)) {
-        setStateDropdownOpen(false);
-      }
-      if (agencyDropdownRef.current && !agencyDropdownRef.current.contains(e.target as Node)) {
-        setAgencyDropdownOpen(false);
-      }
-      if (activityDropdownRef.current && !activityDropdownRef.current.contains(e.target as Node)) {
-        setActivityDropdownOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  // Load initial results on page load
-  const initialLoadDone = useRef(false);
-  useEffect(() => {
-    if (!initialLoadDone.current) {
-      initialLoadDone.current = true;
-      doSearch(1);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Debounced auto-search on query/filter/sort changes
-  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  useEffect(() => {
-    if (!initialLoadDone.current) return;
-    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
-    searchTimeoutRef.current = setTimeout(() => {
-      doSearch(1);
-    }, 400);
-    return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, filters, sort, activePiFilter]);
-
-  const doSearch = useCallback(
-    async (p: number = 1) => {
-      setLoading(true);
-      setHasSearched(true);
-      try {
-        const res = await fetch("/api/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            query,
-            filters: {
-              ...filters,
-              amountMin: filters.amountMin ? Number(filters.amountMin) : undefined,
-              amountMax: filters.amountMax ? Number(filters.amountMax) : undefined,
-              fiscalYear: filters.fiscalYear ? Number(filters.fiscalYear) : undefined,
-              status: filters.status === "all" ? undefined : filters.status,
-              activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
-              nihInstitutes: filters.nihInstitutes.length ? filters.nihInstitutes : undefined,
-              institution: filters.institution || undefined,
-              piName: activePiFilter || undefined,
-            },
-            page: p,
-            sort,
-          }),
-        });
-        const data: SearchResponse = await res.json();
-        setResults(data.results);
-        setTotal(data.total);
-        setPage(data.page);
-        setTotalPages(data.totalPages);
-      } catch {
-        console.error("Search failed");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [query, filters, sort, activePiFilter]
-  );
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    doSearch(1);
-  };
-
-  const toggleExpanded = (id: number) => {
-    setExpandedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleState = (st: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      states: prev.states.includes(st)
-        ? prev.states.filter((s) => s !== st)
-        : [...prev.states, st],
-    }));
-  };
-
-  const toggleAgency = (ag: string) => {
-    setFilters((prev) => {
-      const removing = prev.agencies.includes(ag);
-      return {
-        ...prev,
-        agencies: removing
-          ? prev.agencies.filter((a) => a !== ag)
-          : [...prev.agencies, ag],
-        // Clear NIH institutes when NIH is unchecked
-        nihInstitutes: ag === "nih" && removing ? [] : prev.nihInstitutes,
-      };
-    });
-  };
-
-  const toggleNihInstitute = (fullName: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      nihInstitutes: prev.nihInstitutes.includes(fullName)
-        ? prev.nihInstitutes.filter((n) => n !== fullName)
-        : [...prev.nihInstitutes, fullName],
-    }));
-  };
-
-  const toggleActivityCode = (code: string) => {
-    setFilters((prev) => ({
-      ...prev,
-      activityCodes: prev.activityCodes.includes(code)
-        ? prev.activityCodes.filter((c) => c !== code)
-        : [...prev.activityCodes, code],
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters(defaultFilters);
-    setActivePiFilter(null);
-  };
-
-  const hasActiveFilters =
-    filters.states.length > 0 ||
-    filters.agencies.length > 0 ||
-    filters.nihInstitutes.length > 0 ||
-    filters.activityCodes.length > 0 ||
-    filters.institution ||
-    filters.dateFrom ||
-    filters.dateTo ||
-    filters.status !== "all" ||
-    filters.amountMin ||
-    filters.amountMax ||
-    filters.fiscalYear;
-
-  // Only show states the user is subscribed to
-  const availableStates = subscribedStates.length > 0 ? subscribedStates : US_STATES;
-  const filteredStates = stateSearch
-    ? availableStates.filter((s) => s.toLowerCase().includes(stateSearch.toLowerCase()))
-    : availableStates;
-
-  const filteredAgencies = agencySearch
-    ? AGENCIES.filter((a) => a.label.toLowerCase().includes(agencySearch.toLowerCase()))
-    : AGENCIES;
-
-  const filteredActivityCodes = activitySearch
-    ? ACTIVITY_CODES.filter((c) => c.toLowerCase().includes(activitySearch.toLowerCase()))
-    : ACTIVITY_CODES;
-
-  const currentYear = new Date().getFullYear();
-  const fiscalYears = Array.from({ length: currentYear - 2014 }, (_, i) => currentYear - i);
-
-  const FilterSidebar = () => (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-[var(--color-gray-900)] uppercase tracking-wide">
-          Filters
-        </h3>
-        {hasActiveFilters && (
-          <button
-            onClick={clearFilters}
-            className="text-xs text-[var(--color-brand)] hover:underline"
+function MolecularBg() {
+  return (
+    <div className="absolute inset-0 bg-gradient-to-b from-[#f0f7ff] to-white">
+      <svg className="absolute inset-0 w-full h-full opacity-[0.03]">
+        <defs>
+          <pattern
+            id="mol-grid-hub"
+            width="120"
+            height="120"
+            patternUnits="userSpaceOnUse"
           >
-            Clear all
-          </button>
-        )}
-      </div>
-
-      {/* State filter */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          State
-        </label>
-        <div ref={stateDropdownRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setStateDropdownOpen(!stateDropdownOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white hover:border-[var(--color-gray-500)] transition-colors"
-          >
-            <span className="text-[var(--color-gray-500)]">
-              {filters.states.length
-                ? `${filters.states.length} selected`
-                : "All states"}
-            </span>
-            <ChevronDown size={16} />
-          </button>
-          {stateDropdownOpen && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-60 overflow-hidden">
-              <div className="p-2 border-b border-[var(--color-gray-100)]">
-                <input
-                  type="text"
-                  placeholder="Search states..."
-                  value={stateSearch}
-                  onChange={(e) => setStateSearch(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
-                />
-              </div>
-              <div className="overflow-y-auto max-h-48 p-2 grid grid-cols-3 gap-1">
-                {filteredStates.map((st) => (
-                  <label
-                    key={st}
-                    className="flex items-center gap-1.5 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.states.includes(st)}
-                      onChange={() => toggleState(st)}
-                      className="accent-[var(--color-brand)]"
-                    />
-                    {st}
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        {filters.states.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {filters.states.map((st) => (
-              <span
-                key={st}
-                className="inline-flex items-center gap-1 text-xs bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2 py-0.5 rounded-full"
-              >
-                {st}
-                <button onClick={() => toggleState(st)} className="hover:text-[var(--color-brand-dark)]">
-                  <X size={12} />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Institution filter */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Institution
-        </label>
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-gray-400)]" />
-          <input
-            type="text"
-            placeholder="Filter by institution..."
-            value={filters.institution}
-            onChange={(e) => setFilters((prev) => ({ ...prev, institution: e.target.value }))}
-            className="w-full pl-8 pr-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-          />
-        </div>
-      </div>
-
-      {/* Agency filter */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Agency
-        </label>
-        <div ref={agencyDropdownRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setAgencyDropdownOpen(!agencyDropdownOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white hover:border-[var(--color-gray-500)] transition-colors"
-          >
-            <span className="text-[var(--color-gray-500)]">
-              {filters.agencies.length === AGENCIES.length
-                ? "All agencies"
-                : filters.agencies.length
-                  ? filters.agencies.includes("nih") && filters.nihInstitutes.length > 0
-                    ? `${filters.agencies.length} selected · NIH (${filters.nihInstitutes.length} institute${filters.nihInstitutes.length !== 1 ? "s" : ""})`
-                    : `${filters.agencies.length} selected`
-                  : "No agencies"}
-            </span>
-            <ChevronDown size={16} />
-          </button>
-          {agencyDropdownOpen && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-96 overflow-hidden">
-              <div className="p-2 border-b border-[var(--color-gray-100)]">
-                <input
-                  type="text"
-                  placeholder="Search agencies..."
-                  value={agencySearch}
-                  onChange={(e) => setAgencySearch(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
-                />
-                <div className="flex gap-2 mt-1.5">
-                  <button
-                    type="button"
-                    onClick={() => setFilters((prev) => ({ ...prev, agencies: AGENCIES.map((a) => a.value) }))}
-                    className="text-xs text-[var(--color-brand)] hover:underline"
-                  >
-                    Select all
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFilters((prev) => ({ ...prev, agencies: [], nihInstitutes: [] }))}
-                    className="text-xs text-[var(--color-brand)] hover:underline"
-                  >
-                    Uncheck all
-                  </button>
-                </div>
-              </div>
-              <div className="overflow-y-auto max-h-80 p-2 space-y-1">
-                {filteredAgencies.map((ag) => (
-                  <div key={ag.value}>
-                    <label
-                      className="flex items-center gap-2 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={filters.agencies.includes(ag.value)}
-                        onChange={() => toggleAgency(ag.value)}
-                        className="accent-[var(--color-brand)]"
-                      />
-                      {ag.label}
-                    </label>
-                    {/* Nested NIH institute sub-list — collapsible */}
-                    {ag.value === "nih" && filters.agencies.includes("nih") && (
-                      <div className="ml-4 mt-0.5 mb-1">
-                        <button
-                          type="button"
-                          onClick={() => setNihExpanded(!nihExpanded)}
-                          className="flex items-center gap-1 text-xs text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)] px-1.5 py-0.5"
-                        >
-                          <span className="text-[10px]">{nihExpanded ? "▼" : "▶"}</span>
-                          Filter by institute
-                          {filters.nihInstitutes.length > 0 && (
-                            <span className="text-[var(--color-brand)] font-medium">({filters.nihInstitutes.length})</span>
-                          )}
-                        </button>
-                        {nihExpanded && (
-                          <div className="border-l-2 border-[var(--color-gray-200)] pl-2 mt-1">
-                            <div className="flex gap-2 mb-1 px-1.5">
-                              <button
-                                type="button"
-                                onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: NIH_INSTITUTES.map((i) => i.fullName) }))}
-                                className="text-xs text-[var(--color-brand)] hover:underline"
-                              >
-                                Select all
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: [] }))}
-                                className="text-xs text-[var(--color-brand)] hover:underline"
-                              >
-                                Uncheck all
-                              </button>
-                            </div>
-                            <div className="max-h-40 overflow-y-auto space-y-0.5">
-                              {NIH_INSTITUTES.map((inst) => (
-                                <label
-                                  key={inst.abbr}
-                                  className="flex items-center gap-1.5 px-1.5 py-0.5 text-xs rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                                  title={inst.fullName}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={filters.nihInstitutes.includes(inst.fullName)}
-                                    onChange={() => toggleNihInstitute(inst.fullName)}
-                                    className="accent-[var(--color-brand)]"
-                                  />
-                                  {inst.abbr}
-                                </label>
-                              ))}
-                            </div>
-                            {filters.nihInstitutes.length === 0 && (
-                              <p className="text-xs text-[var(--color-gray-400)] italic px-1.5 mt-1">
-                                None selected = all NIH institutes
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Activity Code (Grant Type) filter */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Grant Type
-        </label>
-        <div ref={activityDropdownRef} className="relative">
-          <button
-            type="button"
-            onClick={() => setActivityDropdownOpen(!activityDropdownOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white hover:border-[var(--color-gray-500)] transition-colors"
-          >
-            <span className="text-[var(--color-gray-500)]">
-              {filters.activityCodes.length
-                ? `${filters.activityCodes.length} selected`
-                : "All grant types"}
-            </span>
-            <ChevronDown size={16} />
-          </button>
-          {activityDropdownOpen && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-60 overflow-hidden">
-              <div className="p-2 border-b border-[var(--color-gray-100)]">
-                <input
-                  type="text"
-                  placeholder="Search codes..."
-                  value={activitySearch}
-                  onChange={(e) => setActivitySearch(e.target.value)}
-                  className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
-                />
-              </div>
-              <div className="overflow-y-auto max-h-48 p-2 grid grid-cols-3 gap-1">
-                {filteredActivityCodes.map((code) => (
-                  <label
-                    key={code}
-                    className="flex items-center gap-1.5 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.activityCodes.includes(code)}
-                      onChange={() => toggleActivityCode(code)}
-                      className="accent-[var(--color-brand)]"
-                    />
-                    {code}
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        {filters.activityCodes.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {filters.activityCodes.map((code) => (
-              <span
-                key={code}
-                className="inline-flex items-center gap-1 text-xs bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2 py-0.5 rounded-full"
-              >
-                {code}
-                <button onClick={() => toggleActivityCode(code)} className="hover:text-[var(--color-brand-dark)]">
-                  <X size={12} />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Date range */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Award Date
-        </label>
-        <div className="space-y-2">
-          <input
-            type="date"
-            value={filters.dateFrom}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))
-            }
-            className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-            placeholder="From"
-          />
-          <input
-            type="date"
-            value={filters.dateTo}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, dateTo: e.target.value }))
-            }
-            className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-            placeholder="To"
-          />
-        </div>
-      </div>
-
-      {/* Status */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Status
-        </label>
-        <select
-          value={filters.status}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, status: e.target.value }))
-          }
-          className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white"
-        >
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
-
-      {/* Award Amount */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Award Amount
-        </label>
-        <div className="flex gap-2">
-          <input
-            type="number"
-            placeholder="Min"
-            value={filters.amountMin}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, amountMin: e.target.value }))
-            }
-            className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-          />
-          <input
-            type="number"
-            placeholder="Max"
-            value={filters.amountMax}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, amountMax: e.target.value }))
-            }
-            className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-          />
-        </div>
-      </div>
-
-      {/* Fiscal Year */}
-      <div>
-        <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
-          Fiscal Year
-        </label>
-        <select
-          value={filters.fiscalYear}
-          onChange={(e) =>
-            setFilters((prev) => ({ ...prev, fiscalYear: e.target.value }))
-          }
-          className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg bg-white"
-        >
-          <option value="">All years</option>
-          {fiscalYears.map((yr) => (
-            <option key={yr} value={yr}>
-              {yr}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Apply button (mobile) */}
-      <button
-        onClick={() => {
-          setMobileFiltersOpen(false);
-          doSearch(1);
-        }}
-        className="w-full md:hidden text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
-      >
-        Apply Filters
-      </button>
+            <circle cx="60" cy="60" r="3" fill="#0066FF" />
+            <circle cx="0" cy="0" r="2" fill="#0066FF" />
+            <circle cx="120" cy="0" r="2" fill="#0066FF" />
+            <circle cx="0" cy="120" r="2" fill="#0066FF" />
+            <circle cx="120" cy="120" r="2" fill="#0066FF" />
+            <line x1="60" y1="60" x2="0" y2="0" stroke="#0066FF" strokeWidth="0.8" />
+            <line x1="60" y1="60" x2="120" y2="0" stroke="#0066FF" strokeWidth="0.8" />
+            <line x1="60" y1="60" x2="120" y2="120" stroke="#0066FF" strokeWidth="0.8" />
+            <line x1="60" y1="60" x2="0" y2="120" stroke="#0066FF" strokeWidth="0.8" />
+            <circle cx="30" cy="90" r="1.5" fill="#00C48C" />
+            <circle cx="90" cy="30" r="1.5" fill="#00C48C" />
+            <line x1="0" y1="120" x2="30" y2="90" stroke="#00C48C" strokeWidth="0.5" />
+            <line x1="120" y1="0" x2="90" y2="30" stroke="#00C48C" strokeWidth="0.5" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#mol-grid-hub)" />
+      </svg>
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
     </div>
   );
+}
 
+/* ── page ─────────────────────────────────────────────────── */
+
+export default function DatabaseHubPage() {
   return (
     <>
       <Header />
-      <main className="min-h-screen bg-[var(--color-gray-50)] pt-16">
-        {/* Hero / Search Bar */}
-        <section className="bg-white border-b border-[var(--color-gray-100)]">
-          <div className="max-w-6xl mx-auto px-6 py-10">
-            <div className="flex items-start justify-between mb-2">
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-gray-900)]">
-                  Grant Database
-                </h1>
-                <p className="text-[var(--color-gray-500)] mt-1">
-                  Search {total > 0 ? total.toLocaleString() : "74,000+"} federally funded research grants
-                </p>
-              </div>
-              {userEmail && (
-                <div className="flex items-center gap-3 shrink-0">
-                  {planTier && (
-                    <span className="text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2.5 py-1 rounded-full hidden sm:inline-flex items-center gap-1">
-                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)} · {subscribedStates.join(", ")}
-                    </span>
-                  )}
-                  <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
-                    {userEmail}
-                  </span>
-                  <button
-                    onClick={handleLogout}
-                    className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"
-                  >
-                    <LogOut size={14} />
-                    Sign out
-                  </button>
-                </div>
-              )}
-            </div>
-            <form onSubmit={handleSearch} className="flex gap-3 mt-6">
-              <div className="relative flex-1">
-                <Search
-                  size={20}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-gray-500)]"
-                />
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search grants by title, PI name, institution, or keyword..."
-                  className="w-full pl-12 pr-4 py-3.5 text-base border border-[var(--color-gray-300)] rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent transition-shadow"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-8 py-3.5 text-base font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] rounded-xl transition-colors disabled:opacity-50 shrink-0"
+
+      {/* Hero */}
+      <section className="relative pt-28 pb-16 px-6 overflow-hidden">
+        <MolecularBg />
+        <div className="relative max-w-4xl mx-auto text-center">
+          <AuthActions />
+          <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--color-gray-900)] mb-4 tracking-tight">
+            Explore the Lab Leads Pro Database
+          </h1>
+          <p className="text-lg md:text-xl text-[var(--color-gray-600)] max-w-2xl mx-auto">
+            350,000+ actively funded research grants across 8 federal agencies.
+            Guides, insights, and tools built for life-science equipment sales reps.
+          </p>
+        </div>
+      </section>
+
+      {/* Guide Cards Grid */}
+      <section className="py-16 px-6">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
+            Research Guides
+          </h2>
+          <p className="text-[var(--color-gray-500)] mb-10">
+            Deep dives into every agency, grant type, and funding program in the database.
+          </p>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {guides.map((guide) => (
+              <Link
+                key={guide.href}
+                href={guide.href}
+                className="group rounded-xl border border-[var(--color-gray-100)] bg-white p-6 hover:border-[var(--color-brand)] hover:shadow-lg hover:shadow-blue-500/5 transition-all"
               >
-                {loading ? "Searching..." : "Search"}
-              </button>
-            </form>
-          </div>
-        </section>
-
-        {/* Content */}
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex gap-8">
-            {/* Desktop Sidebar */}
-            <aside className="hidden md:block w-64 shrink-0">
-              <div className="sticky top-24 bg-white rounded-xl border border-[var(--color-gray-100)] p-5">
-                <FilterSidebar />
-              </div>
-            </aside>
-
-            {/* Mobile Filter Toggle */}
-            <button
-              onClick={() => setMobileFiltersOpen(true)}
-              className="md:hidden fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-[var(--color-brand)] text-white rounded-full shadow-lg hover:bg-[var(--color-brand-dark)] transition-colors"
-            >
-              <SlidersHorizontal size={18} />
-              Filters
-              {hasActiveFilters && (
-                <span className="w-2 h-2 bg-white rounded-full" />
-              )}
-            </button>
-
-            {/* Mobile Filter Drawer */}
-            {mobileFiltersOpen && (
-              <div className="md:hidden fixed inset-0 z-50">
-                <div
-                  className="absolute inset-0 bg-black/40"
-                  onClick={() => setMobileFiltersOpen(false)}
-                />
-                <div className="absolute right-0 top-0 bottom-0 w-80 bg-white p-6 overflow-y-auto">
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-lg font-bold">Filters</h2>
-                    <button
-                      onClick={() => setMobileFiltersOpen(false)}
-                      className="p-1"
-                    >
-                      <X size={24} />
-                    </button>
-                  </div>
-                  <FilterSidebar />
-                </div>
-              </div>
-            )}
-
-            {/* Results */}
-            <div className="flex-1 min-w-0">
-              {hasSearched && (
-                <>
-                  {/* Results header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <p className="text-sm text-[var(--color-gray-500)]">
-                      {loading
-                        ? "Searching..."
-                        : `${total.toLocaleString()} result${total !== 1 ? "s" : ""} found`}
-                    </p>
-                    <select
-                      value={sort}
-                      onChange={(e) => {
-                        setSort(e.target.value);
-                      }}
-                      className="text-sm border border-[var(--color-gray-300)] rounded-lg px-3 py-1.5 bg-white"
-                    >
-                      <option value="relevance">Sort: Relevance</option>
-                      <option value="date">Sort: Newest</option>
-                      <option value="amount">Sort: Highest Award</option>
-                    </select>
-                  </div>
-
-                  {/* Active PI filter pill */}
-                  {activePiFilter && (
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="inline-flex items-center gap-1.5 text-sm bg-[var(--color-brand-light)] text-[var(--color-brand)] px-3 py-1.5 rounded-full font-medium">
-                        PI: {activePiFilter}
-                        <button
-                          onClick={() => setActivePiFilter(null)}
-                          className="hover:text-[var(--color-brand-dark)] ml-0.5"
-                          title="Clear PI filter"
-                        >
-                          <X size={14} />
-                        </button>
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Result cards */}
-                  {loading ? (
-                    <div className="space-y-4">
-                      {[...Array(5)].map((_, i) => (
-                        <div
-                          key={i}
-                          className="bg-white rounded-xl border border-[var(--color-gray-100)] p-6 animate-pulse"
-                        >
-                          <div className="h-5 bg-[var(--color-gray-100)] rounded w-3/4 mb-3" />
-                          <div className="h-4 bg-[var(--color-gray-100)] rounded w-1/2 mb-2" />
-                          <div className="h-4 bg-[var(--color-gray-100)] rounded w-1/3" />
-                        </div>
-                      ))}
-                    </div>
-                  ) : results.length === 0 ? (
-                    <div className="bg-white rounded-xl border border-[var(--color-gray-100)] p-12 text-center">
-                      <p className="text-[var(--color-gray-500)] text-lg">
-                        No grants found. Try broadening your search.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {results.map((grant) => {
-                        const expanded = expandedIds.has(grant.id);
-                        const active = isActive(grant.end_date);
-                        return (
-                          <div
-                            key={grant.id}
-                            className="bg-white rounded-xl border border-[var(--color-gray-100)] p-6 hover:shadow-md transition-shadow"
-                          >
-                            {/* Title */}
-                            <button
-                              onClick={() => toggleExpanded(grant.id)}
-                              className="text-left w-full group"
-                            >
-                              <h3 className="text-base font-semibold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors leading-snug">
-                                {grant.title}
-                              </h3>
-                            </button>
-
-                            {/* PI & Institution */}
-                            <p className="text-sm text-[var(--color-gray-500)] mt-2">
-                              {grant.pi_name && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActivePiFilter(grant.pi_name);
-                                  }}
-                                  className="font-semibold text-[var(--color-gray-900)] hover:text-[var(--color-brand)] hover:underline cursor-pointer"
-                                  title={`Show all grants by ${grant.pi_name}`}
-                                >
-                                  {grant.pi_name}
-                                </button>
-                              )}
-                              {grant.pi_name && (grant.institution || grant.city || grant.state) && " · "}
-                              {[grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(", ")}
-                            </p>
-
-                            {/* PI Email — always visible on collapsed card */}
-                            {(() => {
-                              const email = grant.pis?.email || grant.pi_email;
-                              if (email) {
-                                return (
-                                  <div className="flex items-center gap-1.5 mt-1.5 text-sm">
-                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
-                                    <a
-                                      href={`mailto:${email}`}
-                                      className="text-[var(--color-brand)] font-medium hover:underline"
-                                    >
-                                      {email}
-                                    </a>
-                                  </div>
-                                );
-                              }
-                              if (grant.source === "nih" && grant.source_url) {
-                                return (
-                                  <div className="flex items-center gap-1.5 mt-1.5 text-sm">
-                                    <Mail size={14} className="text-[var(--color-gray-400)] shrink-0" />
-                                    <span className="text-[var(--color-gray-400)] italic">Email available through source</span>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            })()}
-
-                            {/* Badges row */}
-                            <div className="flex flex-wrap items-center gap-2 mt-3">
-                              {grant.source && (
-                                <span className="inline-flex items-center text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2.5 py-1 rounded-full uppercase">
-                                  {grant.source}
-                                </span>
-                              )}
-                              {grant.activity_code && (
-                                <span className="inline-flex items-center text-xs font-medium bg-[var(--color-gray-100)] text-[var(--color-gray-700)] px-2.5 py-1 rounded-full">
-                                  {grant.activity_code}
-                                </span>
-                              )}
-                              {grant.award_amount && (
-                                <span className="text-sm font-medium text-[var(--color-gray-900)]">
-                                  {formatCurrency(grant.award_amount)}
-                                </span>
-                              )}
-                              <span className="text-xs text-[var(--color-gray-500)]">
-                                {formatDate(grant.award_date)}
-                              </span>
-                              {grant.end_date && (
-                                <span
-                                  className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${
-                                    active
-                                      ? "bg-green-50 text-green-700"
-                                      : "bg-[var(--color-gray-100)] text-[var(--color-gray-500)]"
-                                  }`}
-                                >
-                                  {active ? "Active" : "Completed"}
-                                </span>
-                              )}
-                            </div>
-
-                            {/* Equipment tags */}
-                            {grant.equipment_tags && grant.equipment_tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1.5 mt-3">
-                                {grant.equipment_tags.map((tag, i) => (
-                                  <span
-                                    key={i}
-                                    className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-
-                            {/* Abstract */}
-                            {grant.abstract && (
-                              <div className="mt-3">
-                                <p className="text-sm text-[var(--color-gray-500)] leading-relaxed">
-                                  {expanded
-                                    ? grant.abstract
-                                    : grant.abstract.slice(0, 200) +
-                                      (grant.abstract.length > 200 ? "..." : "")}
-                                </p>
-                                {grant.abstract.length > 200 && (
-                                  <button
-                                    onClick={() => toggleExpanded(grant.id)}
-                                    className="text-sm text-[var(--color-brand)] hover:underline mt-1 inline-flex items-center gap-1"
-                                  >
-                                    {expanded ? (
-                                      <>
-                                        Show less <ChevronUp size={14} />
-                                      </>
-                                    ) : (
-                                      <>
-                                        Read more <ChevronDown size={14} />
-                                      </>
-                                    )}
-                                  </button>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Source link */}
-                            {grant.source_url && (
-                              <a
-                                href={grant.source_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-[var(--color-brand)] hover:underline mt-3"
-                              >
-                                View source <ExternalLink size={14} />
-                              </a>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
-                      <button
-                        onClick={() => doSearch(page - 1)}
-                        disabled={page <= 1 || loading}
-                        className="px-4 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg hover:bg-[var(--color-gray-50)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        Previous
-                      </button>
-                      <span className="text-sm text-[var(--color-gray-500)] px-4">
-                        Page {page} of {totalPages.toLocaleString()}
-                      </span>
-                      <button
-                        onClick={() => doSearch(page + 1)}
-                        disabled={page >= totalPages || loading}
-                        className="px-4 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg hover:bg-[var(--color-gray-50)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        Next
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Initial state */}
-              {!hasSearched && (
-                <div className="bg-white rounded-xl border border-[var(--color-gray-100)] p-12 text-center">
-                  <Search size={48} className="mx-auto text-[var(--color-gray-300)] mb-4" />
-                  <h2 className="text-xl font-semibold text-[var(--color-gray-900)] mb-2">
-                    Search federally funded grants
-                  </h2>
-                  <p className="text-[var(--color-gray-500)] max-w-md mx-auto">
-                    Enter a keyword, PI name, institution, or research topic above to explore our database of 74,000+ grants from NIH, NSF, DOD, and more.
-                  </p>
-                </div>
-              )}
-            </div>
+                <span className="text-2xl mb-3 block">{guide.emoji}</span>
+                <h3 className="text-lg font-bold text-[var(--color-gray-900)] mb-1 group-hover:text-[var(--color-brand)] transition-colors">
+                  {guide.title}
+                </h3>
+                <p className="text-sm text-[var(--color-gray-500)] mb-4">
+                  {guide.description}
+                </p>
+                <span className="inline-flex items-center text-sm font-medium text-[var(--color-brand)] group-hover:gap-2 gap-1 transition-all">
+                  Read guide
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-6 bg-gradient-to-b from-white to-[#f0f7ff]">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-extrabold text-[var(--color-gray-900)] mb-4">
+            Ready to find leads in your territory?
+          </h2>
+          <p className="text-[var(--color-gray-500)] mb-8">
+            Search by state, agency, grant type, and keywords. Built for reps who sell into funded labs.
+          </p>
+          <Link
+            href="/checkout"
+            className="inline-flex items-center gap-2 text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] font-semibold px-8 py-3.5 rounded-lg transition-colors text-lg"
+          >
+            Get Started
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </section>
+
       <Footer />
     </>
   );
