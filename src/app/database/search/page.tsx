@@ -214,12 +214,12 @@ export default function DatabasePage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Load initial results on page load
+  // Don't auto-search on page load - show welcome state instead
   const initialLoadDone = useRef(false);
   useEffect(() => {
     if (!initialLoadDone.current) {
       initialLoadDone.current = true;
-      doSearch(1);
+      // Skip initial search - let user enter a query or apply filters first
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
