@@ -124,29 +124,24 @@ export default function GuidesPage() {
           </div>
         </section>
 
-        {/* Agency Guides */}
+        {/* Topic Guides — first, these link to agency guides for deeper engagement */}
         <section className="py-16 bg-white">
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-2xl font-bold text-[var(--color-dark)] mb-2">
-              Agency Guides
+              Start Here
             </h2>
             <p className="text-[var(--color-gray-500)] mb-10">
-              Deep dives into each federal funding agency — how they work, what
-              they fund, and what it means for equipment sales.
+              Cross-agency overviews to help you understand the full funding
+              landscape — then dive into individual agencies below.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {agencyGuides.map((guide) => (
+              {topicGuides.map((guide) => (
                 <Link
                   key={guide.href}
                   href={guide.href}
-                  className="group relative block p-6 rounded-xl border border-gray-200 hover:border-[var(--color-brand)] hover:shadow-lg transition-all"
+                  className="group block p-6 rounded-xl border border-gray-200 hover:border-[var(--color-brand)] hover:shadow-lg transition-all"
                 >
-                  {guide.tag && (
-                    <span className="absolute top-4 right-4 text-xs font-semibold text-[var(--color-brand)] bg-blue-50 px-2.5 py-1 rounded-full">
-                      {guide.tag}
-                    </span>
-                  )}
                   <span className="text-3xl mb-3 block">{guide.emoji}</span>
                   <h3 className="text-lg font-bold text-[var(--color-dark)] group-hover:text-[var(--color-brand)] transition-colors mb-2">
                     {guide.title}
@@ -163,23 +158,29 @@ export default function GuidesPage() {
           </div>
         </section>
 
-        {/* Topic Guides */}
+        {/* Agency Guides */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-2xl font-bold text-[var(--color-dark)] mb-2">
-              Topic Guides
+              Agency Guides
             </h2>
             <p className="text-[var(--color-gray-500)] mb-10">
-              Cross-agency references to help you understand the funding landscape.
+              Deep dives into each federal funding agency — how they work, what
+              they fund, and what it means for equipment sales.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {topicGuides.map((guide) => (
+              {agencyGuides.map((guide) => (
                 <Link
                   key={guide.href}
                   href={guide.href}
-                  className="group block p-6 rounded-xl border border-gray-200 bg-white hover:border-[var(--color-brand)] hover:shadow-lg transition-all"
+                  className="group relative block p-6 rounded-xl border border-gray-200 bg-white hover:border-[var(--color-brand)] hover:shadow-lg transition-all"
                 >
+                  {guide.tag && (
+                    <span className="absolute top-4 right-4 text-xs font-semibold text-[var(--color-brand)] bg-blue-50 px-2.5 py-1 rounded-full">
+                      {guide.tag}
+                    </span>
+                  )}
                   <span className="text-3xl mb-3 block">{guide.emoji}</span>
                   <h3 className="text-lg font-bold text-[var(--color-dark)] group-hover:text-[var(--color-brand)] transition-colors mb-2">
                     {guide.title}
