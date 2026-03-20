@@ -61,7 +61,7 @@ const faqs = [
   {
     question: "How big is the database?",
     answer:
-      "The database currently contains over 340,000 grants and over 150,000 PI records, covering all currently active federally funded research grants, and then some.",
+      "The database currently contains over 450,000 grants and over 150,000 PI records, covering all currently active federally funded research grants, and then some.",
   },
 ];
 
