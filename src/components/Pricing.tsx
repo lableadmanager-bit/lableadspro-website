@@ -115,7 +115,7 @@ export default function Pricing() {
 
         <div className="mt-8 max-w-4xl mx-auto bg-[var(--color-brand)]/5 rounded-2xl p-6 text-center border border-[var(--color-brand)]/20">
           <p className="text-[var(--color-gray-800)] text-base font-semibold">
-            Select three or more states on Standard and we&apos;ll upgrade you to Pro automatically.
+            Select 3+ states on Standard and get upgraded to Lab Leads Pro for free.
           </p>
         </div>
 
