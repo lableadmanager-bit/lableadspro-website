@@ -435,7 +435,7 @@ export default function NIHReporterGuide() {
           </div>
         </article>
 
-        {/* CTA - soft, not salesy */}
+        {/* CTA */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -448,10 +448,10 @@ export default function NIHReporterGuide() {
                 Go to NIH Reporter →
               </a>
               <Link
-                href="/guides"
-                className="inline-block text-sm font-semibold text-[var(--color-gray-600)] border-2 border-gray-300 hover:border-gray-400 px-8 py-3 rounded-lg transition-colors"
+                href="/sample"
+                className="inline-block text-sm font-semibold text-[var(--color-brand)] border-2 border-[var(--color-brand)] hover:bg-blue-50 px-8 py-3 rounded-lg transition-colors"
               >
-                Browse More Guides
+                Get a Free Sample Report
               </Link>
             </div>
           </div>
