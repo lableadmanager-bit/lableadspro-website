@@ -262,10 +262,10 @@ export default function DatabasePage() {
           }),
         });
         const data: SearchResponse = await res.json();
-        setResults(data.results);
-        setTotal(data.total);
-        setPage(data.page);
-        setTotalPages(data.totalPages);
+        setResults(data.results || []);
+        setTotal(data.total || 0);
+        setPage(data.page || 1);
+        setTotalPages(data.totalPages || 0);
       } catch {
         console.error("Search failed");
       } finally {
