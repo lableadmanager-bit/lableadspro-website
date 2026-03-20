@@ -386,10 +386,10 @@ export default function USDAGrantsGuide() {
             </Link>
             <span>/</span>
             <Link
-              href="/database"
+              href="/guides"
               className="hover:text-[var(--color-brand)] transition-colors"
             >
-              Database
+              Guides
             </Link>
             <span>/</span>
             <span className="text-[var(--color-gray-700)]">
