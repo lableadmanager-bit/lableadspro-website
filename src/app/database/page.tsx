@@ -83,6 +83,12 @@ const guides = [
     description: "Public health research grants and CDC lab equipment purchasing patterns.",
     href: "/database/guides/cdc-grants",
   },
+  {
+    emoji: "📖",
+    title: "How to Use the Database",
+    description: "A visual walkthrough of every feature, filter, and search tool.",
+    href: "/database/guides/how-to-use",
+  },
 ];
 
 /* ── molecular background ────────────────────────────────── */
