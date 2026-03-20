@@ -311,7 +311,7 @@ function CheckoutContent() {
                       <span className="line-through">${fullPrice.toLocaleString()}/mo</span>
                     </div>
                     <p className="text-[var(--color-brand)] text-xs mt-1 font-medium">
-                      Select a second state to receive $50 off!
+                      $50 promo for two-state Pro plan!
                     </p>
                   </div>
                 )}
