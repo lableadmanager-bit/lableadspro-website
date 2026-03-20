@@ -143,8 +143,8 @@ export default function DatabaseHubPage() {
       </section>
 
       {/* How to Use - Featured */}
-      <section className="px-6 -mt-4 mb-4">
-        <div className="max-w-6xl mx-auto">
+      <section className="px-6 -mt-4 mb-4 overflow-hidden">
+        <div className="max-w-4xl mx-auto">
           <Link
             href="/database/guides/how-to-use"
             className="group flex items-center gap-6 rounded-xl border border-[var(--color-brand)] bg-white p-6 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
