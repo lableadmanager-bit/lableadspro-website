@@ -24,6 +24,31 @@ const AGENCIES = [
   { value: "cdc", label: "CDC" },
 ];
 
+const NIH_INSTITUTES = [
+  { abbr: "NCI", fullName: "National Cancer Institute" },
+  { abbr: "NIGMS", fullName: "National Institute of General Medical Sciences" },
+  { abbr: "NIAID", fullName: "National Institute of Allergy and Infectious Diseases" },
+  { abbr: "NHLBI", fullName: "National Heart Lung and Blood Institute" },
+  { abbr: "NIA", fullName: "National Institute on Aging" },
+  { abbr: "NINDS", fullName: "National Institute of Neurological Disorders and Stroke" },
+  { abbr: "NIDDK", fullName: "National Institute of Diabetes and Digestive and Kidney Diseases" },
+  { abbr: "NIMH", fullName: "National Institute of Mental Health" },
+  { abbr: "NICHD", fullName: "Eunice Kennedy Shriver National Institute of Child Health and Human Development" },
+  { abbr: "NIDA", fullName: "National Institute on Drug Abuse" },
+  { abbr: "NEI", fullName: "National Eye Institute" },
+  { abbr: "NIAMS", fullName: "National Institute of Arthritis and Musculoskeletal and Skin Diseases" },
+  { abbr: "NIAAA", fullName: "National Institute on Alcohol Abuse and Alcoholism" },
+  { abbr: "NIDCD", fullName: "National Institute on Deafness and Other Communication Disorders" },
+  { abbr: "NIEHS", fullName: "National Institute of Environmental Health Sciences" },
+  { abbr: "NIDCR", fullName: "National Institute of Dental and Craniofacial Research" },
+  { abbr: "NIBIB", fullName: "National Institute of Biomedical Imaging and Bioengineering" },
+  { abbr: "NHGRI", fullName: "National Human Genome Research Institute" },
+  { abbr: "NIMHD", fullName: "National Institute on Minority Health and Health Disparities" },
+  { abbr: "NCATS", fullName: "National Center for Advancing Translational Sciences" },
+  { abbr: "NLM", fullName: "National Library of Medicine" },
+  { abbr: "OD", fullName: "NIH Office of the Director" },
+];
+
 const ACTIVITY_CODES = [
   "R01","R21","R03","R15","R35","R43","R44",
   "U01","U19","U54",
@@ -69,6 +94,7 @@ interface SearchResponse {
 interface Filters {
   states: string[];
   agencies: string[];
+  nihInstitutes: string[];
   activityCodes: string[];
   institution: string;
   dateFrom: string;
@@ -83,6 +109,7 @@ interface Filters {
 const defaultFilters: Filters = {
   states: [],
   agencies: ["nih", "nsf", "dod", "doe", "nasa", "va", "usda", "cdc"],
+  nihInstitutes: [],
   activityCodes: [],
   institution: "",
   dateFrom: "",
@@ -224,6 +251,7 @@ export default function DatabasePage() {
               fiscalYear: filters.fiscalYear ? Number(filters.fiscalYear) : undefined,
               status: filters.status === "all" ? undefined : filters.status,
               activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
+              nihInstitutes: filters.nihInstitutes.length ? filters.nihInstitutes : undefined,
               institution: filters.institution || undefined,
               piName: activePiFilter || undefined,
             },
@@ -269,11 +297,25 @@ export default function DatabasePage() {
   };
 
   const toggleAgency = (ag: string) => {
+    setFilters((prev) => {
+      const removing = prev.agencies.includes(ag);
+      return {
+        ...prev,
+        agencies: removing
+          ? prev.agencies.filter((a) => a !== ag)
+          : [...prev.agencies, ag],
+        // Clear NIH institutes when NIH is unchecked
+        nihInstitutes: ag === "nih" && removing ? [] : prev.nihInstitutes,
+      };
+    });
+  };
+
+  const toggleNihInstitute = (fullName: string) => {
     setFilters((prev) => ({
       ...prev,
-      agencies: prev.agencies.includes(ag)
-        ? prev.agencies.filter((a) => a !== ag)
-        : [...prev.agencies, ag],
+      nihInstitutes: prev.nihInstitutes.includes(fullName)
+        ? prev.nihInstitutes.filter((n) => n !== fullName)
+        : [...prev.nihInstitutes, fullName],
     }));
   };
 
@@ -294,6 +336,7 @@ export default function DatabasePage() {
   const hasActiveFilters =
     filters.states.length > 0 ||
     filters.agencies.length > 0 ||
+    filters.nihInstitutes.length > 0 ||
     filters.activityCodes.length > 0 ||
     filters.institution ||
     filters.dateFrom ||
@@ -433,7 +476,9 @@ export default function DatabasePage() {
               {filters.agencies.length === AGENCIES.length
                 ? "All agencies"
                 : filters.agencies.length
-                  ? `${filters.agencies.length} selected`
+                  ? filters.agencies.includes("nih") && filters.nihInstitutes.length > 0
+                    ? `${filters.agencies.length} selected · NIH (${filters.nihInstitutes.length} institute${filters.nihInstitutes.length !== 1 ? "s" : ""})`
+                    : `${filters.agencies.length} selected`
                   : "No agencies"}
             </span>
             <ChevronDown size={16} />
@@ -458,27 +503,71 @@ export default function DatabasePage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => setFilters((prev) => ({ ...prev, agencies: [] }))}
+                    onClick={() => setFilters((prev) => ({ ...prev, agencies: [], nihInstitutes: [] }))}
                     className="text-xs text-[var(--color-brand)] hover:underline"
                   >
                     Uncheck all
                   </button>
                 </div>
               </div>
-              <div className="overflow-y-auto max-h-48 p-2 space-y-1">
+              <div className="overflow-y-auto max-h-72 p-2 space-y-1">
                 {filteredAgencies.map((ag) => (
-                  <label
-                    key={ag.value}
-                    className="flex items-center gap-2 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={filters.agencies.includes(ag.value)}
-                      onChange={() => toggleAgency(ag.value)}
-                      className="accent-[var(--color-brand)]"
-                    />
-                    {ag.label}
-                  </label>
+                  <div key={ag.value}>
+                    <label
+                      className="flex items-center gap-2 px-1.5 py-1 text-sm rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filters.agencies.includes(ag.value)}
+                        onChange={() => toggleAgency(ag.value)}
+                        className="accent-[var(--color-brand)]"
+                      />
+                      {ag.label}
+                    </label>
+                    {/* Nested NIH institute sub-list */}
+                    {ag.value === "nih" && filters.agencies.includes("nih") && (
+                      <div className="ml-4 mt-1 mb-1 border-l-2 border-[var(--color-gray-200)] pl-2">
+                        <div className="flex gap-2 mb-1 px-1.5">
+                          <button
+                            type="button"
+                            onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: NIH_INSTITUTES.map((i) => i.fullName) }))}
+                            className="text-xs text-[var(--color-brand)] hover:underline"
+                          >
+                            Select all
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: [] }))}
+                            className="text-xs text-[var(--color-brand)] hover:underline"
+                          >
+                            Uncheck all
+                          </button>
+                        </div>
+                        <div className="max-h-40 overflow-y-auto space-y-0.5">
+                          {NIH_INSTITUTES.map((inst) => (
+                            <label
+                              key={inst.abbr}
+                              className="flex items-center gap-1.5 px-1.5 py-0.5 text-xs rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
+                              title={inst.fullName}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={filters.nihInstitutes.includes(inst.fullName)}
+                                onChange={() => toggleNihInstitute(inst.fullName)}
+                                className="accent-[var(--color-brand)]"
+                              />
+                              {inst.abbr}
+                            </label>
+                          ))}
+                        </div>
+                        {filters.nihInstitutes.length === 0 && (
+                          <p className="text-xs text-[var(--color-gray-400)] italic px-1.5 mt-1">
+                            None selected = all NIH institutes
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>

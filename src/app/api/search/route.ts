@@ -93,6 +93,9 @@ export async function POST(req: NextRequest) {
     if (filters.agencies?.length) {
       q = q.in("source", filters.agencies);
     }
+    if (filters.nihInstitutes?.length) {
+      q = q.in("agency", filters.nihInstitutes);
+    }
     if (filters.dateFrom) {
       q = q.gte("award_date", filters.dateFrom);
     }
