@@ -1,4 +1,5 @@
-import { Search, Bot, ClipboardList, Mail, Sparkles } from "lucide-react";
+import { Search, Bot, ClipboardList, Mail, Sparkles, Database } from "lucide-react";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 const steps: { number: string; icon: ReactNode; title: string; description: string }[] = [
@@ -65,6 +66,29 @@ export default function HowItWorks() {
               </p>
             </div>
           ))}
+        </div>
+
+        {/* Database callout */}
+        <div className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)] flex flex-col md:flex-row items-center gap-6">
+          <div className="flex-shrink-0">
+            <div className="w-14 h-14 bg-[var(--color-brand-light)] rounded-xl flex items-center justify-center">
+              <Database className="w-7 h-7 text-[var(--color-brand)]" />
+            </div>
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-xl font-bold text-[var(--color-dark)] mb-2">
+              Want to search the data yourself?
+            </h3>
+            <p className="text-[var(--color-gray-500)] leading-relaxed">
+              Our database has over 450,000 federal research grants across 8 agencies, searchable by state, keyword, and agency. Filter by what matters to your territory and find leads on your own schedule.
+            </p>
+          </div>
+          <Link
+            href="/database/guides/how-to-use"
+            className="flex-shrink-0 text-sm font-semibold text-[var(--color-brand)] border-2 border-[var(--color-brand)] hover:bg-blue-50 px-6 py-2.5 rounded-lg transition-colors whitespace-nowrap"
+          >
+            See How It Works
+          </Link>
         </div>
 
         {/* New Lab Detection Teaser */}
