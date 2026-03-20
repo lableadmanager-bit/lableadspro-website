@@ -448,6 +448,22 @@ export default function DatabasePage() {
                   onChange={(e) => setAgencySearch(e.target.value)}
                   className="w-full px-2 py-1 text-sm border border-[var(--color-gray-300)] rounded"
                 />
+                <div className="flex gap-2 mt-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setFilters((prev) => ({ ...prev, agencies: AGENCIES.map((a) => a.value) }))}
+                    className="text-xs text-[var(--color-brand)] hover:underline"
+                  >
+                    Select all
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFilters((prev) => ({ ...prev, agencies: [] }))}
+                    className="text-xs text-[var(--color-brand)] hover:underline"
+                  >
+                    Uncheck all
+                  </button>
+                </div>
               </div>
               <div className="overflow-y-auto max-h-48 p-2 space-y-1">
                 {filteredAgencies.map((ag) => (
