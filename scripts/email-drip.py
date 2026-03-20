@@ -6,11 +6,15 @@ Standalone script that runs via cron on the Mac mini.
 Loads contacts, checks suppression list, determines what to send,
 sends via Resend API, and logs sends.
 
+Designed to run every 30 minutes during business hours (8 AM - 5 PM ET)
+via cron, sending a small batch each run to spread emails naturally
+across the day instead of blasting all at once.
+
 Usage:
-    python3 scripts/email-drip.py
-    python3 scripts/email-drip.py --dry-run
-    python3 scripts/email-drip.py --test-email george@lableadspro.com
-    python3 scripts/email-drip.py --dry-run --max-sends 10
+    python3 scripts/email-drip.py                                    # Normal run (sends --per-run batch)
+    python3 scripts/email-drip.py --dry-run                          # Preview without sending
+    python3 scripts/email-drip.py --test-email george@lableadspro.com # Redirect all to test address
+    python3 scripts/email-drip.py --max-sends 50 --per-run 3         # 50/day limit, 3 per cron run
 """
 
 import argparse
@@ -41,6 +45,7 @@ TEMPLATE_DIR = SCRIPT_DIR / "email-templates"
 CONTACTS_FILE = DATA_DIR / "contacts.json"
 SUPPRESSION_FILE = DATA_DIR / "suppression-list.json"
 SEND_LOG_FILE = DATA_DIR / "send-log.jsonl"
+DAILY_COUNTER_FILE = DATA_DIR / "daily-send-count.json"
 
 # Sequence definitions: sequence_name -> list of day offsets
 SEQUENCES = {
@@ -228,11 +233,36 @@ def send_email(to: str, subject: str, html: str, test_email: str = None) -> bool
         return False
 
 
+def get_daily_send_count(now: datetime) -> int:
+    """Get how many emails we've already sent today."""
+    if not DAILY_COUNTER_FILE.exists():
+        return 0
+    try:
+        data = json.loads(DAILY_COUNTER_FILE.read_text())
+        if data.get("date") == now.strftime("%Y-%m-%d"):
+            return data.get("count", 0)
+        return 0  # New day, reset
+    except (json.JSONDecodeError, KeyError):
+        return 0
+
+
+def update_daily_send_count(now: datetime, new_sends: int):
+    """Update the daily send counter."""
+    current = get_daily_send_count(now)
+    DAILY_COUNTER_FILE.parent.mkdir(parents=True, exist_ok=True)
+    DAILY_COUNTER_FILE.write_text(json.dumps({
+        "date": now.strftime("%Y-%m-%d"),
+        "count": current + new_sends,
+        "last_updated": now.isoformat(),
+    }, indent=2) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Lab Leads Pro Email Drip Engine")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be sent without sending")
     parser.add_argument("--test-email", type=str, help="Send all emails to this address instead")
-    parser.add_argument("--max-sends", type=int, default=50, help="Maximum emails to send per run (default: 50)")
+    parser.add_argument("--max-sends", type=int, default=50, help="Maximum emails to send per DAY (default: 50)")
+    parser.add_argument("--per-run", type=int, default=0, help="Max emails per cron run (0 = use max-sends, for batch mode)")
     args = parser.parse_args()
 
     now = datetime.now(timezone.utc)
@@ -244,6 +274,23 @@ def main():
         print("  MODE: DRY RUN — no emails will be sent")
     if args.test_email:
         print(f"  MODE: TEST — all emails redirected to {args.test_email}")
+
+    # Calculate how many we can send this run
+    daily_sent = get_daily_send_count(now)
+    daily_remaining = max(0, args.max_sends - daily_sent)
+
+    if args.per_run > 0:
+        # Spread mode: cap this run at per_run OR whatever's left in the daily budget
+        run_limit = min(args.per_run, daily_remaining)
+    else:
+        # Batch mode: send up to daily remaining
+        run_limit = daily_remaining
+
+    print(f"  Daily limit: {args.max_sends} | Sent today: {daily_sent} | This run: up to {run_limit}")
+
+    if run_limit <= 0 and not args.test_email:
+        print(f"  Daily limit reached ({args.max_sends}). Nothing to send.")
+        return
 
     # Load data
     contacts = load_json(CONTACTS_FILE, [])
@@ -257,8 +304,8 @@ def main():
     skipped = 0
 
     for i, contact in enumerate(contacts):
-        if sends >= args.max_sends:
-            print(f"  Reached max sends ({args.max_sends}), stopping.")
+        if sends >= run_limit:
+            print(f"  Reached run limit ({run_limit}), stopping. Will continue next run.")
             break
 
         email = contact["email"].lower()
@@ -313,11 +360,15 @@ def main():
         else:
             sends += 1
 
-    # Save updated contacts
+    # Save updated contacts and daily counter
     if not args.dry_run:
         save_json(CONTACTS_FILE, contacts)
+        if sends > 0:
+            update_daily_send_count(now, sends)
 
-    print(f"\nDone: {sends} sent, {errors} errors, {skipped} suppressed")
+    total_today = daily_sent + sends
+    print(f"\nDone: {sends} sent this run, {errors} errors, {skipped} suppressed")
+    print(f"Daily total: {total_today}/{args.max_sends}")
 
 
 if __name__ == "__main__":
