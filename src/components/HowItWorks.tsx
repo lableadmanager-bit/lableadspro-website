@@ -68,6 +68,19 @@ export default function HowItWorks() {
           ))}
         </div>
 
+        {/* Sample report CTA */}
+        <div className="mt-10 text-center">
+          <p className="text-[var(--color-gray-500)] mb-4">
+            See for yourself what a weekly lead report looks like.
+          </p>
+          <Link
+            href="/sample"
+            className="inline-block text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-8 py-3 rounded-lg transition-colors"
+          >
+            Get a Free Sample Report
+          </Link>
+        </div>
+
         {/* Database callout */}
         <div className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)] flex flex-col md:flex-row items-center gap-6">
           <div className="flex-shrink-0">
