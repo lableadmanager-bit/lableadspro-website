@@ -50,8 +50,8 @@ export default function Hero() {
         {/* Subheadline */}
         <p className="animate-fade-in-up-delay-2 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
           Lab Leads Pro is the AI-powered lead intelligence solution
-          for <span className="whitespace-nowrap">life-science equipment sales.</span> We help you find new labs before the competition does.
-          Our easy-to-use grant database and weekly reports monitor grants from NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA so you don&apos;t have to.
+          for <span className="whitespace-nowrap">life-science equipment sales.</span> We help you find new labs before the competition does and keep you up to date on all of the latest grants being awarded by every federal research agency.
+          Our easy-to-use grant database and weekly reports monitor NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA so you don&apos;t have to.
           Qualified leads delivered to your inbox every Monday morning.
         </p>
 
