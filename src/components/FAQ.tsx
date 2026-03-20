@@ -33,6 +33,31 @@ const faqs = [
     answer:
       "Reach out to us at info@lableadspro.com. We're constantly expanding our equipment taxonomy based on what our customers sell. If you need a category we don't cover yet, we'll add it.",
   },
+  {
+    question: "What is the grant database?",
+    answer:
+      "Every subscription includes access to our live, searchable grant database. Search by keyword, filter by state, institution, funding agency, NIH institute, grant type, and more. Click any PI to see their full funding portfolio. It's like having your own research intelligence platform.",
+  },
+  {
+    question: "How do I access the database?",
+    answer:
+      "After subscribing, you'll receive a welcome email with a link to set your password. Log in at lableadspro.com/database anytime. Your database access is filtered to the states in your subscription.",
+  },
+  {
+    question: "Can I search by PI name or institution?",
+    answer:
+      "Yes. You can search by keyword across all grant abstracts, filter by specific institutions (e.g., Duke, UNC Chapel Hill), and click any PI name to see all of their grants in the database.",
+  },
+  {
+    question: "How is the database different from the weekly reports?",
+    answer:
+      "The weekly reports are curated intelligence pushed to your inbox every Monday, with AI-powered equipment tagging that anticipates what each lab might need. The database is your self-service search tool for when you want to research a specific PI, institution, or topic on your own schedule. Both are included in every plan.",
+  },
+  {
+    question: "How often is the database updated?",
+    answer:
+      "New grants are added weekly as they're awarded by federal agencies. The database currently contains over 340,000 grants and 150,000 PI records across 8 federal agencies.",
+  },
 ];
 
 function FAQItem({ faq, isOpen, onToggle }: { faq: typeof faqs[0]; isOpen: boolean; onToggle: () => void }) {
