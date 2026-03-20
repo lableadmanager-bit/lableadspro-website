@@ -24,12 +24,6 @@ export const metadata: Metadata = {
 
 const guides = [
   {
-    emoji: "💻",
-    title: "How to Use the Database",
-    description: "A visual walkthrough of every feature, filter, and search tool.",
-    href: "/database/guides/how-to-use",
-  },
-  {
     emoji: "📋",
     title: "Grant Types Guide",
     description: "R01, R21, S10, SBIR and more. What each grant type means for equipment sales.",
@@ -145,6 +139,35 @@ export default function DatabaseHubPage() {
             350,000+ actively funded research grants across 8 federal agencies.
             Guides, insights, and tools built for life-science equipment sales reps.
           </p>
+        </div>
+      </section>
+
+      {/* How to Use - Featured */}
+      <section className="px-6 -mt-4 mb-4">
+        <div className="max-w-6xl mx-auto">
+          <Link
+            href="/database/guides/how-to-use"
+            className="group flex items-center gap-6 rounded-xl border border-[var(--color-brand)] bg-white p-6 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
+          >
+            <span className="text-3xl shrink-0">💻</span>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors">
+                How to Use the Database
+              </h3>
+              <p className="text-sm text-[var(--color-gray-500)]">
+                A visual walkthrough of every feature, filter, and search tool at your fingertips.
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 text-[var(--color-brand)] shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </section>
 
