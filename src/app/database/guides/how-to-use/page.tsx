@@ -583,20 +583,22 @@ export default function HowToUseGuide() {
           </p>
           <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6 space-y-4">
             <p className="text-sm text-[var(--color-gray-700)]">
-              Every grant card has a{" "}
+              When a grant shows{" "}
+              <span className="font-semibold text-[var(--color-gray-900)]">
+                &quot;Email available through source&quot;
+              </span>{" "}
+              instead of a direct email, it means the PI&apos;s email is on the original
+              grant record. Click the{" "}
               <span className="font-semibold text-[var(--color-gray-900)]">
                 &quot;View source&quot;
               </span>{" "}
-              link that takes you to the original grant record on the funding
-              agency&apos;s website (NIH Reporter, NSF Award Search, USASpending,
-              etc.). This is your fallback for any information not shown directly
-              in the database.
+              link to go straight there.
             </p>
 
             <Screenshot
-              src="/guide-screenshots/nih-reporter-source.png"
-              alt="Clicking View Source takes you to the original grant record on NIH Reporter"
-              caption="Clicking View Source takes you to the original grant record on NIH Reporter."
+              src="/guide-screenshots/grant-card-email-source.png"
+              alt="A grant card showing Email available through source and the View source link"
+              caption="When an email isn't directly in our database, we tell you where to find it. Click View source to go to the original record."
             />
 
             <h3 className="text-lg font-bold text-[var(--color-gray-900)] mt-6">
@@ -612,11 +614,12 @@ export default function HowToUseGuide() {
                 <span className="font-semibold text-[var(--color-gray-900)]">
                   NIH grants:
                 </span>{" "}
-                We have verified PI emails for about 80% of PIs. For the rest,
-                you can click &quot;View source&quot; to go to NIH Reporter and
-                click the &quot;View Email&quot; button there. Fair warning: NIH
-                Reporter puts a CAPTCHA in front of every single email reveal.
-                Our database saves you that hassle.
+                We have verified PI emails for about 80% of PIs directly in the
+                database. For the rest, click &quot;View source&quot; to go to NIH
+                Reporter and hit the &quot;View Email&quot; button in the Details
+                section. Takes about 10 seconds. But when you have 50 leads to
+                work through, those seconds add up. That is why we pre-verify as
+                many as possible.
               </li>
               <li>
                 <span className="font-semibold text-[var(--color-gray-900)]">
@@ -644,9 +647,9 @@ export default function HowToUseGuide() {
             </ul>
 
             <Screenshot
-              src="/guide-screenshots/nih-reporter-email-revealed.png"
-              alt="NIH Reporter hides emails behind a CAPTCHA"
-              caption="NIH Reporter hides emails behind a CAPTCHA. Our database saves you the hassle."
+              src="/guide-screenshots/george-nih-reporter.png"
+              alt="NIH Reporter project details page with View Email button"
+              caption="On NIH Reporter, scroll to the Details section and click the View Email button to reveal the PI's email address."
             />
 
             <div className="bg-[var(--color-gray-50)] rounded-lg px-4 py-3">
