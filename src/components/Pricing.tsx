@@ -115,7 +115,7 @@ export default function Pricing() {
 
         <div className="mt-8 max-w-4xl mx-auto bg-[var(--color-dark)] rounded-2xl p-6 text-center border border-white/10">
           <p className="text-white text-base font-semibold">
-            🎉 Select 3+ states on Standard and get automatically upgraded to Pro — same price!
+            Select three or more states on Standard and we&apos;ll upgrade you to Pro automatically.
           </p>
         </div>
 
