@@ -663,6 +663,36 @@ export default function HowToUseGuide() {
                 university directory or Google Scholar will get you the email.
               </p>
             </div>
+
+            <h3 className="text-lg font-bold text-[var(--color-gray-900)] mt-6">
+              What If the Email Doesn&apos;t Match the Institution?
+            </h3>
+            <p className="text-sm text-[var(--color-gray-700)]">
+              We pull PI emails from PubMed, NSF records, NIH FOIA data, and
+              other public sources. Sometimes you will see a PI whose email
+              domain does not match the institution listed on the grant. For
+              example, a grant awarded to the University of Michigan but the
+              email on file is from their previous position at Johns Hopkins.
+            </p>
+            <p className="text-sm text-[var(--color-gray-700)]">
+              This is actually a useful signal. It usually means the PI moved
+              institutions recently. A professor who just moved is almost
+              certainly setting up a new lab and buying equipment. Treat it as a
+              hot lead, but verify their current email through the View Source
+              and View Email process described above, or check their new
+              university&apos;s faculty directory.
+            </p>
+
+            <div className="bg-[var(--color-gray-50)] rounded-lg px-4 py-3">
+              <p className="text-xs text-[var(--color-gray-500)]">
+                <span className="font-semibold text-[var(--color-gray-700)]">
+                  Pro tip:
+                </span>{" "}
+                A mismatched email is not bad data. It is a buying signal. New
+                lab, new equipment budget, and no existing vendor relationships.
+                These are some of the best leads in the database.
+              </p>
+            </div>
           </div>
         </section>
 
