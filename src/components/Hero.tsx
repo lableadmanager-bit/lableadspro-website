@@ -55,7 +55,7 @@ export default function Hero() {
         </p>
 
         <p className="animate-fade-in-up-delay-2 text-base md:text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Subscribers also gain access to our easy-to-search, easy-to-filter grant database, including over 340,000 grants awarded to over 150,000 PIs.
+          Subscribers also gain access to our easy-to-search, easy-to-filter grant database, including over 340,000 grants awarded to over 150,000 PIs, covering all actively funded research grants from every federal research agency.
         </p>
 
         {/* CTA */}
