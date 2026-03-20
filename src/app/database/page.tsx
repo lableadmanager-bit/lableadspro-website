@@ -42,13 +42,13 @@ const guides = [
     href: "/database/guides/nih-institutes",
   },
   {
-    emoji: "⚛️",
+    emoji: "🧬",
     title: "NSF Grants Guide",
     description: "How NSF funds research differently from NIH and what it means for your pipeline.",
     href: "/database/guides/nsf-grants",
   },
   {
-    emoji: "🛡️",
+    emoji: "🎖️",
     title: "DOD Research Guide",
     description: "Defense research labs, DARPA, and the military research funding landscape.",
     href: "/database/guides/dod-grants",
