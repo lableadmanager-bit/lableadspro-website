@@ -37,11 +37,11 @@ export default function Header() {
           <a href="/#pricing" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Pricing
           </a>
-          <a href="/database" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
-            Database
-          </a>
           <a href="/guides" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Guides
+          </a>
+          <a href="/database" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+            Database
           </a>
           <a
             href="/#cta"
