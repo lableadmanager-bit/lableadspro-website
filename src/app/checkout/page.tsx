@@ -316,6 +316,19 @@ function CheckoutContent() {
                   </div>
                 )}
 
+                {/* Pro 3+ state free state discount */}
+                {effective.proFreeState && (
+                  <div className="pt-2 border-t border-[var(--color-gray-100)]">
+                    <div className="flex justify-between text-[var(--color-gray-400)]">
+                      <span>Full price ({stateCount} states)</span>
+                      <span className="line-through">${fullPrice.toLocaleString()}/mo</span>
+                    </div>
+                    <p className="text-[var(--color-brand)] text-xs mt-1 font-medium">
+                      {effective.freeStates} free state{(effective.freeStates || 0) > 1 ? "s" : ""}! Paying for {effective.billedStates} of {stateCount}.
+                    </p>
+                  </div>
+                )}
+
                 <div
                   className={`pt-3 border-t border-[var(--color-gray-200)] flex justify-between font-bold text-base tabular-nums transition-colors duration-300 ${
                     priceFlash ? "text-[var(--color-brand)]" : "text-[var(--color-dark)]"

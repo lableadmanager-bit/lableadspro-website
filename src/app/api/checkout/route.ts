@@ -37,6 +37,10 @@ export async function POST(req: NextRequest) {
       // Standard auto-upgrade: use Standard price × number of states
       priceId = PLANS.standard.priceId;
       quantity = stateCount;
+    } else if (effective.proFreeState && effective.billedStates) {
+      // Pro 3+ states: bill for billedStates only (every 3rd free)
+      priceId = PLANS.pro.priceId;
+      quantity = effective.billedStates;
     } else {
       // Normal pricing
       priceId = PLANS[selectedTier].priceId;

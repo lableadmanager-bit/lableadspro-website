@@ -60,13 +60,19 @@ export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1TCtDG1UBk0N5M650ZukDQel"; /
 export function getEffectivePlan(
   selectedTier: PlanTier,
   stateCount: number
-): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean; monthlyTotal: number; proBundle: boolean } {
+): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean; monthlyTotal: number; proBundle: boolean; proFreeState?: boolean; freeStates?: number; billedStates?: number } {
   if (selectedTier === "standard" && stateCount >= AUTO_UPGRADE_THRESHOLD) {
     return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true, monthlyTotal: stateCount * PLANS.standard.pricePerState, proBundle: false };
   }
   if (selectedTier === "pro" && stateCount === 2) {
     // 2-state Pro bundle: $249 flat
-    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, monthlyTotal: PRO_TWO_STATE_BUNDLE, proBundle: true };
+    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, monthlyTotal: PRO_TWO_STATE_BUNDLE, proBundle: true, proFreeState: false };
+  }
+  if (selectedTier === "pro" && stateCount >= 3) {
+    // 3+ states on Pro: every 3rd state free (pay for 2 of every 3)
+    const freeStates = Math.floor(stateCount / 3);
+    const billedStates = stateCount - freeStates;
+    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, monthlyTotal: billedStates * PLANS.pro.pricePerState, proBundle: false, proFreeState: true, freeStates, billedStates };
   }
   return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false, monthlyTotal: stateCount * PLANS[selectedTier].pricePerState, proBundle: false };
 }
