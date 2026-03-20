@@ -114,7 +114,7 @@ function CheckoutContent() {
     <div className="min-h-screen bg-[var(--color-gray-50)] text-[var(--color-dark)]">
       <Header />
 
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-6xl mx-auto px-4 pt-24 pb-10">
         <h1 className="text-3xl font-bold mb-2">Build Your Plan</h1>
         <p className="text-[var(--color-gray-500)] mb-10">Choose your plan, then pick your states.</p>
 
