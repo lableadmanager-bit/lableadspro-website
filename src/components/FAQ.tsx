@@ -56,7 +56,7 @@ const faqs = [
   {
     question: "How often is the database updated?",
     answer:
-      "New grants are added weekly as they're awarded by federal agencies. The database currently contains over 340,000 grants and 150,000 PI records across 8 federal agencies.",
+      "New grants are added weekly as they're awarded by federal agencies. The database currently contains over 340,000 grants and 150,000 PI records across 8 federal agencies, covering all currently active funded grants.",
   },
 ];
 
