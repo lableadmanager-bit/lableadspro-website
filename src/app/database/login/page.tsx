@@ -32,7 +32,7 @@ export default function LoginPage() {
       setError(error.message);
       setLoading(false);
     } else {
-      window.location.href = "/database";
+      window.location.href = "/database/search";
     }
   };
 
@@ -136,8 +136,8 @@ export default function LoginPage() {
 
             <p className="text-center text-sm text-[var(--color-gray-500)] mt-6">
               Don&apos;t have an account?{" "}
-              <a href="/database/signup" className="text-[var(--color-brand)] hover:underline font-medium">
-                Sign up
+              <a href="/#pricing" className="text-[var(--color-brand)] hover:underline font-medium">
+                See our plans
               </a>
             </p>
           </div>
