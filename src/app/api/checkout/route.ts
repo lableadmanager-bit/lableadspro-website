@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { PLANS, VALID_PRICE_IDS, getEffectivePlan } from "@/lib/plans";
+import { PLANS, VALID_PRICE_IDS, getEffectivePlan, PRO_TWO_STATE_BUNDLE_PRICE_ID } from "@/lib/plans";
 import type { PlanTier } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
@@ -25,12 +25,22 @@ export async function POST(req: NextRequest) {
 
     // Apply auto-upgrade logic server-side
     const effective = getEffectivePlan(selectedTier, stateCount);
-    const priceId = effective.autoUpgraded
-      ? PLANS.standard.priceId // Use Standard price for auto-upgrades
-      : PLANS[selectedTier].priceId;
-
-    if (!VALID_PRICE_IDS.has(priceId)) {
-      return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
+    
+    let priceId: string;
+    let quantity: number;
+    
+    if (effective.proBundle) {
+      // Pro 2-state bundle: flat $249 price, quantity 1
+      priceId = PRO_TWO_STATE_BUNDLE_PRICE_ID;
+      quantity = 1;
+    } else if (effective.autoUpgraded) {
+      // Standard auto-upgrade: use Standard price × number of states
+      priceId = PLANS.standard.priceId;
+      quantity = stateCount;
+    } else {
+      // Normal pricing
+      priceId = PLANS[selectedTier].priceId;
+      quantity = stateCount;
     }
 
     const metadata = {
@@ -38,15 +48,13 @@ export async function POST(req: NextRequest) {
       selected_tier: selectedTier,
       states: states.join(","),
       stateCount: String(stateCount),
-      billedStates: String(effective.billedStates),
-      freeStates: String(effective.freeStates),
       autoUpgraded: String(effective.autoUpgraded),
-      pricePerState: String(effective.pricePerState),
+      proBundle: String(effective.proBundle),
+      monthlyTotal: String(effective.monthlyTotal),
     };
 
-    // Bill for billedStates, not total states (free state promo)
     const lineItems: { price: string; quantity: number }[] = [
-      { price: priceId, quantity: effective.billedStates },
+      { price: priceId, quantity },
     ];
 
     const origin = req.headers.get("origin") || "http://localhost:3000";

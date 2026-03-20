@@ -54,20 +54,19 @@ export const VALID_PRICE_IDS = new Set(
 
 export const AUTO_UPGRADE_THRESHOLD = 3; // 3+ states = auto Pro at Standard price
 
-export const PRO_FREE_STATE_THRESHOLD = 3; // Pro: buy 2, get 3rd free
+export const PRO_TWO_STATE_BUNDLE = 249; // Pro: 2 states for $249 (vs $298)
+export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1TCtDG1UBk0N5M650ZukDQel"; // $249 flat monthly
 
 export function getEffectivePlan(
   selectedTier: PlanTier,
   stateCount: number
-): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean; freeStates: number; billedStates: number } {
+): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean; monthlyTotal: number; proBundle: boolean } {
   if (selectedTier === "standard" && stateCount >= AUTO_UPGRADE_THRESHOLD) {
-    return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true, freeStates: 0, billedStates: stateCount };
+    return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true, monthlyTotal: stateCount * PLANS.standard.pricePerState, proBundle: false };
   }
-  if (selectedTier === "pro" && stateCount >= PRO_FREE_STATE_THRESHOLD) {
-    // Every 3rd state is free: for every 3 states, pay for 2
-    const freeStates = Math.floor(stateCount / PRO_FREE_STATE_THRESHOLD);
-    const billedStates = stateCount - freeStates;
-    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, freeStates, billedStates };
+  if (selectedTier === "pro" && stateCount === 2) {
+    // 2-state Pro bundle: $249 flat
+    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, monthlyTotal: PRO_TWO_STATE_BUNDLE, proBundle: true };
   }
-  return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false, freeStates: 0, billedStates: stateCount };
+  return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false, monthlyTotal: stateCount * PLANS[selectedTier].pricePerState, proBundle: false };
 }

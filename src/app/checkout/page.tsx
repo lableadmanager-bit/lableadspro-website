@@ -51,9 +51,8 @@ function CheckoutContent() {
   const stateCount = selectedStates.length;
   const effective = getEffectivePlan(selectedTier, stateCount);
   const displayPlan = PLANS[effective.tier];
-  const monthlyTotal = effective.billedStates * effective.pricePerState;
-  const proTotal = stateCount * PLANS.pro.pricePerState;
-  const fullProTotal = stateCount * PLANS.pro.pricePerState; // without free state discount
+  const monthlyTotal = effective.monthlyTotal;
+  const fullPrice = stateCount * effective.pricePerState; // without any discounts
 
   const filteredStates = US_STATES.filter(
     (s) =>
@@ -182,10 +181,10 @@ function CheckoutContent() {
               ) : (
                 <>
                   <p className="text-[var(--color-brand)] font-semibold text-sm">
-                    Pick any 2 states, get the 3rd state free!
+                    Get 2 states for just $249/mo (save $49!)
                   </p>
                   <p className="text-[var(--color-gray-600)] text-xs mt-1">
-                    3 states of Pro coverage for the price of 2. That&apos;s ${PLANS.pro.pricePerState * 2}/mo instead of ${PLANS.pro.pricePerState * 3}/mo.
+                    Select 2 states and get the Pro bundle discount. Add a 3rd for only $49 more.
                   </p>
                 </>
               )}
@@ -294,25 +293,25 @@ function CheckoutContent() {
                 {/* Auto-upgrade crossed-out pricing */}
                 {effective.autoUpgraded && stateCount > 0 && (
                   <div className="pt-2 border-t border-[var(--color-gray-100)]">
-                    <div className="flex justify-between text-[var(--color-gray-500)]">
+                    <div className="flex justify-between text-[var(--color-gray-400)]">
                       <span>Pro price</span>
-                      <span className="line-through">${proTotal.toLocaleString()}/mo</span>
+                      <span className="line-through">${(stateCount * PLANS.pro.pricePerState).toLocaleString()}/mo</span>
                     </div>
-                    <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
-                      Auto-upgraded to Pro. {stateCount} states get Pro features at Standard pricing!
+                    <p className="text-[var(--color-brand)] text-xs mt-1 font-medium">
+                      Auto-upgraded to Pro. {stateCount} states at Standard pricing!
                     </p>
                   </div>
                 )}
 
-                {/* Pro free state discount */}
-                {!effective.autoUpgraded && effective.freeStates > 0 && (
+                {/* Pro 2-state bundle discount */}
+                {effective.proBundle && (
                   <div className="pt-2 border-t border-[var(--color-gray-100)]">
-                    <div className="flex justify-between text-[var(--color-gray-500)]">
-                      <span>Full price ({stateCount} states)</span>
-                      <span className="line-through">${fullProTotal.toLocaleString()}/mo</span>
+                    <div className="flex justify-between text-[var(--color-gray-400)]">
+                      <span>Regular price</span>
+                      <span className="line-through">${fullPrice.toLocaleString()}/mo</span>
                     </div>
-                    <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
-                      {effective.freeStates} free state{effective.freeStates > 1 ? "s" : ""}! Paying for {effective.billedStates} of {stateCount}!
+                    <p className="text-[var(--color-brand)] text-xs mt-1 font-medium">
+                      Pro 2-state bundle. You save ${fullPrice - monthlyTotal}/mo!
                     </p>
                   </div>
                 )}
