@@ -214,20 +214,17 @@ export default function DatabasePage() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Don't auto-search on page load - show welcome state instead
+  // Track whether user has interacted (don't auto-search on mount)
+  const userHasInteracted = useRef(false);
   const initialLoadDone = useRef(false);
   useEffect(() => {
-    if (!initialLoadDone.current) {
-      initialLoadDone.current = true;
-      // Skip initial search - let user enter a query or apply filters first
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    initialLoadDone.current = true;
   }, []);
 
-  // Debounced auto-search on query/filter/sort changes
+  // Debounced auto-search on query/filter/sort changes (only after user interaction)
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
-    if (!initialLoadDone.current) return;
+    if (!userHasInteracted.current) return;
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     searchTimeoutRef.current = setTimeout(() => {
       doSearch(1);
@@ -277,6 +274,7 @@ export default function DatabasePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    userHasInteracted.current = true;
     doSearch(1);
   };
 
@@ -290,6 +288,7 @@ export default function DatabasePage() {
   };
 
   const toggleState = (st: string) => {
+    userHasInteracted.current = true;
     setFilters((prev) => ({
       ...prev,
       states: prev.states.includes(st)
@@ -299,6 +298,7 @@ export default function DatabasePage() {
   };
 
   const toggleAgency = (ag: string) => {
+    userHasInteracted.current = true;
     setFilters((prev) => {
       const removing = prev.agencies.includes(ag);
       return {
@@ -322,6 +322,7 @@ export default function DatabasePage() {
   };
 
   const toggleActivityCode = (code: string) => {
+    userHasInteracted.current = true;
     setFilters((prev) => ({
       ...prev,
       activityCodes: prev.activityCodes.includes(code)
