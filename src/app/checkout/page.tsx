@@ -184,7 +184,7 @@ function CheckoutContent() {
                     Select a second state to receive $50 off per month
                   </p>
                   <p className="text-[var(--color-gray-600)] text-xs mt-1">
-                    Two Pro states for $249/mo instead of $298.
+                    Two-state Pro plans for $248/mo instead of $298.
                   </p>
                 </>
               )}
