@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "VA Research Grants Guide for Lab Equipment Sales Reps",
     description:
       "115+ VA facilities doing real research, and most reps ignore all of them. Here is what you are missing.",
-    url: "https://lableadspro.com/database/guides/va-grants",
+    url: "https://lableadspro.com/va-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

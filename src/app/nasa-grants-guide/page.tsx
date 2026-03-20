@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "NASA Grants Guide for Lab Equipment Sales Reps",
     description:
       "NASA spends $7B on research including space biology, astronaut health, earth science, and astrobiology. Real bench science with real equipment needs.",
-    url: "https://lableadspro.com/database/guides/nasa-grants",
+    url: "https://lableadspro.com/nasa-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

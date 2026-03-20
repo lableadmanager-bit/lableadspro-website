@@ -428,7 +428,7 @@ export default function HowToUseGuide() {
                 </span>{" "}
                 Check out our{" "}
                 <Link
-                  href="/database/guides/grant-types"
+                  href="/grant-types-guide"
                   className="text-[var(--color-brand)] hover:underline font-semibold"
                 >
                   Grant Types Guide

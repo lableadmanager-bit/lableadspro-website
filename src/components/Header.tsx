@@ -40,6 +40,9 @@ export default function Header() {
           <a href="/database" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
             Database
           </a>
+          <a href="/guides" className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors">
+            Guides
+          </a>
           <a
             href="/#cta"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
@@ -69,7 +72,7 @@ export default function Header() {
       {/* Mobile Nav */}
       <div
         className={`md:hidden bg-white border-t border-gray-100 overflow-hidden transition-all duration-300 ease-in-out ${
-          mobileOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
+          mobileOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="px-6 py-4 space-y-4">
@@ -84,6 +87,9 @@ export default function Header() {
           </a>
           <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Database
+          </a>
+          <a href="/guides" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+            Guides
           </a>
           <a
             href="/#cta"

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "DOE Research Grants Guide for Lab Equipment Sales",
     description:
       "Six program offices, 17 national labs, and dozens of user facilities that all need instruments. Know where the equipment purchases actually happen.",
-    url: "https://lableadspro.com/database/guides/doe-grants",
+    url: "https://lableadspro.com/doe-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

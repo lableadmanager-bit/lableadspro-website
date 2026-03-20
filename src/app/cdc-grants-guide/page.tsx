@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "CDC Research Grants Guide for Lab Equipment Sales Reps",
     description:
       "CDC quietly funds lab equipment at universities and all 50 state public health labs. Here is what most reps miss.",
-    url: "https://lableadspro.com/database/guides/cdc-grants",
+    url: "https://lableadspro.com/cdc-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

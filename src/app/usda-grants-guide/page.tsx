@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "USDA Grants Guide for Lab Equipment Sales Reps",
     description:
       "Most USDA spending will never touch a lab. Here's how to find the research grants that actually buy equipment.",
-    url: "https://lableadspro.com/database/guides/usda-grants",
+    url: "https://lableadspro.com/usda-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

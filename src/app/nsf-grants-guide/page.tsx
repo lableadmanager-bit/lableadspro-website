@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "NSF Grants Guide for Lab Equipment Sales Reps",
     description:
       "NSF's MRI program is basically a purchase order for instruments. Here's what every equipment rep needs to know about NSF funding.",
-    url: "https://lableadspro.com/database/guides/nsf-grants",
+    url: "https://lableadspro.com/nsf-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

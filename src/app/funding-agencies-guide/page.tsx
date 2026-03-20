@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "Federal Research Agencies Guide for Equipment Sales",
     description:
       "8 federal agencies fund lab equipment purchases. Here's what every life-science sales rep needs to know.",
-    url: "https://lableadspro.com/database/guides/agencies",
+    url: "https://lableadspro.com/funding-agencies-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },
@@ -236,7 +236,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Full grant details, PI contact info, equipment need classification, weekly updates.",
     stars: 5,
-    guideLink: "/database/guides/nih-institutes",
+    guideLink: "/nih-institutes-guide",
   },
   {
     id: "nsf",
@@ -257,7 +257,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Full grant details with abstracts (NSF API provides complete data), PI info, equipment classification.",
     stars: 4,
-    guideLink: "/database/guides/nsf-grants",
+    guideLink: "/nsf-grants-guide",
   },
   {
     id: "dod",
@@ -276,7 +276,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending (shorter descriptions than NIH), PI/institution info, state filtering.",
     stars: 3,
-    guideLink: "/database/guides/dod-grants",
+    guideLink: "/dod-grants-guide",
   },
   {
     id: "doe",
@@ -295,7 +295,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution/PI info, state filtering.",
     stars: 3,
-    guideLink: "/database/guides/doe-grants",
+    guideLink: "/doe-grants-guide",
   },
   {
     id: "nasa",
@@ -314,7 +314,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution/PI info, state filtering.",
     stars: 2,
-    guideLink: "/database/guides/nasa-grants",
+    guideLink: "/nasa-grants-guide",
   },
   {
     id: "va",
@@ -333,7 +333,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 3,
-    guideLink: "/database/guides/va-grants",
+    guideLink: "/va-grants-guide",
   },
   {
     id: "usda",
@@ -352,7 +352,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 3,
-    guideLink: "/database/guides/usda-grants",
+    guideLink: "/usda-grants-guide",
   },
   {
     id: "cdc",
@@ -371,7 +371,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 2,
-    guideLink: "/database/guides/cdc-grants",
+    guideLink: "/cdc-grants-guide",
   },
 ];
 

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "DOD Research Grants Guide for Lab Equipment Sales Reps",
     description:
       "Billions in DOD research flows through universities buying the same equipment as NIH-funded labs. Here is what every equipment rep needs to know.",
-    url: "https://lableadspro.com/database/guides/dod-grants",
+    url: "https://lableadspro.com/dod-grants-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

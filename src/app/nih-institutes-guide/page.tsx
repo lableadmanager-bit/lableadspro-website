@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "NIH Institutes & Centers Guide for Equipment Sales",
     description:
       "27 NIH Institutes, ranked by equipment purchasing potential. A practical guide for life-science sales reps.",
-    url: "https://lableadspro.com/database/guides/nih-institutes",
+    url: "https://lableadspro.com/nih-institutes-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },
