@@ -1,52 +1,36 @@
 const plans = [
   {
-    name: "LabLeads Basic",
-    price: "$69",
-    period: "/state/month",
-    description: "NIH grant intelligence for your territory. The foundation every rep needs.",
-    features: [
-      "All newly awarded NIH grants",
-      "AI equipment need anticipation",
-      "PI name, contact info & institution",
-      "Full funding details & grant amounts",
-      "Weekly email delivery every Monday",
-      "Pick as many states as you need",
-    ],
-    cta: "Get Early Access",
-    href: "#cta",
-    featured: false,
-  },
-  {
-    name: "LabLeads Plus",
-    price: "$79",
-    period: "/state/month",
-    description: "Step up your game with newly awarded grants from 8 federal agencies. We'll deliver the grants your competition doesn't even know exist.",
-    features: [
-      "Everything in LabLeads Basic",
-      "NSF, DOD, DOE, USDA, VA, CDC & NASA grants",
-      "Full funding details & grant amounts",
-      "Weekly email delivery every Monday",
-      "Pick as many states as you need",
-    ],
-    cta: "Get Early Access",
-    href: "#cta",
-    featured: false,
-  },
-  {
-    name: "LabLeads Pro",
+    name: "Lab Leads Standard",
     price: "$99",
     period: "/state/month",
-    description: "Our best package. Grants from 8 federal research agencies and early intel on new labs. Everything you need to hit President's Club this year.",
+    description: "NIH grant intelligence + database access for your territory. The foundation every rep needs.",
     features: [
-      "Everything in LabLeads Plus",
+      "Weekly NIH grant reports",
+      "AI equipment need anticipation",
+      "Full NIH grant database access",
+      "PI contact info & institution details",
+      "Keyword search across all abstracts",
+      "Weekly email delivery every Monday",
+    ],
+    cta: "Get Started",
+    href: "/checkout?plan=standard",
+    featured: false,
+  },
+  {
+    name: "Lab Leads Pro",
+    price: "$149",
+    period: "/state/month",
+    description: "The complete package. 8 agencies + new lab detection + full database. Everything you need to hit President's Club.",
+    features: [
+      "Everything in Standard",
+      "NSF, DOD, DOE, NASA, VA, USDA & CDC grants",
+      "Full database access — all 8 agencies",
       "New lab & faculty hire detection",
-      "First-time grant recipient alerts",
-      "New lab setup signals & announcements",
-      "Be the first rep to reach out",
+      "New PI alerts",
       "Priority Monday AM delivery",
     ],
-    cta: "Get Early Access",
-    href: "#cta",
+    cta: "Get Started",
+    href: "/checkout?plan=pro",
     featured: true,
   },
 ];
@@ -54,7 +38,7 @@ const plans = [
 export default function Pricing() {
   return (
     <section id="pricing" className="py-20 px-6 bg-[var(--color-gray-50)]">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-dark)] mb-4">
             Simple, Per-State Pricing
@@ -64,7 +48,7 @@ export default function Pricing() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {plans.map((plan) => (
             <div
               key={plan.name}
@@ -87,7 +71,7 @@ export default function Pricing() {
                 {plan.name}
               </h3>
               <p
-                className={`text-sm min-h-[5rem] mb-6 ${
+                className={`text-sm min-h-[4rem] mb-6 ${
                   plan.featured ? "text-gray-400" : "text-[var(--color-gray-500)]"
                 }`}
               >
@@ -127,6 +111,12 @@ export default function Pricing() {
               </a>
             </div>
           ))}
+        </div>
+
+        <div className="mt-8 max-w-4xl mx-auto bg-[var(--color-dark)] rounded-2xl p-6 text-center border border-white/10">
+          <p className="text-white text-base font-semibold">
+            🎉 Select 3+ states on Standard and get automatically upgraded to Pro — same price!
+          </p>
         </div>
 
         <p className="text-center text-sm text-[var(--color-gray-500)] mt-8">

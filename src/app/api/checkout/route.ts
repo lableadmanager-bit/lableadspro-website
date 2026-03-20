@@ -1,45 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
-import { CATCH_UP_PRICE_ID, VALID_PRICE_IDS, getAddOnPriceId, getAddOnPlanName } from "@/lib/plans";
+import { PLANS, VALID_PRICE_IDS, getEffectivePlan } from "@/lib/plans";
+import type { PlanTier } from "@/lib/plans";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { addons, states, addCatchUp } = body as {
-      addons: { agencies: boolean; newLab: boolean };
+    const { tier, states } = body as {
+      tier: string;
       states: string[];
-      addCatchUp: boolean;
     };
 
-    const agencies = Boolean(addons?.agencies);
-    const newLab = Boolean(addons?.newLab);
-    const priceId = getAddOnPriceId(agencies, newLab);
-    const planName = getAddOnPlanName(agencies, newLab);
-
-    if (!VALID_PRICE_IDS.has(priceId)) {
-      return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
+    // Validate tier
+    if (tier !== "standard" && tier !== "pro") {
+      return NextResponse.json({ error: "Invalid plan tier" }, { status: 400 });
     }
 
     if (!states || states.length === 0) {
       return NextResponse.json({ error: "At least one state required" }, { status: 400 });
     }
 
+    const selectedTier = tier as PlanTier;
     const stateCount = states.length;
+
+    // Apply auto-upgrade logic server-side
+    const effective = getEffectivePlan(selectedTier, stateCount);
+    const priceId = effective.autoUpgraded
+      ? PLANS.standard.priceId // Use Standard price for auto-upgrades
+      : PLANS[selectedTier].priceId;
+
+    if (!VALID_PRICE_IDS.has(priceId)) {
+      return NextResponse.json({ error: "Invalid price ID" }, { status: 400 });
+    }
+
     const metadata = {
-      plan: planName,
+      plan_tier: effective.tier,
+      selected_tier: selectedTier,
       states: states.join(","),
       stateCount: String(stateCount),
-      addAgencies: String(agencies),
-      addNewLab: String(newLab),
+      autoUpgraded: String(effective.autoUpgraded),
+      pricePerState: String(effective.pricePerState),
     };
 
     const lineItems: { price: string; quantity: number }[] = [
       { price: priceId, quantity: stateCount },
     ];
-
-    if (addCatchUp) {
-      lineItems.push({ price: CATCH_UP_PRICE_ID, quantity: stateCount });
-    }
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
 

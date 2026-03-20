@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { PLANS, CATCH_UP_PRICE, ADD_ON_PRICES, getAddOnPlanName } from "@/lib/plans";
+import { PLANS, AUTO_UPGRADE_THRESHOLD, getEffectivePlan } from "@/lib/plans";
+import type { PlanTier } from "@/lib/plans";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -32,43 +33,24 @@ const US_STATES = [
   { code: "WI", name: "Wisconsin" }, { code: "WY", name: "Wyoming" },
 ];
 
-function CheckIcon() {
-  return (
-    <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
-      <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function CheckoutContent() {
   const searchParams = useSearchParams();
-  const planParam = searchParams.get("plan") || "basic";
-  const isPro = planParam === "pro";
+  const planParam = searchParams.get("plan") || "standard";
+  const initialTier: PlanTier = planParam === "pro" ? "pro" : "standard";
 
-  const [addAgencies, setAddAgencies] = useState(planParam === "plus" || planParam === "pro");
-  const [addNewLab, setAddNewLab] = useState(planParam === "pro");
+  const [selectedTier, setSelectedTier] = useState<PlanTier>(initialTier);
   const [selectedStates, setSelectedStates] = useState<string[]>([]);
   const [stateSearch, setStateSearch] = useState("");
-  const [addCatchUp, setAddCatchUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showNewLabTooltip, setShowNewLabTooltip] = useState(false);
   const [priceFlash, setPriceFlash] = useState(false);
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const pricePerState = isPro
-    ? PLANS.pro.pricePerState
-    : PLANS.basic.pricePerState +
-      (addAgencies ? ADD_ON_PRICES.agencies : 0) +
-      (addNewLab ? ADD_ON_PRICES.newLab : 0);
-
-  const planName = isPro
-    ? "LabLeads Pro"
-    : getAddOnPlanName(addAgencies, addNewLab);
-
   const stateCount = selectedStates.length;
-  const monthlyTotal = stateCount * pricePerState;
-  const catchUpTotal = addCatchUp ? stateCount * CATCH_UP_PRICE : 0;
+  const effective = getEffectivePlan(selectedTier, stateCount);
+  const displayPlan = PLANS[effective.tier];
+  const monthlyTotal = stateCount * effective.pricePerState;
+  const proTotal = stateCount * PLANS.pro.pricePerState;
 
   const filteredStates = US_STATES.filter(
     (s) =>
@@ -88,26 +70,15 @@ function CheckoutContent() {
     };
   }, []);
 
-  function handleToggleAgencies(checked: boolean) {
-    setAddAgencies(checked);
-    if (!checked) setAddNewLab(false);
-    triggerFlash();
-  }
-
-  function handleToggleNewLab(checked: boolean) {
-    if (checked && !addAgencies) {
-      setAddAgencies(true);
-      setShowNewLabTooltip(true);
-      setTimeout(() => setShowNewLabTooltip(false), 3000);
-    }
-    setAddNewLab(checked);
-    triggerFlash();
-  }
-
   function toggleState(code: string) {
     setSelectedStates((prev) =>
       prev.includes(code) ? prev.filter((s) => s !== code) : [...prev, code]
     );
+  }
+
+  function handleTierChange(tier: PlanTier) {
+    setSelectedTier(tier);
+    triggerFlash();
   }
 
   async function handleSubscribe() {
@@ -122,12 +93,8 @@ function CheckoutContent() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          addons: {
-            agencies: isPro || addAgencies,
-            newLab: isPro || addNewLab,
-          },
+          tier: selectedTier,
           states: selectedStates,
-          addCatchUp,
         }),
       });
       const data = await res.json();
@@ -141,13 +108,6 @@ function CheckoutContent() {
     }
   }
 
-  const planDescriptions: Record<string, string> = {
-    basic: "Start with NIH grant intelligence for your territory.",
-    plus: "Grants from 8 federal agencies — your territory, fully covered.",
-    pro: "The complete package. Grants + New Lab Detection.",
-  };
-  const headingDescription = planDescriptions[planParam] ?? planDescriptions.basic;
-
   return (
     <div className="min-h-screen bg-[var(--color-dark)] text-white">
       {/* Header */}
@@ -158,142 +118,21 @@ function CheckoutContent() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold mb-2">
-          {isPro ? "Select Your States" : "Customize Your Plan"}
-        </h1>
-        <p className="text-gray-400 mb-10">{headingDescription}</p>
+        <h1 className="text-3xl font-bold mb-2">Build Your Plan</h1>
+        <p className="text-gray-400 mb-10">Pick your states, then choose your plan. Select 3+ states on Standard and get upgraded to Pro automatically.</p>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Add-ons — hidden for Pro entry */}
-            {!isPro && (
-              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                <h2 className="text-lg font-semibold mb-1">Optional Add-Ons</h2>
-                <p className="text-sm text-gray-400 mb-4">
-                  Base plan: LabLeads Basic — ${PLANS.basic.pricePerState}/state/mo
-                </p>
-                <div className="space-y-3">
-
-                  {/* Agencies add-on */}
-                  <label
-                    className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                      addAgencies
-                        ? "border-[var(--color-brand)] bg-[var(--color-brand)]/10"
-                        : "border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/8"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={addAgencies}
-                      onChange={(e) => handleToggleAgencies(e.target.checked)}
-                      className="sr-only"
-                    />
-                    <div
-                      className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 ${
-                        addAgencies
-                          ? "bg-[var(--color-brand)] border-[var(--color-brand)]"
-                          : "border-white/30 bg-transparent"
-                      }`}
-                    >
-                      {addAgencies && <CheckIcon />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm">Add 7 More Federal Agencies</p>
-                      <p className="text-xs text-gray-400 mt-0.5">NSF, DOD, DOE, NASA, VA, USDA, CDC</p>
-                    </div>
-                    <div className="text-sm font-medium whitespace-nowrap">
-                      {addAgencies ? (
-                        <span className="text-[var(--color-brand)]">Included</span>
-                      ) : (
-                        <span className="text-gray-300">+${ADD_ON_PRICES.agencies}/state/mo</span>
-                      )}
-                    </div>
-                  </label>
-
-                  {/* New Lab add-on */}
-                  <div className="relative">
-                    <label
-                      className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
-                        addNewLab
-                          ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10"
-                          : "border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/8"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={addNewLab}
-                        onChange={(e) => handleToggleNewLab(e.target.checked)}
-                        className="sr-only"
-                      />
-                      <div
-                        className={`w-5 h-5 rounded flex-shrink-0 border-2 flex items-center justify-center transition-all duration-200 ${
-                          addNewLab
-                            ? "bg-[var(--color-accent)] border-[var(--color-accent)]"
-                            : "border-white/30 bg-transparent"
-                        }`}
-                      >
-                        {addNewLab && <CheckIcon />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm">Add New Lab Detection</p>
-                        <p className="text-xs text-gray-400 mt-0.5">
-                          New lab &amp; faculty hire alerts, first-time grant recipients, new lab signals
-                        </p>
-                      </div>
-                      <div className="text-sm font-medium whitespace-nowrap">
-                        {addNewLab ? (
-                          <span className="text-[var(--color-accent)]">Included</span>
-                        ) : (
-                          <span className="text-gray-300">+${ADD_ON_PRICES.newLab}/state/mo</span>
-                        )}
-                      </div>
-                    </label>
-
-                    {showNewLabTooltip && (
-                      <div className="absolute -top-11 left-1/2 -translate-x-1/2 bg-gray-800 border border-white/20 text-white text-xs px-3 py-2 rounded-lg shadow-xl whitespace-nowrap z-20 pointer-events-none">
-                        New Lab Detection includes all 8 federal agency grants
-                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-800" />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Pro clean summary */}
-            {isPro && (
-              <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-2xl font-bold">LabLeads Pro</span>
-                  <span className="text-sm bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-0.5 rounded-full font-medium">
-                    Full Package
-                  </span>
-                </div>
-                <p className="text-gray-400 text-sm mb-4">Everything included. No add-ons needed.</p>
-                <ul className="space-y-2">
-                  {PLANS.pro.features.map((f) => (
-                    <li key={f} className="flex gap-2 text-sm text-gray-300">
-                      <span className="text-[var(--color-accent)] mt-0.5">✓</span> {f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* State selector */}
+            {/* State selector — FIRST */}
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold">Select States</h2>
-                <span
-                  className={`text-sm font-medium transition-colors duration-300 ${
-                    priceFlash ? "text-[var(--color-brand)]" : "text-[var(--color-brand)]"
-                  }`}
-                >
+                <span className="text-sm font-medium text-[var(--color-brand)]">
                   {stateCount} state{stateCount !== 1 ? "s" : ""} selected
                   {stateCount > 0 &&
-                    ` — ${stateCount} × $${pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
+                    ` — ${stateCount} × $${effective.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
                 </span>
               </div>
               <input
@@ -331,6 +170,63 @@ function CheckoutContent() {
                 </button>
               )}
             </div>
+
+            {/* Auto-upgrade banner */}
+            {effective.autoUpgraded && (
+              <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-5">
+                <p className="text-[var(--color-accent)] font-semibold text-sm">
+                  🎉 Congratulations! You&apos;re being upgraded to Pro automatically!
+                </p>
+                <p className="text-gray-300 text-xs mt-1">
+                  {stateCount} states selected — Standard customers with {AUTO_UPGRADE_THRESHOLD}+ states get all Pro features at ${PLANS.standard.pricePerState}/state.
+                </p>
+              </div>
+            )}
+
+            {/* Plan selector */}
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+              <h2 className="text-lg font-semibold mb-4">Select Plan</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {(["standard", "pro"] as PlanTier[]).map((tier) => {
+                  const plan = PLANS[tier];
+                  const isSelected = selectedTier === tier;
+                  return (
+                    <button
+                      key={tier}
+                      onClick={() => handleTierChange(tier)}
+                      className={`text-left p-4 rounded-xl border transition-all duration-200 ${
+                        isSelected
+                          ? "border-[var(--color-brand)] bg-[var(--color-brand)]/10"
+                          : "border-white/10 bg-white/5 hover:border-white/30"
+                      }`}
+                    >
+                      <p className="font-semibold text-sm">{plan.name}</p>
+                      <p className="text-2xl font-bold mt-1">${plan.pricePerState}<span className="text-sm font-normal text-gray-400">/state/mo</span></p>
+                      <p className="text-xs text-gray-400 mt-2">{plan.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Plan features */}
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-lg font-bold">{displayPlan.name}</span>
+                {effective.autoUpgraded && (
+                  <span className="text-xs bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-2 py-0.5 rounded-full font-medium">
+                    Auto-Upgraded
+                  </span>
+                )}
+              </div>
+              <ul className="space-y-2">
+                {displayPlan.features.map((f) => (
+                  <li key={f} className="flex gap-2 text-sm text-gray-300">
+                    <span className="text-[var(--color-accent)] mt-0.5">✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Right: Order summary */}
@@ -341,7 +237,7 @@ function CheckoutContent() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Plan</span>
-                  <span className="font-medium text-right max-w-[60%]">{planName}</span>
+                  <span className="font-medium text-right max-w-[60%]">{displayPlan.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Price/state</span>
@@ -350,7 +246,7 @@ function CheckoutContent() {
                       priceFlash ? "text-[var(--color-brand)]" : "text-white"
                     }`}
                   >
-                    ${pricePerState}/mo
+                    ${effective.pricePerState}/mo
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -374,6 +270,19 @@ function CheckoutContent() {
                   </div>
                 )}
 
+                {/* Auto-upgrade crossed-out pricing */}
+                {effective.autoUpgraded && stateCount > 0 && (
+                  <div className="pt-2 border-t border-white/10">
+                    <div className="flex justify-between text-gray-500">
+                      <span>Pro price</span>
+                      <span className="line-through">${proTotal.toLocaleString()}/mo</span>
+                    </div>
+                    <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
+                      Auto-upgraded to Pro — {stateCount} states get Pro features at Standard pricing!
+                    </p>
+                  </div>
+                )}
+
                 <div
                   className={`pt-3 border-t border-white/10 flex justify-between font-bold text-base tabular-nums transition-colors duration-300 ${
                     priceFlash ? "text-[var(--color-brand)]" : "text-white"
@@ -381,37 +290,6 @@ function CheckoutContent() {
                 >
                   <span>Monthly total</span>
                   <span>${monthlyTotal.toLocaleString()}/mo</span>
-                </div>
-
-                {/* Catch-up add-on */}
-                <div className="pt-2 border-t border-white/10">
-                  <label
-                    className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all duration-200 ${
-                      addCatchUp
-                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/10"
-                        : "border-white/10 bg-white/5 hover:border-white/20"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={addCatchUp}
-                      onChange={(e) => setAddCatchUp(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 accent-[var(--color-accent)]"
-                    />
-                    <div>
-                      <p className="font-medium text-xs">3-Month Catch-Up Report</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        +${CATCH_UP_PRICE}/state, one-time
-                      </p>
-                    </div>
-                  </label>
-
-                  {addCatchUp && stateCount > 0 && (
-                    <div className="flex justify-between text-[var(--color-accent)] text-sm mt-2 font-medium">
-                      <span>Catch-Up Report</span>
-                      <span>+${catchUpTotal.toLocaleString()} one-time</span>
-                    </div>
-                  )}
                 </div>
               </div>
 

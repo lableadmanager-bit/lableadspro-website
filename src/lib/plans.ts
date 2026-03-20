@@ -1,4 +1,4 @@
-export type PlanTier = "basic" | "plus" | "pro";
+export type PlanTier = "standard" | "pro";
 
 export interface Plan {
   tier: PlanTier;
@@ -9,48 +9,40 @@ export interface Plan {
   features: string[];
 }
 
-export const CATCH_UP_PRICE_ID = "price_1TAEFQ1UBk0N5M65aDu5P5q1";
-export const CATCH_UP_PRICE = 249;
+// Old price IDs for reference:
+// basic:  price_1TAEF81UBk0N5M65oZke89IN ($69)
+// plus:   price_1TAEFE1UBk0N5M65xfXyp86s ($79)
+// pro:    price_1TAEFE1UBk0N5M65zJjBY0mR ($99)
+// catchUp: price_1TAEFQ1UBk0N5M65aDu5P5q1 ($249)
 
 export const PLANS: Record<PlanTier, Plan> = {
-  basic: {
-    tier: "basic",
-    name: "LabLeads Basic",
-    priceId: "price_1TAEF81UBk0N5M65oZke89IN",
-    pricePerState: 69,
-    description: "NIH grant intelligence for your territory.",
+  standard: {
+    tier: "standard",
+    name: "Lab Leads Standard",
+    priceId: "price_1TCsii1UBk0N5M65WjOYmLpY",
+    pricePerState: 99,
+    description: "NIH grant intelligence + database access for your territory.",
     features: [
-      "All newly awarded NIH grants",
+      "Weekly NIH grant reports",
       "AI equipment need anticipation",
-      "PI name, contact info & institution",
-      "Full funding details & grant amounts",
-      "Weekly email delivery every Monday",
-    ],
-  },
-  plus: {
-    tier: "plus",
-    name: "LabLeads Plus",
-    priceId: "price_1TAEFE1UBk0N5M65xfXyp86s",
-    pricePerState: 79,
-    description: "NIH + 7 additional federal agencies.",
-    features: [
-      "Everything in LabLeads Basic",
-      "NSF, DOD, DOE, USDA, VA, CDC & NASA grants",
-      "Full funding details & grant amounts",
+      "Full NIH grant database access",
+      "PI contact info & institution details",
+      "Keyword search across all abstracts",
       "Weekly email delivery every Monday",
     ],
   },
   pro: {
     tier: "pro",
-    name: "LabLeads Pro",
-    priceId: "price_1TAEFE1UBk0N5M65zJjBY0mR",
-    pricePerState: 99,
-    description: "Grants + new lab detection. Our best package.",
+    name: "Lab Leads Pro",
+    priceId: "price_1TCsix1UBk0N5M65nBv2GFC2",
+    pricePerState: 149,
+    description: "The complete package. 8 agencies + new lab detection + full database.",
     features: [
-      "Everything in LabLeads Plus",
+      "Everything in Standard",
+      "NSF, DOD, DOE, NASA, VA, USDA & CDC grants",
+      "Full database access — all 8 agencies",
       "New lab & faculty hire detection",
-      "First-time grant recipient alerts",
-      "New lab setup signals & announcements",
+      "New PI alerts",
       "Priority Monday AM delivery",
     ],
   },
@@ -60,20 +52,14 @@ export const VALID_PRICE_IDS = new Set(
   Object.values(PLANS).map((p) => p.priceId)
 );
 
-export const ADD_ON_PRICES = {
-  agencies: 10,
-  newLab: 20,
-} as const;
+export const AUTO_UPGRADE_THRESHOLD = 3; // 3+ states = auto Pro at Standard price
 
-export function getAddOnPriceId(agencies: boolean, newLab: boolean): string {
-  if (agencies && newLab) return PLANS.pro.priceId;
-  if (agencies) return PLANS.plus.priceId;
-  return PLANS.basic.priceId;
-}
-
-export function getAddOnPlanName(agencies: boolean, newLab: boolean): string {
-  if (agencies && newLab) return "LabLeads Pro";
-  if (agencies) return "LabLeads Plus";
-  if (newLab) return "LabLeads Basic + New Lab Detection";
-  return "LabLeads Basic";
+export function getEffectivePlan(
+  selectedTier: PlanTier,
+  stateCount: number
+): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean } {
+  if (selectedTier === "standard" && stateCount >= AUTO_UPGRADE_THRESHOLD) {
+    return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true };
+  }
+  return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false };
 }

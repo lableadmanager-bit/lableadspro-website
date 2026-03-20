@@ -149,19 +149,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   }
 
   const metadata = session.metadata || {};
-  const planName = metadata.plan || "Lab Leads Pro";
   const states = metadata.states ? metadata.states.split(",") : [];
-  const addNewLab = metadata.addNewLab === "true";
-  const addAgencies = metadata.addAgencies === "true";
-
-  let planTier: string;
-  if (addNewLab) {
-    planTier = "pro";
-  } else if (addAgencies) {
-    planTier = "plus";
-  } else {
-    planTier = "basic";
-  }
+  const planTier = metadata.plan_tier || "standard";
+  const autoUpgraded = metadata.autoUpgraded === "true";
+  const planName = planTier === "pro"
+    ? (autoUpgraded ? "Lab Leads Pro (Auto-Upgraded)" : "Lab Leads Pro")
+    : "Lab Leads Standard";
 
   // Create Supabase Auth user
   const tempPassword = crypto.randomBytes(24).toString("base64url");
