@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Terms of Service — Lab Leads Pro",
+  title: "Terms of Service - Lab Leads Pro",
   description: "Terms and conditions for using Lab Leads Pro services.",
 };
 
@@ -34,7 +34,7 @@ export default function TermsOfService() {
           <div className="prose-custom space-y-10">
             <Section title="1. Service Description">
               <p>
-                Lab Leads Pro provides AI-powered analysis of publicly available federal research grant data, delivered as weekly email intelligence reports. Our service identifies equipment purchase signals in newly awarded grants from NIH, NSF, DOD, DOE, NASA, VA, USDA, and CDC — helping life-science equipment sales professionals find qualified leads.
+                Lab Leads Pro provides AI-powered analysis of publicly available federal research grant data, delivered as weekly email intelligence reports. Our service identifies equipment purchase signals in newly awarded grants from NIH, NSF, DOD, DOE, NASA, VA, USDA, and CDC - helping life-science equipment sales professionals find qualified leads.
               </p>
             </Section>
 
@@ -42,9 +42,9 @@ export default function TermsOfService() {
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-gray-700)]">
                 <li>Subscriptions are billed <strong>monthly</strong> on a per-state basis</li>
                 <li>You can subscribe to as many or as few U.S. states as you need</li>
-                <li>Add or remove states at any time — changes take effect on your next billing cycle</li>
+                <li>Add or remove states at any time - changes take effect on your next billing cycle</li>
                 <li><strong>No long-term contracts.</strong> Cancel anytime.</li>
-                <li>Cancellations are effective at the end of your current billing period — you&apos;ll continue receiving reports until then</li>
+                <li>Cancellations are effective at the end of your current billing period - you&apos;ll continue receiving reports until then</li>
               </ul>
             </Section>
 
@@ -54,7 +54,7 @@ export default function TermsOfService() {
                 <li>Subscriptions renew automatically each month unless cancelled</li>
                 <li>Prices are listed in U.S. dollars</li>
                 <li>We reserve the right to adjust pricing with 30 days&apos; notice to existing subscribers</li>
-                <li>Refunds are handled on a case-by-case basis — reach out to us and we&apos;ll make it right</li>
+                <li>Refunds are handled on a case-by-case basis - reach out to us and we&apos;ll make it right</li>
               </ul>
             </Section>
 
@@ -66,10 +66,10 @@ export default function TermsOfService() {
                 </p>
               </div>
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-gray-700)]">
-                <li>Grant data is sourced from NIH Reporter, NSF, and USASpending.gov — federal databases that may have their own processing delays (typically 1-2 weeks)</li>
+                <li>Grant data is sourced from NIH Reporter, NSF, and USASpending.gov - federal databases that may have their own processing delays (typically 1-2 weeks)</li>
                 <li>AI-powered equipment classification may occasionally misidentify or miss equipment signals</li>
                 <li>PI contact information is sourced from public records and may not always be current</li>
-                <li>Our reports are intended as <strong>supplementary sales intelligence</strong> — not as the sole basis for business decisions</li>
+                <li>Our reports are intended as <strong>supplementary sales intelligence</strong> - not as the sole basis for business decisions</li>
                 <li>We are not responsible for actions taken based on information in our reports</li>
               </ul>
             </Section>
@@ -93,7 +93,7 @@ export default function TermsOfService() {
                 The Lab Leads Pro platform, reports, AI classification methodology, website content, and branding are our intellectual property. Your subscription grants you a <strong>limited, non-exclusive license</strong> to use report data for your internal business purposes.
               </p>
               <p>
-                The underlying grant data is public information from federal agencies. Our value-add — the analysis, classification, scoring, and presentation — is proprietary.
+                The underlying grant data is public information from federal agencies. Our value-add - the analysis, classification, scoring, and presentation - is proprietary.
               </p>
             </Section>
 
@@ -101,7 +101,7 @@ export default function TermsOfService() {
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-gray-700)]">
                 <li><strong>By you:</strong> Cancel anytime from your account settings. Access continues through the end of your billing period.</li>
                 <li><strong>By us:</strong> We may suspend or terminate accounts that violate these terms, with notice where practical.</li>
-                <li>Upon termination, your personal data is handled per our <Link href="/privacy" className="text-[var(--color-brand)] hover:underline">Privacy Policy</Link> — deleted within 30 days upon request.</li>
+                <li>Upon termination, your personal data is handled per our <Link href="/privacy" className="text-[var(--color-brand)] hover:underline">Privacy Policy</Link> - deleted within 30 days upon request.</li>
               </ul>
             </Section>
 

@@ -105,7 +105,7 @@ const topicGuides = [
     emoji: "🖥️",
     title: "How to Use NIH Reporter",
     description:
-      "Free step-by-step guide to NIH's grant search tool. How to search, filter, and find funded labs — and when you might want something faster.",
+      "Free step-by-step guide to NIH's grant search tool. How to search, filter, and find funded labs - and when you might want something faster.",
     href: "/nih-reporter-guide",
   },
 ];
@@ -131,7 +131,7 @@ export default function GuidesPage() {
           </div>
         </section>
 
-        {/* Topic Guides — first, these link to agency guides for deeper engagement */}
+        {/* Topic Guides - first, these link to agency guides for deeper engagement */}
         <section className="py-16 bg-white">
           <div className="max-w-6xl mx-auto px-6">
             <h2 className="text-2xl font-bold text-[var(--color-dark)] mb-2">
@@ -139,7 +139,7 @@ export default function GuidesPage() {
             </h2>
             <p className="text-[var(--color-gray-500)] mb-10">
               Cross-agency overviews to help you understand the full funding
-              landscape — then dive into individual agencies below.
+              landscape - then dive into individual agencies below.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -172,7 +172,7 @@ export default function GuidesPage() {
               Agency Guides
             </h2>
             <p className="text-[var(--color-gray-500)] mb-10">
-              Deep dives into each federal funding agency — how they work, what
+              Deep dives into each federal funding agency - how they work, what
               they fund, and what it means for equipment sales.
             </p>
 
@@ -212,7 +212,7 @@ export default function GuidesPage() {
             </h2>
             <p className="text-[var(--color-gray-500)] mb-8">
               Our database has 450,000+ federal research grants across all 8
-              agencies — searchable by state, keyword, and agency.
+              agencies - searchable by state, keyword, and agency.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

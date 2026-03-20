@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     // Auto-suppress bounces and complaints
     if (SUPPRESS_EVENTS.includes(eventType) && recipientEmail) {
       addToSuppressionList(recipientEmail, eventType);
-      console.log(`[email-webhook] Suppressed ${recipientEmail} — reason: ${eventType}`);
+      console.log(`[email-webhook] Suppressed ${recipientEmail} - reason: ${eventType}`);
     }
 
     return NextResponse.json({ received: true });

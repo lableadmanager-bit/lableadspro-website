@@ -95,14 +95,14 @@ function buildWelcomeEmail(params: {
           <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e5e7eb;margin-top:24px;">
             <tr><td style="padding-top:20px;">
               <p style="margin:0;color:#6b7280;font-size:14px;line-height:1.6;">
-                📬 <strong>Your first weekly report arrives Monday morning</strong> — fresh grants and PI contacts delivered straight to your inbox.
+                📬 <strong>Your first weekly report arrives Monday morning</strong> - fresh grants and PI contacts delivered straight to your inbox.
               </p>
             </td></tr>
           </table>
         </td></tr>
         <!-- Footer -->
         <tr><td style="background-color:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;">
-          <p style="margin:0;color:#9ca3af;font-size:13px;">Lab Leads Pro — Grant intelligence for lab suppliers</p>
+          <p style="margin:0;color:#9ca3af;font-size:13px;">Lab Leads Pro - Grant intelligence for lab suppliers</p>
         </td></tr>
       </table>
     </td></tr>
@@ -128,7 +128,7 @@ async function sendWelcomeEmail(email: string, params: {
     body: JSON.stringify({
       from: FROM_EMAIL,
       to: [email],
-      subject: "Welcome to Lab Leads Pro — Your Database is Ready 🔬",
+      subject: "Welcome to Lab Leads Pro - Your Database is Ready 🔬",
       html,
     }),
   });
@@ -213,7 +213,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  // Use the action_link directly — it goes through Supabase's /auth/v1/verify endpoint
+  // Use the action_link directly - it goes through Supabase's /auth/v1/verify endpoint
   // which validates the token, creates a session, then redirects to our set-password page
   const resetLink = linkData?.properties?.action_link || `${SITE_URL}/database/login`;
 

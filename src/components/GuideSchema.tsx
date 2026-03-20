@@ -1,6 +1,6 @@
 /**
  * Structured data (JSON-LD) for guide pages.
- * Invisible to users — helps search engines and LLMs parse our content.
+ * Invisible to users - helps search engines and LLMs parse our content.
  */
 
 interface FAQItem {

@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy — Lab Leads Pro",
+  title: "Privacy Policy - Lab Leads Pro",
   description: "How Lab Leads Pro collects, uses, and protects your data.",
 };
 
@@ -43,7 +43,7 @@ export default function PrivacyPolicy() {
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-gray-700)]">
                 <li><strong>Account information:</strong> Name, email address, company name</li>
                 <li><strong>Subscription preferences:</strong> Selected U.S. states for grant coverage</li>
-                <li><strong>Payment information:</strong> Processed securely by Stripe — we never store your credit card details on our servers</li>
+                <li><strong>Payment information:</strong> Processed securely by Stripe - we never store your credit card details on our servers</li>
                 <li><strong>Communications:</strong> Emails you send us at info@lableadspro.com</li>
               </ul>
 
@@ -81,10 +81,10 @@ export default function PrivacyPolicy() {
             <Section title="Third-Party Services">
               <p>We use the following trusted third-party services to operate Lab Leads Pro:</p>
               <ul className="list-disc pl-6 space-y-2 text-[var(--color-gray-700)]">
-                <li><strong>Stripe</strong> — Payment processing. Subject to <a href="https://stripe.com/privacy" className="text-[var(--color-brand)] hover:underline" target="_blank" rel="noopener noreferrer">Stripe&apos;s Privacy Policy</a>.</li>
-                <li><strong>Resend / Amazon SES</strong> — Email delivery for your weekly reports</li>
-                <li><strong>Vercel</strong> — Website hosting and analytics</li>
-                <li><strong>Google Analytics</strong> — Anonymous site usage statistics</li>
+                <li><strong>Stripe</strong> - Payment processing. Subject to <a href="https://stripe.com/privacy" className="text-[var(--color-brand)] hover:underline" target="_blank" rel="noopener noreferrer">Stripe&apos;s Privacy Policy</a>.</li>
+                <li><strong>Resend / Amazon SES</strong> - Email delivery for your weekly reports</li>
+                <li><strong>Vercel</strong> - Website hosting and analytics</li>
+                <li><strong>Google Analytics</strong> - Anonymous site usage statistics</li>
               </ul>
               <p>
                 We do <strong>not</strong> sell, rent, or share your personal information with any third parties for their marketing purposes.
@@ -122,7 +122,7 @@ export default function PrivacyPolicy() {
 
             <Section title="CAN-SPAM Compliance">
               <p>
-                All marketing emails include a clear unsubscribe mechanism. We honor opt-out requests within 10 business days. Our weekly grant reports are a core part of the subscription service — to stop receiving them, cancel your subscription.
+                All marketing emails include a clear unsubscribe mechanism. We honor opt-out requests within 10 business days. Our weekly grant reports are a core part of the subscription service - to stop receiving them, cancel your subscription.
               </p>
             </Section>
 

@@ -22,7 +22,7 @@ const STATE_NAMES: Record<string, string> = {
   WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
 };
 
-// Simple rate limiting — in-memory, per-email, 3 requests per hour
+// Simple rate limiting - in-memory, per-email, 3 requests per hour
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 function isRateLimited(email: string): boolean {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     // Notify George via Telegram
     await notifyTelegram(email.toLowerCase(), validStates);
 
-    // Send sample reports — one email per state
+    // Send sample reports - one email per state
     const results = await Promise.all(
       validStates.map((state: string) => sendSampleEmail(email, state.toUpperCase()))
     );

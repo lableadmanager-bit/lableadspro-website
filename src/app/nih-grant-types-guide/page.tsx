@@ -206,7 +206,7 @@ export default function GrantTypesGuide() {
         url="https://lableadspro.com/nih-grant-types-guide"
         faqs={[
           { question: "What is an R01 grant?", answer: "An R01 is the NIH's standard research project grant, typically funding $250K-$500K per year for 3-5 years. R01s are the most common NIH grant type and frequently involve equipment purchases for new or expanding research projects." },
-          { question: "What NIH grants signal equipment purchases?", answer: "S10 Shared Instrumentation Grants are the strongest signal — they exist solely to buy equipment ($50K-$600K+). R01 and R35 grants often include equipment budgets. New R01 awards to early-career PIs are especially strong signals since they're setting up new labs." },
+          { question: "What NIH grants signal equipment purchases?", answer: "S10 Shared Instrumentation Grants are the strongest signal - they exist solely to buy equipment ($50K-$600K+). R01 and R35 grants often include equipment budgets. New R01 awards to early-career PIs are especially strong signals since they're setting up new labs." },
           { question: "What is the difference between R01 and R21 grants?", answer: "R01 grants are full research projects ($250K-$500K/year, 3-5 years) while R21 grants are exploratory/developmental awards ($275K total over 2 years). R01s are much more likely to involve equipment purchases due to their larger budgets." },
           { question: "What is an SBIR grant?", answer: "SBIR (Small Business Innovation Research) grants fund small businesses developing commercial products. Phase I awards are ~$275K for feasibility, Phase II are ~$1M for development. SBIR recipients often need specialized lab equipment for R&D." },
         ]}

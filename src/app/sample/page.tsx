@@ -86,7 +86,7 @@ export default function SampleReport() {
                 We just sent {selectedStates.length === 1 ? "a sample report" : `${selectedStates.length} sample reports`} to <strong className="text-[var(--color-dark)]">{email}</strong>
               </p>
               <p className="text-[var(--color-gray-500)]">
-                This is real NIH grant data from September 2025. Imagine getting this for your territory every Monday — with fresh data.
+                This is real NIH grant data from September 2025. Imagine getting this for your territory every Monday - with fresh data.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row gap-3 justify-center">
                 <a

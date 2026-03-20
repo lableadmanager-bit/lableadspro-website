@@ -62,7 +62,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    // Agency & topic guides — SEO landing pages
+    // Agency & topic guides - SEO landing pages
     {
       url: `${baseUrl}/nih-institutes-guide`,
       lastModified: new Date(),

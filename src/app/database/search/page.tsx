@@ -527,7 +527,7 @@ export default function DatabasePage() {
                       />
                       {ag.label}
                     </label>
-                    {/* Nested NIH institute sub-list — collapsible */}
+                    {/* Nested NIH institute sub-list - collapsible */}
                     {ag.value === "nih" && filters.agencies.includes("nih") && (
                       <div className="ml-4 mt-0.5 mb-1">
                         <button
@@ -968,7 +968,7 @@ export default function DatabasePage() {
                               {[grant.institution, [grant.city, grant.state].filter(Boolean).join(", ")].filter(Boolean).join(", ")}
                             </p>
 
-                            {/* PI Email — always visible on collapsed card */}
+                            {/* PI Email - always visible on collapsed card */}
                             {(() => {
                               const email = grant.pis?.email || grant.pi_email;
                               if (email) {

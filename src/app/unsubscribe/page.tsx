@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Unsubscribed — Lab Leads Pro",
+  title: "Unsubscribed - Lab Leads Pro",
 };
 
 export default function UnsubscribePage() {

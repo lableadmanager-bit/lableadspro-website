@@ -122,7 +122,7 @@ function CheckoutContent() {
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* Plan selector — FIRST */}
+            {/* Plan selector - FIRST */}
             <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)]">
               <h2 className="text-lg font-semibold mb-4">Select Plan</h2>
               <div className="grid grid-cols-2 gap-3">
@@ -167,7 +167,7 @@ function CheckoutContent() {
               </ul>
             </div>
 
-            {/* Promo message — changes based on selected plan */}
+            {/* Promo message - changes based on selected plan */}
             <div className="bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 rounded-2xl p-5">
               {selectedTier === "standard" ? (
                 <>
@@ -190,7 +190,7 @@ function CheckoutContent() {
               )}
             </div>
 
-            {/* Auto-upgrade banner — shows when triggered */}
+            {/* Auto-upgrade banner - shows when triggered */}
             {effective.autoUpgraded && (
               <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-5">
                 <p className="text-[var(--color-accent)] font-semibold text-sm">

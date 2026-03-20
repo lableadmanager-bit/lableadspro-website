@@ -11,9 +11,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Lab Leads Pro — Know Who's Buying Before They Start Shopping",
+  title: "Lab Leads Pro - Know Who's Buying Before They Start Shopping",
   description:
-    "AI-powered lead intelligence for life-science equipment sales. Weekly alerts on newly funded labs, PI contact info, and equipment purchase signals — delivered to your inbox.",
+    "AI-powered lead intelligence for life-science equipment sales. Weekly alerts on newly funded labs, PI contact info, and equipment purchase signals - delivered to your inbox.",
   keywords: [
     "life science leads",
     "lab equipment sales",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "Lab Leads Pro — Life-Science Lead Intelligence",
+    title: "Lab Leads Pro - Life-Science Lead Intelligence",
     description:
       "Weekly alerts on newly funded labs with equipment purchase signals. Built for life-science sales reps.",
     url: "https://lableadspro.com",
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
         url: "https://lableadspro.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Lab Leads Pro — Know Who's Buying Before They Start Shopping",
+        alt: "Lab Leads Pro - Know Who's Buying Before They Start Shopping",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lab Leads Pro — Life-Science Lead Intelligence",
+    title: "Lab Leads Pro - Life-Science Lead Intelligence",
     description:
       "Weekly alerts on newly funded labs with equipment purchase signals. Built for life-science sales reps.",
     images: ["https://lableadspro.com/og-image.png"],

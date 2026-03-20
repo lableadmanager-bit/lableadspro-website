@@ -73,10 +73,10 @@ export async function POST(req: NextRequest) {
 
     // --- State filtering: subscription enforced server-side ---
     if (subscribedStates) {
-      // User has a subscription — restrict to their states
+      // User has a subscription - restrict to their states
       const allStatesCount = 51; // 50 states + DC
       if (filters.states?.length) {
-        // User selected specific states in UI — intersect with their subscription
+        // User selected specific states in UI - intersect with their subscription
         const allowedStates = filters.states.filter((s: string) => subscribedStates!.includes(s));
         if (allowedStates.length === 0) {
           // They tried to filter to states they don't have access to
@@ -84,12 +84,12 @@ export async function POST(req: NextRequest) {
         }
         q = q.in("state", allowedStates);
       } else if (subscribedStates.length < allStatesCount) {
-        // Partial subscription — filter to their states
+        // Partial subscription - filter to their states
         q = q.in("state", subscribedStates);
       }
       // If subscribed to all states, skip the filter entirely (same as no filter)
     } else if (filters.states?.length) {
-      // No subscription found — still apply their filter (for admin/testing)
+      // No subscription found - still apply their filter (for admin/testing)
       q = q.in("state", filters.states);
     }
     if (filters.agencies?.length) {
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
       const agencyFilters = filters.nihInstitutes.filter((n: string) => n !== "VA Medical Centers");
       
       if (vaFilter && agencyFilters.length > 0) {
-        // Both VA and specific institutes selected — use OR logic
+        // Both VA and specific institutes selected - use OR logic
         q = q.or(`agency.in.(${agencyFilters.map((a: string) => `"${a}"`).join(",")}),institution.ilike.%veteran%,institution.ilike.%VA %medical%`);
       } else if (vaFilter) {
         // Only VA selected
