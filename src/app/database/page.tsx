@@ -164,6 +164,7 @@ export default function DatabasePage() {
   const stateDropdownRef = useRef<HTMLDivElement>(null);
   const [agencyDropdownOpen, setAgencyDropdownOpen] = useState(false);
   const [agencySearch, setAgencySearch] = useState("");
+  const [nihExpanded, setNihExpanded] = useState(false);
   const agencyDropdownRef = useRef<HTMLDivElement>(null);
   const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
   const [activitySearch, setActivitySearch] = useState("");
@@ -524,46 +525,61 @@ export default function DatabasePage() {
                       />
                       {ag.label}
                     </label>
-                    {/* Nested NIH institute sub-list */}
+                    {/* Nested NIH institute sub-list — collapsible */}
                     {ag.value === "nih" && filters.agencies.includes("nih") && (
-                      <div className="ml-4 mt-1 mb-1 border-l-2 border-[var(--color-gray-200)] pl-2">
-                        <div className="flex gap-2 mb-1 px-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: NIH_INSTITUTES.map((i) => i.fullName) }))}
-                            className="text-xs text-[var(--color-brand)] hover:underline"
-                          >
-                            Select all
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: [] }))}
-                            className="text-xs text-[var(--color-brand)] hover:underline"
-                          >
-                            Uncheck all
-                          </button>
-                        </div>
-                        <div className="max-h-40 overflow-y-auto space-y-0.5">
-                          {NIH_INSTITUTES.map((inst) => (
-                            <label
-                              key={inst.abbr}
-                              className="flex items-center gap-1.5 px-1.5 py-0.5 text-xs rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
-                              title={inst.fullName}
-                            >
-                              <input
-                                type="checkbox"
-                                checked={filters.nihInstitutes.includes(inst.fullName)}
-                                onChange={() => toggleNihInstitute(inst.fullName)}
-                                className="accent-[var(--color-brand)]"
-                              />
-                              {inst.abbr}
-                            </label>
-                          ))}
-                        </div>
-                        {filters.nihInstitutes.length === 0 && (
-                          <p className="text-xs text-[var(--color-gray-400)] italic px-1.5 mt-1">
-                            None selected = all NIH institutes
-                          </p>
+                      <div className="ml-4 mt-0.5 mb-1">
+                        <button
+                          type="button"
+                          onClick={() => setNihExpanded(!nihExpanded)}
+                          className="flex items-center gap-1 text-xs text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)] px-1.5 py-0.5"
+                        >
+                          <span className="text-[10px]">{nihExpanded ? "▼" : "▶"}</span>
+                          Filter by institute
+                          {filters.nihInstitutes.length > 0 && (
+                            <span className="text-[var(--color-brand)] font-medium">({filters.nihInstitutes.length})</span>
+                          )}
+                        </button>
+                        {nihExpanded && (
+                          <div className="border-l-2 border-[var(--color-gray-200)] pl-2 mt-1">
+                            <div className="flex gap-2 mb-1 px-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: NIH_INSTITUTES.map((i) => i.fullName) }))}
+                                className="text-xs text-[var(--color-brand)] hover:underline"
+                              >
+                                Select all
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setFilters((prev) => ({ ...prev, nihInstitutes: [] }))}
+                                className="text-xs text-[var(--color-brand)] hover:underline"
+                              >
+                                Uncheck all
+                              </button>
+                            </div>
+                            <div className="max-h-40 overflow-y-auto space-y-0.5">
+                              {NIH_INSTITUTES.map((inst) => (
+                                <label
+                                  key={inst.abbr}
+                                  className="flex items-center gap-1.5 px-1.5 py-0.5 text-xs rounded hover:bg-[var(--color-gray-50)] cursor-pointer"
+                                  title={inst.fullName}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={filters.nihInstitutes.includes(inst.fullName)}
+                                    onChange={() => toggleNihInstitute(inst.fullName)}
+                                    className="accent-[var(--color-brand)]"
+                                  />
+                                  {inst.abbr}
+                                </label>
+                              ))}
+                            </div>
+                            {filters.nihInstitutes.length === 0 && (
+                              <p className="text-xs text-[var(--color-gray-400)] italic px-1.5 mt-1">
+                                None selected = all NIH institutes
+                              </p>
+                            )}
+                          </div>
                         )}
                       </div>
                     )}
