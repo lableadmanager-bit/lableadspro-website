@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title:
     "How to Use NIH Reporter to Find Research Grants | Lab Leads Pro",
   description:
-    "A complete guide to using NIH Reporter for finding funded research grants. Learn how to search, filter, and use NIH's free database — and when you might want something faster.",
+    "A complete guide to using NIH Reporter for finding funded research grants. Learn how to search, filter, and use NIH's free database - and when you might want something faster.",
   keywords:
     "NIH Reporter, how to use NIH Reporter, NIH grants search, find NIH grants, NIH Reporter tutorial, research grants database, NIH funded projects, NIH grant search tool",
   openGraph: {
@@ -70,7 +70,7 @@ export default function NIHReporterGuide() {
             </h1>
             <p className="text-lg text-[var(--color-gray-500)] max-w-2xl">
               NIH Reporter is a free tool that lets anyone search NIH-funded
-              research grants. Here&apos;s how to use it effectively — whether
+              research grants. Here&apos;s how to use it effectively - whether
               you&apos;re a sales rep prospecting new leads or just exploring
               the research landscape.
             </p>
@@ -96,7 +96,7 @@ export default function NIHReporterGuide() {
               (Research Portfolio Online Reporting Tools) is a free, publicly
               available database run by the National Institutes of Health. It
               gives you detailed information about every NIH-funded research
-              project — over 300,000 active grants at any given time.
+              project - over 300,000 active grants at any given time.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
               It&apos;s genuinely one of the best free resources available for
@@ -113,30 +113,30 @@ export default function NIHReporterGuide() {
             </p>
             <ul className="text-[var(--color-gray-600)] space-y-2">
               <li>
-                <strong>The Principal Investigator (PI)</strong> — the lead
+                <strong>The Principal Investigator (PI)</strong> - the lead
                 researcher running the project
               </li>
               <li>
-                <strong>The institution</strong> — which university, hospital,
+                <strong>The institution</strong> - which university, hospital,
                 or research institute
               </li>
               <li>
-                <strong>Award amount</strong> — how much funding they received
+                <strong>Award amount</strong> - how much funding they received
               </li>
               <li>
-                <strong>Project abstract</strong> — a detailed description of
+                <strong>Project abstract</strong> - a detailed description of
                 the research
               </li>
               <li>
-                <strong>Activity code</strong> — the grant type (R01, R21, S10,
+                <strong>Activity code</strong> - the grant type (R01, R21, S10,
                 etc.)
               </li>
               <li>
-                <strong>NIH institute</strong> — which of the 27 NIH institutes
+                <strong>NIH institute</strong> - which of the 27 NIH institutes
                 funded it
               </li>
               <li>
-                <strong>Project dates</strong> — when funding started and when
+                <strong>Project dates</strong> - when funding started and when
                 it ends
               </li>
             </ul>
@@ -161,7 +161,7 @@ export default function NIHReporterGuide() {
               </a>
               . You&apos;ll see a simple search bar on the homepage. You can
               type a keyword here to do a quick search, but the real power is in{" "}
-              <strong>&quot;Advanced Search&quot;</strong> — click that to get
+              <strong>&quot;Advanced Search&quot;</strong> - click that to get
               access to all the filters.
             </p>
 
@@ -182,7 +182,7 @@ export default function NIHReporterGuide() {
                   Search project abstracts for equipment-related terms. Try
                   &quot;mass spectrometry,&quot; &quot;confocal microscopy,&quot;
                   &quot;flow cytometry,&quot; or whatever you sell. This searches
-                  the full abstract, not just the title — so you&apos;ll catch
+                  the full abstract, not just the title - so you&apos;ll catch
                   grants that mention your equipment type even if the title
                   sounds unrelated.
                 </p>
@@ -193,7 +193,7 @@ export default function NIHReporterGuide() {
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
                   Filter by state to see grants in your territory. You can also
-                  search by specific institution — useful if you&apos;re trying
+                  search by specific institution - useful if you&apos;re trying
                   to map out all the funded research at a particular university
                   or medical center.
                 </p>
@@ -205,7 +205,7 @@ export default function NIHReporterGuide() {
                 <p className="text-sm text-[var(--color-gray-600)]">
                   This is the grant type, and it&apos;s worth learning the key
                   ones. <strong>S10</strong> grants are shared instrumentation
-                  grants — the PI literally has money earmarked to buy
+                  grants - the PI literally has money earmarked to buy
                   equipment. <strong>R01</strong> is the standard research grant
                   (most common, often includes equipment budgets).{" "}
                   <strong>R35</strong> are large MIRA awards. See our{" "}
@@ -225,7 +225,7 @@ export default function NIHReporterGuide() {
                 <p className="text-sm text-[var(--color-gray-600)]">
                   This is a great filter. Check &quot;Newly Awarded&quot; to see
                   only first-time grants (not renewals). These PIs just got
-                  funded — they&apos;re setting up or expanding their labs. If
+                  funded - they&apos;re setting up or expanding their labs. If
                   someone just got their first R01, they probably need
                   everything.
                 </p>
@@ -285,7 +285,7 @@ export default function NIHReporterGuide() {
                   When a PI gets their first R01 (called a &quot;Type 1&quot; or
                   new award), they&apos;re often a new assistant professor
                   setting up a lab from scratch. They need instruments,
-                  consumables, service contracts — everything. These are some of
+                  consumables, service contracts - everything. These are some of
                   the best leads you&apos;ll find anywhere.
                 </p>
               </div>
@@ -296,7 +296,7 @@ export default function NIHReporterGuide() {
                 <p className="text-sm text-[var(--color-gray-600)]">
                   When you find a grant that&apos;s a perfect match, click into
                   the project details. NIH Reporter shows &quot;Similar
-                  Projects&quot; — other funded research doing related work. It&apos;s
+                  Projects&quot; - other funded research doing related work. It&apos;s
                   a quick way to find more leads in the same research area without
                   running a new search.
                 </p>
@@ -322,7 +322,7 @@ export default function NIHReporterGuide() {
               NIH grant abstracts are written by scientists for review
               committees. They&apos;re dense, full of jargon, and can be
               intimidating if you don&apos;t have a research background. But you
-              don&apos;t need to understand the science — you just need to spot
+              don&apos;t need to understand the science - you just need to spot
               the signals.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
@@ -330,24 +330,24 @@ export default function NIHReporterGuide() {
             </p>
             <ul className="text-[var(--color-gray-600)] space-y-2">
               <li>
-                <strong>Technique names</strong> you recognize — &quot;confocal
+                <strong>Technique names</strong> you recognize - &quot;confocal
                 imaging,&quot; &quot;mass spectrometry,&quot; &quot;next-gen
                 sequencing,&quot; &quot;flow cytometry&quot;
               </li>
               <li>
-                <strong>Instrument mentions</strong> — brand names or specific
+                <strong>Instrument mentions</strong> - brand names or specific
                 instrument types
               </li>
               <li>
                 <strong>&quot;We will acquire&quot; or &quot;we will
-                purchase&quot;</strong> — direct equipment buying language
+                purchase&quot;</strong> - direct equipment buying language
               </li>
               <li>
                 <strong>&quot;Establish&quot; or &quot;build&quot;</strong> a new
-                facility, core, or lab — signals from-scratch setup
+                facility, core, or lab - signals from-scratch setup
               </li>
               <li>
-                <strong>Specific Aims</strong> — many abstracts list numbered
+                <strong>Specific Aims</strong> - many abstracts list numbered
                 aims. If an aim mentions your instrument type, that&apos;s a
                 strong signal.
               </li>
@@ -362,7 +362,7 @@ export default function NIHReporterGuide() {
               Exporting Your Results
             </h2>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              NIH Reporter lets you export search results to CSV — look for the
+              NIH Reporter lets you export search results to CSV - look for the
               download button above your results. The export includes PI names,
               institutions, award amounts, and project details. You can open it
               in Excel or Google Sheets and start building a lead list.
@@ -370,7 +370,7 @@ export default function NIHReporterGuide() {
             <p className="text-[var(--color-gray-600)] leading-relaxed">
               One thing to know: the export doesn&apos;t include PI email
               addresses or phone numbers. You&apos;ll need to look those up
-              separately — usually through the university directory, their lab
+              separately - usually through the university directory, their lab
               website, or Google Scholar.
             </p>
 
@@ -384,15 +384,15 @@ export default function NIHReporterGuide() {
               there&apos;s a reason most reps don&apos;t do it consistently.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              The challenge isn&apos;t finding the grants — it&apos;s keeping up.
+              The challenge isn&apos;t finding the grants - it&apos;s keeping up.
               NIH awards new grants every week, and the only way to catch them
               is to re-run your searches regularly. There&apos;s no alert system
               or notification when new awards drop in your territory.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
               Then there&apos;s the contact info problem. You find a great lead
-              — newly funded PI at a university in your state, abstract
-              mentions your exact instrument type — but the grant record
+              - newly funded PI at a university in your state, abstract
+              mentions your exact instrument type - but the grant record
               doesn&apos;t have their email. So you&apos;re Googling their name,
               hunting through university directories, checking recent papers for
               a corresponding author address. Multiply that by 20 leads and
@@ -401,8 +401,8 @@ export default function NIHReporterGuide() {
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
               And NIH Reporter only covers NIH. There are seven other federal
-              agencies that fund research labs — NSF, DOD, DOE, NASA, VA, USDA,
-              CDC — and each one has its own separate system (or no public
+              agencies that fund research labs - NSF, DOD, DOE, NASA, VA, USDA,
+              CDC - and each one has its own separate system (or no public
               search tool at all).
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
@@ -410,7 +410,7 @@ export default function NIHReporterGuide() {
               best free source of research funding data available. But if you
               find yourself wishing someone would just pull all the grants
               together, add the contact info, and send you the new ones every
-              week —{" "}
+              week -{" "}
               <Link
                 href="/sample"
                 className="text-[var(--color-brand)] hover:underline font-medium"
@@ -422,7 +422,7 @@ export default function NIHReporterGuide() {
           </div>
         </article>
 
-        {/* CTA — soft, not salesy */}
+        {/* CTA - soft, not salesy */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-3xl mx-auto px-6 text-center">
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
