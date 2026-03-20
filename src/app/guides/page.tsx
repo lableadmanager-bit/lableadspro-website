@@ -138,8 +138,8 @@ export default function GuidesPage() {
               Start Here
             </h2>
             <p className="text-[var(--color-gray-500)] mb-10">
-              Cross-agency overviews to help you understand the full funding
-              landscape - then dive into individual agencies below.
+              Use our cross-agency overviews to help you understand the full funding
+              landscape, then take deep dives into each individual agency below.
             </p>
 
             <div className="grid md:grid-cols-2 gap-6">
