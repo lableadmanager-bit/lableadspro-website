@@ -95,6 +95,7 @@ const jumpLinks = [
   { id: "agency-filter", label: "Agency Filter" },
   { id: "grant-type-filter", label: "Grant Type Filter" },
   { id: "grant-card", label: "Reading a Grant Card" },
+  { id: "pi-contact", label: "Finding PI Contact Info" },
   { id: "pro-tips", label: "Pro Tips" },
 ];
 
@@ -572,7 +573,97 @@ export default function HowToUseGuide() {
           </div>
         </section>
 
-        {/* Section 7: Pro Tips */}
+        {/* Section 7: Finding PI Contact Information */}
+        <section id="pi-contact" className="scroll-mt-24">
+          <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
+            Finding PI Contact Information
+          </h2>
+          <p className="text-sm text-[var(--color-gray-500)] mb-6">
+            How to get in touch with the people who control the budget.
+          </p>
+          <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6 space-y-4">
+            <p className="text-sm text-[var(--color-gray-700)]">
+              Every grant card has a{" "}
+              <span className="font-semibold text-[var(--color-gray-900)]">
+                &quot;View source&quot;
+              </span>{" "}
+              link that takes you to the original grant record on the funding
+              agency&apos;s website (NIH Reporter, NSF Award Search, USASpending,
+              etc.). This is your fallback for any information not shown directly
+              in the database.
+            </p>
+
+            <Screenshot
+              src="/guide-screenshots/nih-reporter-source.png"
+              alt="Clicking View Source takes you to the original grant record on NIH Reporter"
+              caption="Clicking View Source takes you to the original grant record on NIH Reporter."
+            />
+
+            <h3 className="text-lg font-bold text-[var(--color-gray-900)] mt-6">
+              Email Availability by Agency
+            </h3>
+            <p className="text-sm text-[var(--color-gray-700)]">
+              Not all agencies publish PI emails the same way. Here is what you
+              can expect from each source.
+            </p>
+
+            <ul className="space-y-3 text-sm text-[var(--color-gray-700)]">
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  NIH grants:
+                </span>{" "}
+                We have verified PI emails for about 80% of PIs. For the rest,
+                you can click &quot;View source&quot; to go to NIH Reporter and
+                click the &quot;View Email&quot; button there. Fair warning: NIH
+                Reporter puts a CAPTCHA in front of every single email reveal.
+                Our database saves you that hassle.
+              </li>
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  NSF grants:
+                </span>{" "}
+                We pull PI emails directly from the NSF API. Good coverage.
+              </li>
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  VA grants:
+                </span>{" "}
+                PI emails available through VA and often through their
+                university appointment.
+              </li>
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  DOD, DOE, NASA, USDA, CDC grants:
+                </span>{" "}
+                These come from USASpending data, which has shorter descriptions
+                and less PI contact info. We provide the institution and
+                sometimes the department, but email coverage is thinner. Use the
+                PI name + institution to find them through Google Scholar, their
+                university directory, or PubMed.
+              </li>
+            </ul>
+
+            <Screenshot
+              src="/guide-screenshots/nih-reporter-email-revealed.png"
+              alt="NIH Reporter hides emails behind a CAPTCHA"
+              caption="NIH Reporter hides emails behind a CAPTCHA. Our database saves you the hassle."
+            />
+
+            <div className="bg-[var(--color-gray-50)] rounded-lg px-4 py-3">
+              <p className="text-xs text-[var(--color-gray-500)]">
+                <span className="font-semibold text-[var(--color-gray-700)]">
+                  Pro tip:
+                </span>{" "}
+                The grants where we already have the PI email are the fastest
+                path to a conversation. Start there. For the rest, the PI name
+                and institution get you 90% of the way. A quick search of their
+                university directory or Google Scholar will get you the email.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 8: Pro Tips */}
         <section id="pro-tips" className="scroll-mt-24">
           <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
             Pro Tips
