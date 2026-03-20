@@ -96,6 +96,7 @@ interface AgencySectionProps {
   programs: KeyProgram[];
   dataNote: string;
   stars: number;
+  guideLink?: string;
 }
 
 function AgencySection({
@@ -109,6 +110,7 @@ function AgencySection({
   programs,
   dataNote,
   stars,
+  guideLink,
 }: AgencySectionProps) {
   return (
     <section id={id} className="scroll-mt-24">
@@ -181,6 +183,17 @@ function AgencySection({
               {dataNote}
             </p>
           </div>
+
+          {/* Deep-dive guide link */}
+          {guideLink && (
+            <Link
+              href={guideLink}
+              className="inline-flex items-center gap-1 text-sm font-semibold text-[var(--color-brand)] hover:underline"
+            >
+              Read the full {abbr} deep-dive guide
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          )}
         </div>
       </div>
     </section>
@@ -223,6 +236,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Full grant details, PI contact info, equipment need classification, weekly updates.",
     stars: 5,
+    guideLink: "/database/guides/nih-institutes",
   },
   {
     id: "nsf",
@@ -243,6 +257,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Full grant details with abstracts (NSF API provides complete data), PI info, equipment classification.",
     stars: 4,
+    guideLink: "/database/guides/nsf-grants",
   },
   {
     id: "dod",
@@ -261,6 +276,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending (shorter descriptions than NIH), PI/institution info, state filtering.",
     stars: 3,
+    guideLink: "/database/guides/dod-grants",
   },
   {
     id: "doe",
@@ -279,6 +295,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution/PI info, state filtering.",
     stars: 3,
+    guideLink: "/database/guides/doe-grants",
   },
   {
     id: "nasa",
@@ -297,6 +314,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution/PI info, state filtering.",
     stars: 2,
+    guideLink: "/database/guides/nasa-grants",
   },
   {
     id: "va",
@@ -315,6 +333,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 3,
+    guideLink: "/database/guides/va-grants",
   },
   {
     id: "usda",
@@ -333,6 +352,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 3,
+    guideLink: "/database/guides/usda-grants",
   },
   {
     id: "cdc",
@@ -351,6 +371,7 @@ const agencies: AgencySectionProps[] = [
     dataNote:
       "Award data via USASpending, institution info, state filtering.",
     stars: 2,
+    guideLink: "/database/guides/cdc-grants",
   },
 ];
 
