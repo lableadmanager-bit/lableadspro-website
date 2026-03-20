@@ -143,7 +143,7 @@ export default function DatabaseHubPage() {
       </section>
 
       {/* How to Use - Featured */}
-      <section className="px-8 -mt-4 mb-4">
+      <section className="px-8 mt-2 mb-4">
         <div className="max-w-3xl mx-auto">
           <Link
             href="/database/guides/how-to-use"
