@@ -7,13 +7,13 @@ import AuthActions from "./AuthActions";
 export const metadata: Metadata = {
   title: "Federal Research Grants Database | Lab Leads Pro",
   description:
-    "Explore 350,000+ actively funded federal research grants across 8 agencies. Guides, grant types, and search tools built for life-science equipment sales reps.",
+    "Explore 450,527 actively funded federal research grants across 8 agencies. Guides, grant types, and search tools built for life-science equipment sales reps.",
   keywords:
     "federal grants database, NIH grants, NSF grants, DOD research grants, lab equipment sales, research funding database, grant search, life science sales",
   openGraph: {
     title: "Federal Research Grants Database | Lab Leads Pro",
     description:
-      "350,000+ grants across 8 agencies. The research funding database built for equipment sales.",
+      "450,527 grants across 8 agencies. The research funding database built for equipment sales.",
     url: "https://lableadspro.com/database",
     siteName: "Lab Leads Pro",
     type: "website",
@@ -136,7 +136,7 @@ export default function DatabaseHubPage() {
             Explore the Lab Leads Pro Database
           </h1>
           <p className="text-lg md:text-xl text-[var(--color-gray-600)] max-w-2xl mx-auto">
-            350,000+ actively funded research grants across 8 federal agencies.
+            450,527 actively funded research grants across 8 federal agencies.
             Guides, insights, and tools built for life-science equipment sales reps.
           </p>
         </div>
