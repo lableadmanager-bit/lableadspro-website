@@ -34,7 +34,7 @@ export default function Hero() {
         {/* Badge */}
         <div className="animate-fade-in-up inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[var(--color-gray-300)] text-sm text-[var(--color-gray-700)] mb-8">
           <span className="w-2 h-2 rounded-full bg-[var(--color-accent)] animate-blink" />
-          Currently monitoring $602.8 billion in active research funding from
+          Enterprise-level intelligence, built for the individual rep
         </div>
 
         {/* Scrolling agency logo bar */}
