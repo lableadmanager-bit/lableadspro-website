@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "NIH Institutes & Centers Guide for Equipment Sales | Lab Leads Pro",
@@ -337,6 +338,14 @@ const jumpLinks = [
 export default function NIHInstitutesGuide() {
   return (
     <>
+      <GuideSchema
+        title="NIH Institutes Guide for Equipment Sales"
+        description="27 NIH institutes and centers. Which ones buy equipment and where the money flows."
+        url="https://lableadspro.com/nih-institutes-guide"
+        faqs={[
+          { question: "How many institutes does the NIH have?", answer: "NIH has 27 institutes and centers, each focused on different areas of biomedical research. The largest funders of lab equipment include NIGMS, NCI, NIAID, and NHLBI." },
+        ]}
+      />
       <Header />
 
       {/* ── Hero ────────────────────────────────────────────── */}

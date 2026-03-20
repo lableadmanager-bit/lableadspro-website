@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title:
@@ -382,6 +383,17 @@ export default function AgenciesGuide() {
 
   return (
     <>
+      <GuideSchema
+        title="Federal Research Agencies Guide for Equipment Sales"
+        description="Beyond NIH: 8 federal agencies that fund lab equipment purchases. Learn what each agency funds, their budgets, and why they matter for life-science equipment sales."
+        url="https://lableadspro.com/funding-agencies-guide"
+        faqs={[
+          { question: "What federal agencies fund research lab equipment?", answer: "Eight major agencies fund lab equipment: NIH (largest, ~$48B/year), NSF (~$11B), DOD (~$18B for research), DOE (~$8B), NASA (~$8B), VA (~$1.9B), USDA (~$3.8B), and CDC (~$7.5B). NIH alone funds over 70% of academic biomedical research equipment purchases." },
+          { question: "Which agency spends the most on lab equipment?", answer: "NIH is by far the largest funder of lab equipment in the life sciences, with over $48 billion in annual research funding. Their S10 grant program is specifically designed for shared instrumentation purchases." },
+          { question: "How can sales reps find grants from these agencies?", answer: "Lab Leads Pro aggregates grants from all 8 federal agencies into a searchable database with over 450,000 grants, PI contact information, and keyword search. NIH Reporter is also a free option for NIH-only grants." },
+          { question: "What is an S10 grant?", answer: "S10 grants are NIH Shared Instrumentation Grants specifically for purchasing major equipment ($50K-$600K+). They are the strongest equipment purchase signal in federal funding." },
+        ]}
+      />
       <Header />
 
       {/* ── Hero ────────────────────────────────────────────── */}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "NSF Grants Guide for Lab Equipment Sales Reps | Lab Leads Pro",
@@ -370,6 +371,14 @@ const jumpLinks = [
 export default function NSFGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="NSF Grants Guide for Equipment Sales"
+        description="How NSF funds research differently from NIH and what it means for your pipeline."
+        url="https://lableadspro.com/nsf-grants-guide"
+        faqs={[
+          { question: "How does NSF funding differ from NIH?", answer: "NSF funds fundamental research across all sciences and engineering, while NIH focuses on biomedical and health research. NSF MRI grants specifically fund major research instrumentation purchases." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

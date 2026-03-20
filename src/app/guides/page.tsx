@@ -101,6 +101,13 @@ const topicGuides = [
       "All 8 agencies side by side. Budgets, priorities, and a quick comparison of where the equipment money flows.",
     href: "/funding-agencies-guide",
   },
+  {
+    emoji: "🖥️",
+    title: "How to Use NIH Reporter",
+    description:
+      "Free step-by-step guide to NIH's grant search tool. How to search, filter, and find funded labs — and when you might want something faster.",
+    href: "/nih-reporter-guide",
+  },
 ];
 
 export default function GuidesPage() {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "CDC Research Grants Guide for Lab Equipment Sales Reps | Lab Leads Pro",
@@ -360,6 +361,14 @@ const jumpLinks = [
 export default function CDCGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="CDC Research Grants Guide for Equipment Sales"
+        description="Public health research grants and CDC lab equipment purchasing patterns."
+        url="https://lableadspro.com/cdc-grants-guide"
+        faqs={[
+          { question: "Does the CDC fund lab equipment purchases?", answer: "CDC funds laboratory capacity through cooperative agreements with state and local health departments. Their Epidemiology and Laboratory Capacity program supports diagnostic equipment for infectious disease testing and surveillance." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

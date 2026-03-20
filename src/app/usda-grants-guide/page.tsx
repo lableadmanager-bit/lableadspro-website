@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title:
@@ -361,6 +362,14 @@ const jumpLinks = [
 export default function USDAGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="USDA Research Grants Guide for Equipment Sales"
+        description="Agricultural research funding, NIFA grants, and food science equipment opportunities."
+        url="https://lableadspro.com/usda-grants-guide"
+        faqs={[
+          { question: "What kind of lab equipment does USDA research use?", answer: "USDA-funded research in food science, crop genetics, soil analysis, and veterinary diagnostics uses equipment including mass spectrometers, PCR machines, microscopes, chromatography systems, and environmental monitoring instruments." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

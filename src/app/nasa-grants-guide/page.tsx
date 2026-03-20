@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "NASA Grants Guide for Lab Equipment Sales Reps | Lab Leads Pro",
@@ -369,6 +370,14 @@ const jumpLinks = [
 export default function NASAGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="NASA Research Grants Guide for Equipment Sales"
+        description="Space science grants, planetary research, and NASA lab equipment needs."
+        url="https://lableadspro.com/nasa-grants-guide"
+        faqs={[
+          { question: "Does NASA buy lab equipment?", answer: "Yes. NASA funds research at universities and its own centers including JPL, Goddard, Ames, and Langley. Research in astrobiology, planetary science, materials, and Earth observation all require specialized lab equipment." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

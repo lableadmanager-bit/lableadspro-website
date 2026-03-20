@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "DOD Research Grants Guide for Lab Equipment Sales Reps | Lab Leads Pro",
@@ -362,6 +363,14 @@ const jumpLinks = [
 export default function DODGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="DOD Research Grants Guide for Equipment Sales"
+        description="Defense research labs, DARPA, and the military research funding landscape."
+        url="https://lableadspro.com/dod-grants-guide"
+        faqs={[
+          { question: "Does the Department of Defense fund scientific research?", answer: "Yes. DOD spends approximately 18 billion dollars annually on research through agencies like DARPA, Army Research Lab, Naval Research Lab, and Air Force Research Lab. Many projects require advanced lab equipment." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

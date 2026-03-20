@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "VA Research Grants Guide for Lab Equipment Sales Reps | Lab Leads Pro",
@@ -362,6 +363,14 @@ const jumpLinks = [
 export default function VAGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="VA Research Grants Guide for Equipment Sales"
+        description="Veterans health research with consistent equipment budgets and less competition."
+        url="https://lableadspro.com/va-grants-guide"
+        faqs={[
+          { question: "Does the VA fund research?", answer: "Yes. The VA funds approximately 1.9 billion dollars in medical research annually, focused on veteran health issues. VA medical centers often have dedicated research labs that need equipment." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}

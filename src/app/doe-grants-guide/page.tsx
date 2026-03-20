@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import GuideSchema from "@/components/GuideSchema";
 
 export const metadata: Metadata = {
   title: "DOE Research Grants Guide for Lab Equipment Sales | Lab Leads Pro",
@@ -407,6 +408,14 @@ const jumpLinks = [
 export default function DOEGrantsGuide() {
   return (
     <>
+      <GuideSchema
+        title="DOE Research Grants Guide for Equipment Sales"
+        description="National labs, energy research, and the DOE equipment procurement cycle."
+        url="https://lableadspro.com/doe-grants-guide"
+        faqs={[
+          { question: "What are DOE national laboratories?", answer: "DOE operates 17 national laboratories including Argonne, Brookhaven, Lawrence Berkeley, Oak Ridge, and Sandia. These labs have massive equipment budgets for research in energy, physics, materials science, and computing." },
+        ]}
+      />
       <Header />
 
       {/* -- Hero ---------------------------------------------------------- */}
