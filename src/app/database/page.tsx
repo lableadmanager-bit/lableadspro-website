@@ -25,9 +25,9 @@ export const metadata: Metadata = {
 const guides = [
   {
     emoji: "📋",
-    title: "Grant Types Guide",
+    title: "NIH Grant Types Guide",
     description: "R01, R21, S10, SBIR and more. What each grant type means for equipment sales.",
-    href: "/grant-types-guide",
+    href: "/nih-grant-types-guide",
   },
   {
     emoji: "🏛️",

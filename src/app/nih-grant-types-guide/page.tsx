@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: "NIH Grant Types Guide for Equipment Sales Reps",
     description:
       "Which NIH grants signal equipment purchases? A practical guide for life-science sales reps.",
-    url: "https://lableadspro.com/grant-types-guide",
+    url: "https://lableadspro.com/nih-grant-types-guide",
     siteName: "Lab Leads Pro",
     type: "article",
   },

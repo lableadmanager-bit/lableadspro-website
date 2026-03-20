@@ -89,10 +89,10 @@ const agencyGuides = [
 const topicGuides = [
   {
     emoji: "📋",
-    title: "Grant Types Guide",
+    title: "NIH Grant Types Guide",
     description:
-      "R01, R21, S10, SBIR, and more. What each grant type means for equipment sales and which ones signal active purchasing.",
-    href: "/grant-types-guide",
+      "R01, R21, S10, SBIR, and more. What each NIH activity code means for equipment sales and which ones signal active purchasing.",
+    href: "/nih-grant-types-guide",
   },
   {
     emoji: "🏛️",

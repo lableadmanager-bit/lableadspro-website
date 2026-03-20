@@ -118,7 +118,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/grant-types-guide`,
+      url: `${baseUrl}/nih-grant-types-guide`,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
