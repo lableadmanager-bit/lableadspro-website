@@ -54,12 +54,20 @@ export const VALID_PRICE_IDS = new Set(
 
 export const AUTO_UPGRADE_THRESHOLD = 3; // 3+ states = auto Pro at Standard price
 
+export const PRO_FREE_STATE_THRESHOLD = 3; // Pro: buy 2, get 3rd free
+
 export function getEffectivePlan(
   selectedTier: PlanTier,
   stateCount: number
-): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean } {
+): { tier: PlanTier; pricePerState: number; autoUpgraded: boolean; freeStates: number; billedStates: number } {
   if (selectedTier === "standard" && stateCount >= AUTO_UPGRADE_THRESHOLD) {
-    return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true };
+    return { tier: "pro", pricePerState: PLANS.standard.pricePerState, autoUpgraded: true, freeStates: 0, billedStates: stateCount };
   }
-  return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false };
+  if (selectedTier === "pro" && stateCount >= PRO_FREE_STATE_THRESHOLD) {
+    // Every 3rd state is free: for every 3 states, pay for 2
+    const freeStates = Math.floor(stateCount / PRO_FREE_STATE_THRESHOLD);
+    const billedStates = stateCount - freeStates;
+    return { tier: "pro", pricePerState: PLANS.pro.pricePerState, autoUpgraded: false, freeStates, billedStates };
+  }
+  return { tier: selectedTier, pricePerState: PLANS[selectedTier].pricePerState, autoUpgraded: false, freeStates: 0, billedStates: stateCount };
 }

@@ -49,8 +49,9 @@ function CheckoutContent() {
   const stateCount = selectedStates.length;
   const effective = getEffectivePlan(selectedTier, stateCount);
   const displayPlan = PLANS[effective.tier];
-  const monthlyTotal = stateCount * effective.pricePerState;
+  const monthlyTotal = effective.billedStates * effective.pricePerState;
   const proTotal = stateCount * PLANS.pro.pricePerState;
+  const fullProTotal = stateCount * PLANS.pro.pricePerState; // without free state discount
 
   const filteredStates = US_STATES.filter(
     (s) =>
@@ -119,71 +120,13 @@ function CheckoutContent() {
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold mb-2">Build Your Plan</h1>
-        <p className="text-gray-400 mb-10">Pick your states, then choose your plan. Select 3+ states on Standard and get upgraded to Pro automatically.</p>
+        <p className="text-gray-400 mb-10">Choose your plan, then pick your states.</p>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
 
-            {/* State selector — FIRST */}
-            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Select States</h2>
-                <span className="text-sm font-medium text-[var(--color-brand)]">
-                  {stateCount} state{stateCount !== 1 ? "s" : ""} selected
-                  {stateCount > 0 &&
-                    ` — ${stateCount} × $${effective.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
-                </span>
-              </div>
-              <input
-                type="text"
-                placeholder="Search states…"
-                value={stateSearch}
-                onChange={(e) => setStateSearch(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-[var(--color-brand)] placeholder-gray-500"
-              />
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">
-                {filteredStates.map((s) => {
-                  const selected = selectedStates.includes(s.code);
-                  return (
-                    <button
-                      key={s.code}
-                      onClick={() => toggleState(s.code)}
-                      className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
-                        selected
-                          ? "bg-[var(--color-brand)] border-[var(--color-brand)] text-white"
-                          : "bg-white/5 border-white/10 hover:border-white/30 text-gray-300"
-                      }`}
-                    >
-                      <span className="font-mono font-bold text-xs">{s.code}</span>
-                      <span className="ml-1 hidden sm:inline text-xs opacity-75">{s.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-              {selectedStates.length > 0 && (
-                <button
-                  onClick={() => setSelectedStates([])}
-                  className="mt-3 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                >
-                  Clear all
-                </button>
-              )}
-            </div>
-
-            {/* Auto-upgrade banner */}
-            {effective.autoUpgraded && (
-              <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-5">
-                <p className="text-[var(--color-accent)] font-semibold text-sm">
-                  🎉 Congratulations! You&apos;re being upgraded to Pro automatically!
-                </p>
-                <p className="text-gray-300 text-xs mt-1">
-                  {stateCount} states selected — Standard customers with {AUTO_UPGRADE_THRESHOLD}+ states get all Pro features at ${PLANS.standard.pricePerState}/state.
-                </p>
-              </div>
-            )}
-
-            {/* Plan selector */}
+            {/* Plan selector — FIRST */}
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <h2 className="text-lg font-semibold mb-4">Select Plan</h2>
               <div className="grid grid-cols-2 gap-3">
@@ -226,6 +169,87 @@ function CheckoutContent() {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* Promo message — changes based on selected plan */}
+            <div className="bg-[var(--color-brand)]/10 border border-[var(--color-brand)]/30 rounded-2xl p-5">
+              {selectedTier === "standard" ? (
+                <>
+                  <p className="text-[var(--color-brand)] font-semibold text-sm">
+                    💡 Pick 3 or more states and get upgraded to Pro automatically!
+                  </p>
+                  <p className="text-gray-300 text-xs mt-1">
+                    All Pro features — 8 agencies, new lab detection, full database — at the Standard price.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[var(--color-brand)] font-semibold text-sm">
+                    🎁 Pick any 2 states, get the 3rd state free!
+                  </p>
+                  <p className="text-gray-300 text-xs mt-1">
+                    3 states of Pro coverage for the price of 2. That&apos;s ${PLANS.pro.pricePerState * 2}/mo instead of ${PLANS.pro.pricePerState * 3}/mo.
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* Auto-upgrade banner — shows when triggered */}
+            {effective.autoUpgraded && (
+              <div className="bg-[var(--color-accent)]/10 border border-[var(--color-accent)]/30 rounded-2xl p-5">
+                <p className="text-[var(--color-accent)] font-semibold text-sm">
+                  🎉 Congratulations! You&apos;re being upgraded to Pro automatically!
+                </p>
+                <p className="text-gray-300 text-xs mt-1">
+                  {stateCount} states selected — you&apos;re getting all Pro features at ${PLANS.standard.pricePerState}/state.
+                </p>
+              </div>
+            )}
+
+            {/* State selector */}
+            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Select Your States</h2>
+                <span className="text-sm font-medium text-[var(--color-brand)]">
+                  {stateCount} state{stateCount !== 1 ? "s" : ""} selected
+                  {stateCount > 0 &&
+                    ` — ${stateCount} × $${effective.pricePerState}/mo = $${monthlyTotal.toLocaleString()}/mo`}
+                </span>
+              </div>
+              <input
+                type="text"
+                placeholder="Search states…"
+                value={stateSearch}
+                onChange={(e) => setStateSearch(e.target.value)}
+                className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-[var(--color-brand)] placeholder-gray-500"
+              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">
+                {filteredStates.map((s) => {
+                  const selected = selectedStates.includes(s.code);
+                  return (
+                    <button
+                      key={s.code}
+                      onClick={() => toggleState(s.code)}
+                      className={`text-left text-sm px-3 py-2 rounded-lg border transition-all ${
+                        selected
+                          ? "bg-[var(--color-brand)] border-[var(--color-brand)] text-white"
+                          : "bg-white/5 border-white/10 hover:border-white/30 text-gray-300"
+                      }`}
+                    >
+                      <span className="font-mono font-bold text-xs">{s.code}</span>
+                      <span className="ml-1 hidden sm:inline text-xs opacity-75">{s.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedStates.length > 0 && (
+                <button
+                  onClick={() => setSelectedStates([])}
+                  className="mt-3 text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                >
+                  Clear all
+                </button>
+              )}
             </div>
           </div>
 
@@ -279,6 +303,19 @@ function CheckoutContent() {
                     </div>
                     <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
                       Auto-upgraded to Pro — {stateCount} states get Pro features at Standard pricing!
+                    </p>
+                  </div>
+                )}
+
+                {/* Pro free state discount */}
+                {!effective.autoUpgraded && effective.freeStates > 0 && (
+                  <div className="pt-2 border-t border-white/10">
+                    <div className="flex justify-between text-gray-500">
+                      <span>Full price ({stateCount} states)</span>
+                      <span className="line-through">${fullProTotal.toLocaleString()}/mo</span>
+                    </div>
+                    <p className="text-[var(--color-accent)] text-xs mt-1 font-medium">
+                      🎁 {effective.freeStates} free state{effective.freeStates > 1 ? "s" : ""} — paying for {effective.billedStates} of {stateCount}!
                     </p>
                   </div>
                 )}

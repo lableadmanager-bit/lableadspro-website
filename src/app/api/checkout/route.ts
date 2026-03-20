@@ -38,12 +38,15 @@ export async function POST(req: NextRequest) {
       selected_tier: selectedTier,
       states: states.join(","),
       stateCount: String(stateCount),
+      billedStates: String(effective.billedStates),
+      freeStates: String(effective.freeStates),
       autoUpgraded: String(effective.autoUpgraded),
       pricePerState: String(effective.pricePerState),
     };
 
+    // Bill for billedStates, not total states (free state promo)
     const lineItems: { price: string; quantity: number }[] = [
-      { price: priceId, quantity: stateCount },
+      { price: priceId, quantity: effective.billedStates },
     ];
 
     const origin = req.headers.get("origin") || "http://localhost:3000";
