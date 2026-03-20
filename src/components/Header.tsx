@@ -85,11 +85,11 @@ export default function Header() {
           <a href="/#pricing" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Pricing
           </a>
-          <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
-            Database
-          </a>
           <a href="/guides" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Guides
+          </a>
+          <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
+            Database
           </a>
           <a
             href="/#cta"
