@@ -24,6 +24,12 @@ export const metadata: Metadata = {
 
 const guides = [
   {
+    emoji: "💻",
+    title: "How to Use the Database",
+    description: "A visual walkthrough of every feature, filter, and search tool.",
+    href: "/database/guides/how-to-use",
+  },
+  {
     emoji: "📋",
     title: "Grant Types Guide",
     description: "R01, R21, S10, SBIR and more. What each grant type means for equipment sales.",
@@ -82,12 +88,6 @@ const guides = [
     title: "CDC Research Guide",
     description: "Public health research grants and CDC lab equipment purchasing patterns.",
     href: "/database/guides/cdc-grants",
-  },
-  {
-    emoji: "📖",
-    title: "How to Use the Database",
-    description: "A visual walkthrough of every feature, filter, and search tool.",
-    href: "/database/guides/how-to-use",
   },
 ];
 
