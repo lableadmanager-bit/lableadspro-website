@@ -94,12 +94,22 @@ export default function NIHReporterGuide() {
                 NIH Reporter
               </a>{" "}
               (Research Portfolio Online Reporting Tools) is a free, publicly
-              available database maintained by the National Institutes of Health.
-              It contains detailed information about every NIH-funded research
+              available database run by the National Institutes of Health. It
+              gives you detailed information about every NIH-funded research
               project — over 300,000 active grants at any given time.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              For each grant, you can see:
+              It&apos;s genuinely one of the best free resources available for
+              anyone in life-science sales. If you sell equipment to research
+              labs and you&apos;re not using NIH Reporter, you should be. Here&apos;s
+              how to get started.
+            </p>
+
+            <h3 className="text-xl font-semibold text-[var(--color-dark)] mt-8">
+              What You&apos;ll Find
+            </h3>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              For each funded grant, NIH Reporter shows:
             </p>
             <ul className="text-[var(--color-gray-600)] space-y-2">
               <li>
@@ -114,7 +124,8 @@ export default function NIHReporterGuide() {
                 <strong>Award amount</strong> — how much funding they received
               </li>
               <li>
-                <strong>Project abstract</strong> — what the research is about
+                <strong>Project abstract</strong> — a detailed description of
+                the research
               </li>
               <li>
                 <strong>Activity code</strong> — the grant type (R01, R21, S10,
@@ -129,10 +140,14 @@ export default function NIHReporterGuide() {
                 it ends
               </li>
             </ul>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              All of this is public information, funded by taxpayer dollars.
+              Anyone can access it.
+            </p>
 
             {/* Getting Started */}
             <h2 id="getting-started" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
-              Getting Started: The Search Interface
+              Getting Started
             </h2>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
               Head to{" "}
@@ -144,18 +159,18 @@ export default function NIHReporterGuide() {
               >
                 reporter.nih.gov
               </a>
-              . You&apos;ll see a simple search bar on the homepage. You can type
-              a keyword here, but for serious prospecting, click{" "}
-              <strong>&quot;Advanced Search&quot;</strong> — that&apos;s where the real
-              power is.
+              . You&apos;ll see a simple search bar on the homepage. You can
+              type a keyword here to do a quick search, but the real power is in{" "}
+              <strong>&quot;Advanced Search&quot;</strong> — click that to get
+              access to all the filters.
             </p>
 
             <h3 className="text-xl font-semibold text-[var(--color-dark)] mt-8">
-              Key Filters for Sales Reps
+              The Filters That Matter
             </h3>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              The advanced search gives you dozens of filters. Here are the ones
-              that matter most for prospecting:
+              Advanced search gives you dozens of filters. Here are the ones
+              that are most useful for prospecting:
             </p>
 
             <div className="bg-gray-50 rounded-xl p-6 my-6 space-y-4">
@@ -167,7 +182,9 @@ export default function NIHReporterGuide() {
                   Search project abstracts for equipment-related terms. Try
                   &quot;mass spectrometry,&quot; &quot;confocal microscopy,&quot;
                   &quot;flow cytometry,&quot; or whatever you sell. This searches
-                  the full abstract, not just the title.
+                  the full abstract, not just the title — so you&apos;ll catch
+                  grants that mention your equipment type even if the title
+                  sounds unrelated.
                 </p>
               </div>
               <div>
@@ -176,8 +193,9 @@ export default function NIHReporterGuide() {
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
                   Filter by state to see grants in your territory. You can also
-                  search by specific institution if you&apos;re targeting a
-                  particular university or medical center.
+                  search by specific institution — useful if you&apos;re trying
+                  to map out all the funded research at a particular university
+                  or medical center.
                 </p>
               </div>
               <div>
@@ -185,20 +203,19 @@ export default function NIHReporterGuide() {
                   📋 Activity Code
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  This is the grant type. The magic codes for equipment sales:
-                  <strong> S10</strong> (shared instrumentation — literally
-                  buying equipment), <strong>R01</strong> (standard research
-                  grants, often include equipment budgets),{" "}
-                  <strong>R35</strong> (large MIRA awards), and{" "}
-                  <strong>U01/U54</strong> (cooperative agreements with big
-                  budgets). See our{" "}
+                  This is the grant type, and it&apos;s worth learning the key
+                  ones. <strong>S10</strong> grants are shared instrumentation
+                  grants — the PI literally has money earmarked to buy
+                  equipment. <strong>R01</strong> is the standard research grant
+                  (most common, often includes equipment budgets).{" "}
+                  <strong>R35</strong> are large MIRA awards. See our{" "}
                   <Link
                     href="/nih-grant-types-guide"
                     className="text-[var(--color-brand)] hover:underline"
                   >
                     NIH Grant Types Guide
                   </Link>{" "}
-                  for the full breakdown.
+                  for the full breakdown of what each code means.
                 </p>
               </div>
               <div>
@@ -206,10 +223,11 @@ export default function NIHReporterGuide() {
                   ✅ Newly Awarded
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  Check the &quot;Newly Awarded&quot; filter to see only
-                  first-time grants (not renewals). These are PIs who just got
-                  funded — they&apos;re setting up or expanding their labs right
-                  now. This is the highest-intent signal.
+                  This is a great filter. Check &quot;Newly Awarded&quot; to see
+                  only first-time grants (not renewals). These PIs just got
+                  funded — they&apos;re setting up or expanding their labs. If
+                  someone just got their first R01, they probably need
+                  everything.
                 </p>
               </div>
               <div>
@@ -217,223 +235,211 @@ export default function NIHReporterGuide() {
                   📅 Fiscal Year
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  Filter by the current fiscal year to see the most recent
-                  awards. NIH&apos;s fiscal year runs October through September
-                  (so FY2026 started October 2025).
+                  Filter by the current fiscal year to focus on recent awards.
+                  NIH&apos;s fiscal year runs October through September (FY2026
+                  started October 2025).
                 </p>
               </div>
             </div>
 
             {/* Pro Tips */}
             <h2 id="pro-tips" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
-              Pro Tips for Sales Reps
+              Tips From the Field
             </h2>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              A few things we&apos;ve learned from years of using grant data for
+              prospecting:
+            </p>
 
             <div className="space-y-6 my-6">
               <div className="border-l-4 border-[var(--color-brand)] pl-4">
                 <p className="font-semibold text-[var(--color-dark)]">
-                  Search for S10 grants first
+                  Start with S10 grants
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  S10 Shared Instrumentation Grants are the strongest buy
-                  signal in all of federal funding. These PIs have money
-                  earmarked specifically for equipment. Filter by Activity Code =
-                  S10 and your state. That&apos;s your hottest lead list.
+                  S10 Shared Instrumentation Grants exist solely to purchase
+                  equipment. Filter by Activity Code = S10 and your state, and
+                  you&apos;ll have a list of PIs who have money set aside
+                  specifically for instruments. It doesn&apos;t get more
+                  qualified than that.
                 </p>
               </div>
               <div className="border-l-4 border-[var(--color-brand)] pl-4">
                 <p className="font-semibold text-[var(--color-dark)]">
-                  Look at the abstract, not just the title
+                  Read the abstract, not just the title
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
                   A grant titled &quot;Mechanisms of neuronal plasticity&quot;
-                  might sound irrelevant, but the abstract could describe
-                  two-photon imaging experiments that need a $500K microscope.
-                  Always click through and read the abstract.
+                  might sound irrelevant if you sell microscopes. But the
+                  abstract could describe two-photon imaging experiments that
+                  require a $500K system. The science sounds complex, but
+                  you&apos;re just looking for mentions of techniques and
+                  instruments you recognize.
                 </p>
               </div>
               <div className="border-l-4 border-[var(--color-brand)] pl-4">
                 <p className="font-semibold text-[var(--color-dark)]">
-                  New Type 1 awards = new labs being built
+                  New Type 1 awards are gold
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  When a PI gets their first R01 (a &quot;Type 1&quot; or new
-                  award), they&apos;re often a new assistant professor setting up
-                  from scratch. They need everything — instruments, consumables,
-                  service contracts. These are golden leads.
+                  When a PI gets their first R01 (called a &quot;Type 1&quot; or
+                  new award), they&apos;re often a new assistant professor
+                  setting up a lab from scratch. They need instruments,
+                  consumables, service contracts — everything. These are some of
+                  the best leads you&apos;ll find anywhere.
                 </p>
               </div>
               <div className="border-l-4 border-[var(--color-brand)] pl-4">
                 <p className="font-semibold text-[var(--color-dark)]">
-                  Export is limited
+                  Use the &quot;Similar Projects&quot; feature
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  NIH Reporter lets you export search results to CSV, but
-                  it&apos;s capped and doesn&apos;t include PI email addresses.
-                  You&apos;ll need to manually look up each PI through their
-                  university website, Google Scholar, or recent publications to
-                  find contact info.
+                  When you find a grant that&apos;s a perfect match, click into
+                  the project details. NIH Reporter shows &quot;Similar
+                  Projects&quot; — other funded research doing related work. It&apos;s
+                  a quick way to find more leads in the same research area without
+                  running a new search.
+                </p>
+              </div>
+              <div className="border-l-4 border-[var(--color-brand)] pl-4">
+                <p className="font-semibold text-[var(--color-dark)]">
+                  Bookmark your search
+                </p>
+                <p className="text-sm text-[var(--color-gray-600)]">
+                  After you set up a search with all your filters, bookmark the
+                  URL. NIH Reporter encodes search parameters in the URL, so
+                  you can re-run the same search next week without setting
+                  everything up again.
                 </p>
               </div>
             </div>
 
-            {/* Limitations */}
-            <h2 id="limitations" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
-              What NIH Reporter Can&apos;t Do
+            {/* Understanding abstracts */}
+            <h2 id="reading-abstracts" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
+              Making Sense of the Abstracts
             </h2>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              NIH Reporter is a great free tool, but it has real limitations for
-              sales prospecting:
+              NIH grant abstracts are written by scientists for review
+              committees. They&apos;re dense, full of jargon, and can be
+              intimidating if you don&apos;t have a research background. But you
+              don&apos;t need to understand the science — you just need to spot
+              the signals.
             </p>
-            <ul className="text-[var(--color-gray-600)] space-y-3">
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              Look for:
+            </p>
+            <ul className="text-[var(--color-gray-600)] space-y-2">
               <li>
-                <strong>No PI email addresses or phone numbers.</strong> You get
-                names and institutions, but you&apos;ll need to manually find
-                contact info for every single lead.
+                <strong>Technique names</strong> you recognize — &quot;confocal
+                imaging,&quot; &quot;mass spectrometry,&quot; &quot;next-gen
+                sequencing,&quot; &quot;flow cytometry&quot;
               </li>
               <li>
-                <strong>NIH only.</strong> It doesn&apos;t cover NSF, DOD, DOE,
-                NASA, USDA, CDC, or VA grants — which collectively fund billions
-                in lab equipment.
+                <strong>Instrument mentions</strong> — brand names or specific
+                instrument types
               </li>
               <li>
-                <strong>No equipment tagging.</strong> You can search keywords in
-                abstracts, but there&apos;s no way to filter grants by what
-                equipment they&apos;re likely to purchase.
+                <strong>&quot;We will acquire&quot; or &quot;we will
+                purchase&quot;</strong> — direct equipment buying language
               </li>
               <li>
-                <strong>No alerts.</strong> You can&apos;t set up automatic
-                notifications when new grants are awarded in your territory.
-                You&apos;d need to run your search manually every week.
+                <strong>&quot;Establish&quot; or &quot;build&quot;</strong> a new
+                facility, core, or lab — signals from-scratch setup
               </li>
               <li>
-                <strong>Data freshness varies.</strong> New awards can take days
-                or weeks to appear in the system. There&apos;s no published
-                schedule for when data updates.
-              </li>
-              <li>
-                <strong>Manual, time-consuming process.</strong> To build a
-                proper lead list, you&apos;re looking at hours of searching,
-                clicking through individual grants, and manually researching
-                each PI.
+                <strong>Specific Aims</strong> — many abstracts list numbered
+                aims. If an aim mentions your instrument type, that&apos;s a
+                strong signal.
               </li>
             </ul>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              It takes a little practice, but after scanning a few dozen
+              abstracts, you&apos;ll get fast at spotting what&apos;s relevant.
+            </p>
 
-            {/* When to use what */}
-            <h2 id="nih-reporter-vs-lab-leads-pro" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
-              NIH Reporter vs. Lab Leads Pro
+            {/* Exporting data */}
+            <h2 id="exporting" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
+              Exporting Your Results
             </h2>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              Full transparency: you can absolutely do this work yourself using
-              NIH Reporter. It&apos;s free, it&apos;s comprehensive for NIH
-              data, and every field rep should know how to use it.
+              NIH Reporter lets you export search results to CSV — look for the
+              download button above your results. The export includes PI names,
+              institutions, award amounts, and project details. You can open it
+              in Excel or Google Sheets and start building a lead list.
             </p>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              The question is whether your time is better spent manually
-              searching a government website or actually selling.
+              One thing to know: the export doesn&apos;t include PI email
+              addresses or phone numbers. You&apos;ll need to look those up
+              separately — usually through the university directory, their lab
+              website, or Google Scholar.
             </p>
 
-            <div className="bg-gray-50 rounded-xl overflow-hidden my-8">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-200 bg-gray-100">
-                    <th className="text-left p-4 font-semibold text-[var(--color-dark)]">
-                      Feature
-                    </th>
-                    <th className="text-center p-4 font-semibold text-[var(--color-dark)]">
-                      NIH Reporter
-                    </th>
-                    <th className="text-center p-4 font-semibold text-[var(--color-brand)]">
-                      Lab Leads Pro
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="text-[var(--color-gray-600)]">
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">Price</td>
-                    <td className="p-4 text-center">Free</td>
-                    <td className="p-4 text-center">$99–149/mo</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">Agencies covered</td>
-                    <td className="p-4 text-center">NIH only</td>
-                    <td className="p-4 text-center">8 agencies</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">Grants in database</td>
-                    <td className="p-4 text-center">~330K (NIH)</td>
-                    <td className="p-4 text-center">450K+</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">PI email addresses</td>
-                    <td className="p-4 text-center">❌</td>
-                    <td className="p-4 text-center">✅ 80% coverage</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">Weekly new grant alerts</td>
-                    <td className="p-4 text-center">❌</td>
-                    <td className="p-4 text-center">✅</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">Equipment purchase signals</td>
-                    <td className="p-4 text-center">❌</td>
-                    <td className="p-4 text-center">✅</td>
-                  </tr>
-                  <tr className="border-b border-gray-100">
-                    <td className="p-4">State + keyword search</td>
-                    <td className="p-4 text-center">✅</td>
-                    <td className="p-4 text-center">✅</td>
-                  </tr>
-                  <tr>
-                    <td className="p-4">Time to build a lead list</td>
-                    <td className="p-4 text-center">Hours</td>
-                    <td className="p-4 text-center">Minutes</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
+            {/* The real challenge */}
+            <h2 id="the-challenge" className="text-2xl font-bold text-[var(--color-dark)] mt-12">
+              Where It Gets Hard
+            </h2>
             <p className="text-[var(--color-gray-600)] leading-relaxed">
-              If you&apos;re covering a small territory and have time to spare,
-              NIH Reporter is a solid free option. If you want all 8 agencies,
-              PI contact info, and your leads delivered weekly so you can focus
-              on selling —{" "}
+              NIH Reporter is a genuinely powerful tool, and if you put the time
+              in, you can build a solid prospecting list from it. But
+              there&apos;s a reason most reps don&apos;t do it consistently.
+            </p>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              The challenge isn&apos;t finding the grants — it&apos;s keeping up.
+              NIH awards new grants every week, and the only way to catch them
+              is to re-run your searches regularly. There&apos;s no alert system
+              or notification when new awards drop in your territory.
+            </p>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              Then there&apos;s the contact info problem. You find a great lead
+              — newly funded PI at a university in your state, abstract
+              mentions your exact instrument type — but the grant record
+              doesn&apos;t have their email. So you&apos;re Googling their name,
+              hunting through university directories, checking recent papers for
+              a corresponding author address. Multiply that by 20 leads and
+              you&apos;ve spent your afternoon on data entry instead of
+              selling.
+            </p>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              And NIH Reporter only covers NIH. There are seven other federal
+              agencies that fund research labs — NSF, DOD, DOE, NASA, VA, USDA,
+              CDC — and each one has its own separate system (or no public
+              search tool at all).
+            </p>
+            <p className="text-[var(--color-gray-600)] leading-relaxed">
+              None of this makes NIH Reporter less useful. It&apos;s still the
+              best free source of research funding data available. But if you
+              find yourself wishing someone would just pull all the grants
+              together, add the contact info, and send you the new ones every
+              week —{" "}
               <Link
                 href="/sample"
                 className="text-[var(--color-brand)] hover:underline font-medium"
               >
-                grab a free sample report
-              </Link>{" "}
-              and see the difference.
+                that&apos;s what we built
+              </Link>
+              .
             </p>
           </div>
         </article>
 
-        {/* CTA */}
+        {/* CTA — soft, not salesy */}
         <section className="py-16 bg-gray-50">
           <div className="max-w-3xl mx-auto px-6 text-center">
-            <h2 className="text-2xl font-bold text-[var(--color-dark)] mb-4">
-              See what you&apos;re missing
-            </h2>
-            <p className="text-[var(--color-gray-500)] mb-8">
-              Get a free sample report for your state — real grants, real PI
-              contact info, across all 8 agencies.
-            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/sample"
-                className="inline-block text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-8 py-3 rounded-lg transition-colors"
-              >
-                Get a Free Sample Report
-              </Link>
               <a
                 href="https://reporter.nih.gov"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block text-sm font-semibold text-[var(--color-gray-600)] border-2 border-gray-300 hover:border-gray-400 px-8 py-3 rounded-lg transition-colors"
+                className="inline-block text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-8 py-3 rounded-lg transition-colors"
               >
                 Go to NIH Reporter →
               </a>
+              <Link
+                href="/guides"
+                className="inline-block text-sm font-semibold text-[var(--color-gray-600)] border-2 border-gray-300 hover:border-gray-400 px-8 py-3 rounded-lg transition-colors"
+              >
+                Browse More Guides
+              </Link>
             </div>
           </div>
         </section>
