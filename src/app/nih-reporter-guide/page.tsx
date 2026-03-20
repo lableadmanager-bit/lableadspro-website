@@ -128,11 +128,23 @@ export default function NIHReporterGuide() {
                 the research
               </li>
               <li>
-                <strong>Activity code</strong> - the grant type (R01, R21, S10,
-                etc.)
+                <strong>Activity code</strong> - the{" "}
+                <Link
+                  href="/nih-grant-types-guide"
+                  className="text-[var(--color-brand)] hover:underline"
+                >
+                  grant type
+                </Link>{" "}
+                (R01, R21, S10, etc.)
               </li>
               <li>
-                <strong>NIH institute</strong> - which of the 27 NIH institutes
+                <strong>NIH institute</strong> - which of the{" "}
+                <Link
+                  href="/nih-institutes-guide"
+                  className="text-[var(--color-brand)] hover:underline"
+                >
+                  27 NIH institutes
+                </Link>{" "}
                 funded it
               </li>
               <li>
@@ -257,7 +269,8 @@ export default function NIHReporterGuide() {
                   Start with S10 grants
                 </p>
                 <p className="text-sm text-[var(--color-gray-600)]">
-                  S10 Shared Instrumentation Grants exist solely to purchase
+                  <Link href="/nih-grant-types-guide" className="text-[var(--color-brand)] hover:underline">S10 Shared Instrumentation Grants</Link>{" "}
+                  exist solely to purchase
                   equipment. Filter by Activity Code = S10 and your state, and
                   you&apos;ll have a list of PIs who have money set aside
                   specifically for instruments. It doesn&apos;t get more
