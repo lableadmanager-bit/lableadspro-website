@@ -54,8 +54,8 @@ export const VALID_PRICE_IDS = new Set(
 
 export const AUTO_UPGRADE_THRESHOLD = 3; // 3+ states = auto Pro at Standard price
 
-export const PRO_TWO_STATE_BUNDLE = 249; // Pro: 2 states for $249 (vs $298)
-export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1TCtDG1UBk0N5M650ZukDQel"; // $249 flat monthly
+export const PRO_TWO_STATE_BUNDLE = 248; // Pro: 2 states for $248 (vs $298, exactly $50 off)
+export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1TCtKJ1UBk0N5M65QOspIUk7"; // $248 flat monthly
 
 export function getEffectivePlan(
   selectedTier: PlanTier,
