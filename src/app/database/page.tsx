@@ -486,7 +486,7 @@ export default function DatabasePage() {
             <ChevronDown size={16} />
           </button>
           {agencyDropdownOpen && (
-            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-60 overflow-hidden">
+            <div className="absolute z-20 mt-1 w-full bg-white border border-[var(--color-gray-300)] rounded-lg shadow-lg max-h-96 overflow-hidden">
               <div className="p-2 border-b border-[var(--color-gray-100)]">
                 <input
                   type="text"
@@ -512,7 +512,7 @@ export default function DatabasePage() {
                   </button>
                 </div>
               </div>
-              <div className="overflow-y-auto max-h-72 p-2 space-y-1">
+              <div className="overflow-y-auto max-h-80 p-2 space-y-1">
                 {filteredAgencies.map((ag) => (
                   <div key={ag.value}>
                     <label
