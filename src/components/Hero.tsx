@@ -54,6 +54,10 @@ export default function Hero() {
           We monitor NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA so you don&apos;t have to, and deliver the latest intel straight to your inbox every Monday morning.
         </p>
 
+        <p className="animate-fade-in-up-delay-2 text-base md:text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
+          Subscribers also gain access to our easy-to-search, easy-to-filter grant database, including over 340,000 grants awarded to over 150,000 PIs.
+        </p>
+
         {/* CTA */}
         <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
