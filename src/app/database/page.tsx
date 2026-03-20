@@ -47,6 +47,7 @@ const NIH_INSTITUTES = [
   { abbr: "NCATS", fullName: "National Center for Advancing Translational Sciences" },
   { abbr: "NLM", fullName: "National Library of Medicine" },
   { abbr: "OD", fullName: "NIH Office of the Director" },
+  { abbr: "VA", fullName: "VA Medical Centers" },
 ];
 
 const ACTIVITY_CODES = [

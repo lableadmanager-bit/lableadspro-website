@@ -94,7 +94,19 @@ export async function POST(req: NextRequest) {
       q = q.in("source", filters.agencies);
     }
     if (filters.nihInstitutes?.length) {
-      q = q.in("agency", filters.nihInstitutes);
+      const vaFilter = filters.nihInstitutes.includes("VA Medical Centers");
+      const agencyFilters = filters.nihInstitutes.filter((n: string) => n !== "VA Medical Centers");
+      
+      if (vaFilter && agencyFilters.length > 0) {
+        // Both VA and specific institutes selected — use OR logic
+        q = q.or(`agency.in.(${agencyFilters.map((a: string) => `"${a}"`).join(",")}),institution.ilike.%veteran%,institution.ilike.%VA %medical%`);
+      } else if (vaFilter) {
+        // Only VA selected
+        q = q.or("institution.ilike.%veteran%,institution.ilike.%VA %medical%");
+      } else {
+        // Only regular institutes
+        q = q.in("agency", agencyFilters);
+      }
     }
     if (filters.dateFrom) {
       q = q.gte("award_date", filters.dateFrom);
