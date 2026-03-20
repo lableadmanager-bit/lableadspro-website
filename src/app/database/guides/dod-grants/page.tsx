@@ -303,8 +303,8 @@ const noisePrograms: NoiseItemProps[] = [
   },
   {
     name: "Facilities Maintenance and Construction",
-    description: "Base construction, building maintenance, HVAC repairs, road work. Shows up constantly in DOD spending data. Sometimes keywords like \u0027laboratory\u0027 appear because they are renovating a lab building, not doing research in one.",
-    verdict: "Building a lab is not the same as equipping one. Skip.",
+    description: "Base construction, building maintenance, HVAC repairs, road work. Shows up constantly in DOD spending data.",
+    verdict: "General construction is noise, but keep an eye out for lab renovations. Those often come with capital budget for new equipment.",
   },
   {
     name: "IT and Cybersecurity Contracts",
