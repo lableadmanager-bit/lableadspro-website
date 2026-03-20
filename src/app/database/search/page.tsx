@@ -776,14 +776,14 @@ export default function DatabasePage() {
                   Grant Database
                 </h1>
                 <p className="text-[var(--color-gray-500)] mt-1">
-                  Search {total > 0 ? total.toLocaleString() : "74,000+"} federally funded research grants
+                  Search {total > 0 ? total.toLocaleString() : "450,000+"} federally funded research grants
                 </p>
               </div>
               {userEmail && (
                 <div className="flex items-center gap-3 shrink-0">
                   {planTier && (
                     <span className="text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2.5 py-1 rounded-full hidden sm:inline-flex items-center gap-1">
-                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)} · {subscribedStates.join(", ")}
+                      {planTier.charAt(0).toUpperCase() + planTier.slice(1)}{subscribedStates.length <= 5 ? ` · ${subscribedStates.join(", ")}` : ` · ${subscribedStates.length} states`}
                     </span>
                   )}
                   <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
@@ -1119,7 +1119,7 @@ export default function DatabasePage() {
                     Search federally funded grants
                   </h2>
                   <p className="text-[var(--color-gray-500)] max-w-md mx-auto">
-                    Enter a keyword, PI name, institution, or research topic above to explore our database of 74,000+ grants from NIH, NSF, DOD, and more.
+                    Enter a keyword, PI name, institution, or research topic above to explore our database of 450,000+ grants from NIH, NSF, DOD, and more.
                   </p>
                 </div>
               )}
