@@ -777,7 +777,7 @@ export default function DatabasePage() {
                   Grant Database
                 </h1>
                 <p className="text-[var(--color-gray-500)] mt-1">
-                  Search {total > 0 ? total.toLocaleString() : "450,527"} federally funded research grants
+                  Search {total > 0 ? total.toLocaleString() : "525,600"} federally funded research grants
                 </p>
               </div>
               {userEmail && (
@@ -1120,7 +1120,7 @@ export default function DatabasePage() {
                     Search federally funded grants
                   </h2>
                   <p className="text-[var(--color-gray-500)] max-w-md mx-auto">
-                    Enter a keyword, PI name, institution, or research topic above to explore our database of 450,527 grants from NIH, NSF, DOD, and more.
+                    Enter a keyword, PI name, institution, or research topic above to explore our database of 525,600 grants from NIH, NSF, DOD, and more.
                   </p>
                 </div>
               )}
