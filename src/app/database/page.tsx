@@ -83,6 +83,12 @@ const guides = [
     description: "Public health research grants and CDC lab equipment purchasing patterns.",
     href: "/cdc-grants-guide",
   },
+  {
+    emoji: "🏷️",
+    title: "Equipment Tags We Detect",
+    description: "Every instrument our AI identifies in grant abstracts. 90+ high-value tags across 14 categories.",
+    href: "/database/guides/equipment-tags",
+  },
 ];
 
 /* ── molecular background ────────────────────────────────── */
