@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Equipment Tags We Detect | Lab Leads Pro",
     description:
-      "90+ instrument tags across 14 categories. See exactly what our AI looks for in 450,000+ federal grant abstracts.",
+      "90+ instrument tags across 14 categories. See exactly what our AI looks for in 525,000+ federal grant abstracts.",
     url: "https://lableadspro.com/database/guides/equipment-tags",
     siteName: "Lab Leads Pro",
     type: "article",
@@ -355,7 +355,7 @@ export default function EquipmentTagsGuide() {
             </span>
           </h1>
           <p className="text-lg text-[var(--color-gray-500)] max-w-2xl mb-4">
-            Every piece of lab equipment our AI identifies across 450,000+
+            Every piece of lab equipment our AI identifies across 525,000+
             federal grant abstracts.
           </p>
           <div className="space-y-3 text-sm text-[var(--color-gray-700)] max-w-2xl">

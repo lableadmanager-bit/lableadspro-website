@@ -92,7 +92,7 @@ export default function RootLayout({
                     "@id": "https://lableadspro.com/#organization",
                   },
                   description:
-                    "Federal research grants database with 450,000+ grants across 8 agencies. Built for life-science equipment sales reps.",
+                    "Federal research grants database with 525,000+ grants across 8 agencies. Built for life-science equipment sales reps.",
                 },
                 {
                   "@type": "SoftwareApplication",
@@ -100,7 +100,7 @@ export default function RootLayout({
                   applicationCategory: "BusinessApplication",
                   operatingSystem: "Web",
                   description:
-                    "Search 450,000+ federal research grants by state, keyword, and agency. Includes PI contact information, equipment purchase signals, and weekly new grant alerts.",
+                    "Search 525,000+ federal research grants by state, keyword, and agency. Includes PI contact information, equipment purchase signals, and weekly new grant alerts.",
                   url: "https://lableadspro.com",
                   offers: [
                     {

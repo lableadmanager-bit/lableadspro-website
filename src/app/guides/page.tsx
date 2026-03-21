@@ -211,7 +211,7 @@ export default function GuidesPage() {
               Ready to put this knowledge to work?
             </h2>
             <p className="text-[var(--color-gray-500)] mb-8">
-              Our database has 450,000+ federal research grants across all 8
+              Our database has 525,000+ federal research grants across all 8
               agencies - searchable by state, keyword, and agency.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
