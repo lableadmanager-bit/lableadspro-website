@@ -313,7 +313,7 @@ const tier2Items = [
 
 const jumpLinks = [
   ...categories.map((c) => ({ id: c.id, label: c.title })),
-  { id: "tier-2", label: "Common Lab Equipment" },
+  { id: "additional", label: "Additional Lab Equipment" },
 ];
 
 /* -- page component ------------------------------------------------------- */
@@ -446,16 +446,16 @@ export default function EquipmentTagsGuide() {
           </section>
         ))}
 
-        {/* Tier 2 */}
-        <section id="tier-2" className="scroll-mt-24">
+        {/* Additional Lab Equipment */}
+        <section id="additional" className="scroll-mt-24">
           <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
-            Common Lab Equipment (Tier 2)
+            Additional Lab Equipment
           </h2>
           <p className="text-sm text-[var(--color-gray-500)] mb-6">
-            These are standard lab items typically under $20K. We track them
-            because they show up in grant abstracts, but they are lower priority
-            for most sales reps. If you sell consumables or general lab
-            infrastructure, these tags still surface relevant grants for you.
+            Beyond the major instrument categories above, we also detect these
+            common lab equipment items in grant abstracts. If you sell lab
+            infrastructure, safety equipment, or general research tools, these
+            tags surface relevant grants for your pipeline.
           </p>
           <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6">
             <div className="flex flex-wrap gap-2">
