@@ -11,7 +11,7 @@ const faqs = [
   {
     question: "How does AI equipment tagging work?",
     answer:
-      "Our AI reads every grant abstract and identifies specific equipment needs mentioned or implied. We currently detect 90+ high-value instruments across 14 categories, plus 45 additional common lab equipment items. You can see the full list of everything we tag at lableadspro.com/database/guides/equipment-tags. If you sell something we don't tag yet, let us know and we'll add it.",
+      <>Our AI reads every grant abstract and identifies specific equipment needs mentioned or implied. We currently detect 90+ high-value instruments across 14 categories, plus 45 additional common lab equipment items. You can <a href="/database/guides/equipment-tags" className="text-[var(--color-brand)] hover:underline font-medium">see the full list of everything we tag</a>. If you sell something we don&apos;t tag yet, let us know and we&apos;ll add it.</>,
   },
   {
     question: "Why per-state pricing?",
@@ -31,7 +31,7 @@ const faqs = [
   {
     question: "What if I sell equipment you don't tag yet?",
     answer:
-      "Check our full equipment tag list at lableadspro.com/database/guides/equipment-tags first. If your product isn't there, reach out to info@lableadspro.com. We regularly expand our taxonomy based on what our customers sell.",
+      <>Check our <a href="/database/guides/equipment-tags" className="text-[var(--color-brand)] hover:underline font-medium">full equipment tag list</a> first. If your product isn&apos;t there, reach out to <a href="mailto:info@lableadspro.com" className="text-[var(--color-brand)] hover:underline font-medium">info@lableadspro.com</a>. We regularly expand our taxonomy based on what our customers sell.</>,
   },
   {
     question: "What is the grant database?",
@@ -65,7 +65,7 @@ const faqs = [
   },
 ];
 
-function FAQItem({ faq, isOpen, onToggle }: { faq: typeof faqs[0]; isOpen: boolean; onToggle: () => void }) {
+function FAQItem({ faq, isOpen, onToggle }: { faq: { question: string; answer: React.ReactNode }; isOpen: boolean; onToggle: () => void }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
