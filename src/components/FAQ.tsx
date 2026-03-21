@@ -11,7 +11,7 @@ const faqs = [
   {
     question: "How does AI equipment tagging work?",
     answer:
-      "Our AI reads every grant abstract and identifies specific equipment needs mentioned or implied, including microscopes, centrifuges, sequencers, flow cytometers, PCR systems, and more, with nearly 100 unique tags in total. You can filter leads by the equipment categories you sell. Want to verify that your equipment is something we tag? Reach out to info@lableadspro.com.",
+      "Our AI reads every grant abstract and identifies specific equipment needs mentioned or implied. We currently detect 90+ high-value instruments across 14 categories, plus 45 additional common lab equipment items. You can see the full list of everything we tag at lableadspro.com/database/guides/equipment-tags. If you sell something we don't tag yet, let us know and we'll add it.",
   },
   {
     question: "Why per-state pricing?",
@@ -31,7 +31,7 @@ const faqs = [
   {
     question: "What if I sell equipment you don't tag yet?",
     answer:
-      "Reach out to us at info@lableadspro.com. We're constantly expanding our equipment taxonomy based on what our customers sell. If you need a category we don't cover yet, we'll add it.",
+      "Check our full equipment tag list at lableadspro.com/database/guides/equipment-tags first. If your product isn't there, reach out to info@lableadspro.com. We regularly expand our taxonomy based on what our customers sell.",
   },
   {
     question: "What is the grant database?",
