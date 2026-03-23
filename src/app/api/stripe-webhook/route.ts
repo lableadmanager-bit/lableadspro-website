@@ -64,11 +64,11 @@ function buildWelcomeEmail(params: {
           <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
             <tr>
               <td width="50%" style="padding:16px;background-color:#f8fafc;border-radius:8px 0 0 8px;">
-                <p style="margin:0 0 4px;color:#16a34a;font-size:24px;font-weight:700;">330,000+</p>
+                <p style="margin:0 0 4px;color:#16a34a;font-size:24px;font-weight:700;">525,000+</p>
                 <p style="margin:0;color:#64748b;font-size:13px;">grants from 8 federal agencies</p>
               </td>
               <td width="50%" style="padding:16px;background-color:#f8fafc;border-radius:0 8px 8px 0;">
-                <p style="margin:0 0 4px;color:#16a34a;font-size:24px;font-weight:700;">144,000+</p>
+                <p style="margin:0 0 4px;color:#16a34a;font-size:24px;font-weight:700;">160,000+</p>
                 <p style="margin:0;color:#64748b;font-size:13px;">PIs with verified contact info</p>
               </td>
             </tr>
