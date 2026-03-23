@@ -197,6 +197,31 @@ export default function DatabasePage() {
     window.location.href = "/database/login";
   };
 
+  const handleManageSubscription = async () => {
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = "/database/login";
+        return;
+      }
+      const res = await fetch("/api/billing-portal", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Unable to open billing portal. Please contact support@lableadspro.com");
+      }
+    } catch {
+      alert("Unable to open billing portal. Please contact support@lableadspro.com");
+    }
+  };
+
   // Close dropdowns on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -790,6 +815,13 @@ export default function DatabasePage() {
                   <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
                     {userEmail}
                   </span>
+                  <button
+                    onClick={handleManageSubscription}
+                    className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"
+                  >
+                    <SlidersHorizontal size={14} />
+                    Manage Plan
+                  </button>
                   <button
                     onClick={handleLogout}
                     className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"
