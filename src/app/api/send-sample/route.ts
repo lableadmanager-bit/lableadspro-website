@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const NEVERBOUNCE_API_KEY = process.env.NEVERBOUNCE_API_KEY;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const TELEGRAM_TOPIC_ID = process.env.TELEGRAM_TOPIC_ID;
@@ -21,6 +22,28 @@ const STATE_NAMES: Record<string, string> = {
   TX: "Texas", UT: "Utah", VT: "Vermont", VA: "Virginia", WA: "Washington",
   WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
 };
+
+// NeverBounce email verification — blocks invalid/disposable emails before sending
+async function verifyEmail(email: string): Promise<{ valid: boolean; result: string }> {
+  if (!NEVERBOUNCE_API_KEY) return { valid: true, result: "skipped" }; // fail-open if no key
+
+  try {
+    const res = await fetch(
+      `https://api.neverbounce.com/v4.2/single/check?key=${NEVERBOUNCE_API_KEY}&email=${encodeURIComponent(email)}&timeout=10`,
+      { signal: AbortSignal.timeout(15000) }
+    );
+    if (!res.ok) return { valid: true, result: "api_error" }; // fail-open on API errors
+
+    const data = await res.json();
+    // result: 0=valid, 1=invalid, 2=disposable, 3=catchall, 4=unknown
+    const result = ["valid", "invalid", "disposable", "catchall", "unknown"][data.result] || "unknown";
+    // Block invalid and disposable — allow valid, catchall, and unknown
+    const valid = data.result !== 1 && data.result !== 2;
+    return { valid, result };
+  } catch {
+    return { valid: true, result: "timeout" }; // fail-open on network errors
+  }
+}
 
 // Simple rate limiting - in-memory, per-email, 3 requests per hour
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -127,8 +150,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
+    // Verify email with NeverBounce before sending
+    const verification = await verifyEmail(email.toLowerCase());
+    if (!verification.valid) {
+      console.log(`[BLOCKED] ${new Date().toISOString()} | ${email.toLowerCase()} | reason: ${verification.result} | states: ${validStates.join(",")}`);
+      // Return generic success to not reveal we blocked them (don't help attackers)
+      return NextResponse.json({
+        success: true,
+        sent: validStates.length,
+        failed: 0,
+        message: `Sent ${validStates.length} sample report${validStates.length > 1 ? "s" : ""} to ${email}`,
+      });
+    }
+
     // Log to Vercel function logs
-    console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | source: sample-funnel`);
+    console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | nb: ${verification.result} | source: sample-funnel`);
 
     // Notify George via Telegram
     await notifyTelegram(email.toLowerCase(), validStates);
