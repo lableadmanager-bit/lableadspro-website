@@ -265,9 +265,12 @@ export default function DatabasePage() {
   useEffect(() => {
     if (!userHasInteracted.current) return;
     if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    // Longer debounce for typed fields (query, institution), shorter for toggles
+    const hasTypedInput = query.trim().length > 0 || filters.institution.length > 0;
+    const delay = hasTypedInput ? 1200 : 400;
     searchTimeoutRef.current = setTimeout(() => {
       doSearch(1);
-    }, 400);
+    }, delay);
     return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, filters, sort, activePiFilter, favoritesOnly]);
