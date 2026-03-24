@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, Star } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, Star, LayoutGrid, Table, Download } from "lucide-react";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
@@ -174,6 +174,7 @@ export default function DatabasePage() {
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [togglingFav, setTogglingFav] = useState<Set<string>>(new Set());
+  const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
 
   // Get user session and subscription
   useEffect(() => {
@@ -310,6 +311,31 @@ export default function DatabasePage() {
     },
     [query, filters, sort, activePiFilter, favoritesOnly, favoriteIds]
   );
+
+  const exportFavoritesCSV = () => {
+    if (results.length === 0) return;
+    const headers = ["PI Name", "Email", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
+    const rows = results.map((g) => [
+      g.pi_name || "",
+      g.pis?.email || g.pi_email || "",
+      g.institution || "",
+      g.state || "",
+      `"${(g.title || "").replace(/"/g, '""')}"`,
+      (g.source || "").toUpperCase(),
+      g.award_amount ? String(g.award_amount) : "",
+      g.award_date || "",
+      (g.equipment_tags || []).join("; "),
+      g.grant_id || "",
+    ]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lab-leads-pro-favorites-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const toggleFavorite = async (grantId: string) => {
     setTogglingFav((prev) => new Set(prev).add(grantId));
@@ -973,6 +999,45 @@ export default function DatabasePage() {
                         <Star size={14} className={favoritesOnly ? "fill-amber-400 text-amber-400" : ""} />
                         Favorites{favoriteIds.size > 0 ? ` (${favoriteIds.size})` : ""}
                       </button>
+
+                      {/* View mode toggle */}
+                      <div className="flex items-center border border-[var(--color-gray-300)] rounded-lg overflow-hidden">
+                        <button
+                          onClick={() => setViewMode("cards")}
+                          className={`p-1.5 transition-colors ${
+                            viewMode === "cards"
+                              ? "bg-[var(--color-brand)] text-white"
+                              : "text-[var(--color-gray-400)] hover:text-[var(--color-gray-600)]"
+                          }`}
+                          title="Card view"
+                        >
+                          <LayoutGrid size={16} />
+                        </button>
+                        <button
+                          onClick={() => setViewMode("table")}
+                          className={`p-1.5 transition-colors ${
+                            viewMode === "table"
+                              ? "bg-[var(--color-brand)] text-white"
+                              : "text-[var(--color-gray-400)] hover:text-[var(--color-gray-600)]"
+                          }`}
+                          title="Table view"
+                        >
+                          <Table size={16} />
+                        </button>
+                      </div>
+
+                      {/* Export CSV - only in favorites mode */}
+                      {favoritesOnly && results.length > 0 && (
+                        <button
+                          onClick={exportFavoritesCSV}
+                          className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] text-[var(--color-gray-500)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-colors"
+                          title="Export favorites as CSV"
+                        >
+                          <Download size={14} />
+                          Export CSV
+                        </button>
+                      )}
+
                     <select
                       value={sort}
                       onChange={(e) => {
@@ -1022,6 +1087,113 @@ export default function DatabasePage() {
                       <p className="text-[var(--color-gray-500)] text-lg">
                         No grants found. Try broadening your search.
                       </p>
+                    </div>
+                  ) : viewMode === "table" ? (
+                    /* ===== TABLE VIEW ===== */
+                    <div className="bg-white rounded-xl border border-[var(--color-gray-100)] overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-[var(--color-gray-100)] bg-[var(--color-gray-50)]">
+                              <th className="w-8 px-3 py-3"></th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">PI Name</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Email</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Institution</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)] hidden lg:table-cell">State</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Grant Title</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)] hidden md:table-cell">Agency</th>
+                              <th className="text-right px-3 py-3 font-semibold text-[var(--color-gray-700)] hidden md:table-cell">Amount</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)] hidden xl:table-cell">Equipment</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {results.map((grant) => {
+                              const email = grant.pis?.email || grant.pi_email;
+                              return (
+                                <tr
+                                  key={grant.id}
+                                  className="border-b border-[var(--color-gray-50)] hover:bg-[var(--color-gray-50)] transition-colors"
+                                >
+                                  <td className="px-3 py-2.5">
+                                    <button
+                                      onClick={() => toggleFavorite(grant.grant_id)}
+                                      disabled={togglingFav.has(grant.grant_id)}
+                                      className={`p-0.5 transition-colors ${
+                                        favoriteIds.has(grant.grant_id)
+                                          ? "text-amber-400 hover:text-amber-500"
+                                          : "text-[var(--color-gray-300)] hover:text-amber-400"
+                                      } disabled:opacity-50`}
+                                    >
+                                      <Star size={14} className={favoriteIds.has(grant.grant_id) ? "fill-amber-400" : ""} />
+                                    </button>
+                                  </td>
+                                  <td className="px-3 py-2.5 font-medium text-[var(--color-gray-900)] whitespace-nowrap">
+                                    {grant.pi_name ? (
+                                      <button
+                                        type="button"
+                                        onClick={() => setActivePiFilter(grant.pi_name)}
+                                        className="hover:text-[var(--color-brand)] hover:underline"
+                                      >
+                                        {grant.pi_name}
+                                      </button>
+                                    ) : (
+                                      <span className="text-[var(--color-gray-400)]">—</span>
+                                    )}
+                                  </td>
+                                  <td className="px-3 py-2.5">
+                                    {email ? (
+                                      <a href={`mailto:${email}`} className="text-[var(--color-brand)] hover:underline truncate block max-w-[200px]">
+                                        {email}
+                                      </a>
+                                    ) : (
+                                      <span className="text-[var(--color-gray-400)]">—</span>
+                                    )}
+                                  </td>
+                                  <td className="px-3 py-2.5 text-[var(--color-gray-600)] max-w-[180px] truncate">
+                                    {grant.institution || "—"}
+                                  </td>
+                                  <td className="px-3 py-2.5 text-[var(--color-gray-600)] hidden lg:table-cell">
+                                    {grant.state || "—"}
+                                  </td>
+                                  <td className="px-3 py-2.5 max-w-[250px]">
+                                    <button
+                                      onClick={() => toggleExpanded(grant.id)}
+                                      className="text-left text-[var(--color-gray-900)] hover:text-[var(--color-brand)] transition-colors truncate block w-full"
+                                      title={grant.title}
+                                    >
+                                      {grant.title}
+                                    </button>
+                                  </td>
+                                  <td className="px-3 py-2.5 hidden md:table-cell">
+                                    <span className="text-xs font-medium bg-[var(--color-brand-light)] text-[var(--color-brand)] px-2 py-0.5 rounded-full uppercase">
+                                      {grant.source}
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-2.5 text-right text-[var(--color-gray-900)] font-medium tabular-nums hidden md:table-cell whitespace-nowrap">
+                                    {formatCurrency(grant.award_amount)}
+                                  </td>
+                                  <td className="px-3 py-2.5 hidden xl:table-cell">
+                                    {grant.equipment_tags && grant.equipment_tags.length > 0 ? (
+                                      <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                        {grant.equipment_tags.slice(0, 3).map((tag, i) => (
+                                          <span key={i} className="text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full truncate max-w-[100px]">
+                                            {tag}
+                                          </span>
+                                        ))}
+                                        {grant.equipment_tags.length > 3 && (
+                                          <span className="text-xs text-[var(--color-gray-400)]">+{grant.equipment_tags.length - 3}</span>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <span className="text-[var(--color-gray-400)]">—</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
