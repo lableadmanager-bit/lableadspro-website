@@ -81,7 +81,7 @@ interface Grant {
   source_url: string | null;
   equipment_tags: string[] | null;
   department: string | null;
-  pis: { email: string | null; phone: string | null } | null;
+  pis: { email: string | null; phone: string | null; department: string | null; office_location: string | null; building: string | null; room: string | null } | null;
 }
 
 interface SearchResponse {
@@ -316,11 +316,15 @@ export default function DatabasePage() {
     if (results.length === 0) return;
     // Export up to 500 (matches favorites cap)
     const maxExport = 500;
-    const headers = ["PI Name", "Email", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
+    const headers = ["PI Name", "Email", "Phone", "Department", "Building", "Room", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
     const exportResults = results.slice(0, maxExport);
     const rows = exportResults.map((g) => [
       g.pi_name || "",
       g.pis?.email || g.pi_email || "",
+      g.pis?.phone || "",
+      g.pis?.department || "",
+      g.pis?.building || "",
+      g.pis?.room || "",
       g.institution || "",
       g.state || "",
       `"${(g.title || "").replace(/"/g, '""')}"`,
@@ -1127,7 +1131,7 @@ export default function DatabasePage() {
                             <tr className="border-b border-[var(--color-gray-100)] bg-[var(--color-gray-50)]">
                               <th className="w-8 px-3 py-3"></th>
                               <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">PI Name</th>
-                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Email</th>
+                              <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Contact</th>
                               <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Institution</th>
                               <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)] hidden lg:table-cell">State</th>
                               <th className="text-left px-3 py-3 font-semibold text-[var(--color-gray-700)]">Grant Title</th>
@@ -1171,13 +1175,21 @@ export default function DatabasePage() {
                                     )}
                                   </td>
                                   <td className="px-3 py-2.5">
-                                    {email ? (
-                                      <a href={`mailto:${email}`} className="text-[var(--color-brand)] hover:underline truncate block max-w-[200px]">
-                                        {email}
-                                      </a>
-                                    ) : (
-                                      <span className="text-[var(--color-gray-400)]">—</span>
-                                    )}
+                                    <div className="space-y-0.5">
+                                      {email ? (
+                                        <a href={`mailto:${email}`} className="text-[var(--color-brand)] hover:underline truncate block max-w-[200px] text-xs">
+                                          {email}
+                                        </a>
+                                      ) : (
+                                        <span className="text-[var(--color-gray-400)] text-xs">No email</span>
+                                      )}
+                                      {grant.pis?.phone && (
+                                        <span className="text-xs text-[var(--color-gray-500)] block">📞 {grant.pis.phone}</span>
+                                      )}
+                                      {(grant.pis?.building || grant.pis?.room) && (
+                                        <span className="text-xs text-[var(--color-gray-500)] block">📍 {[grant.pis.building, grant.pis.room ? `Rm ${grant.pis.room}` : null].filter(Boolean).join(", ")}</span>
+                                      )}
+                                    </div>
                                   </td>
                                   <td className="px-3 py-2.5 text-[var(--color-gray-600)] max-w-[180px] truncate">
                                     {grant.institution || "—"}
@@ -1306,6 +1318,37 @@ export default function DatabasePage() {
                                 );
                               }
                               return null;
+                            })()}
+
+                            {/* Extra contact info: phone, department, office */}
+                            {(() => {
+                              const phone = grant.pis?.phone;
+                              const dept = grant.pis?.department;
+                              const building = grant.pis?.building;
+                              const room = grant.pis?.room;
+                              const office = grant.pis?.office_location;
+                              const location = [building, room ? `Room ${room}` : null].filter(Boolean).join(", ") || office;
+                              const hasExtra = phone || dept || location;
+                              if (!hasExtra) return null;
+                              return (
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm text-[var(--color-gray-500)]">
+                                  {phone && (
+                                    <span className="inline-flex items-center gap-1">
+                                      📞 <a href={`tel:${phone}`} className="hover:text-[var(--color-brand)]">{phone}</a>
+                                    </span>
+                                  )}
+                                  {location && (
+                                    <span className="inline-flex items-center gap-1">
+                                      📍 {location}
+                                    </span>
+                                  )}
+                                  {dept && (
+                                    <span className="inline-flex items-center gap-1">
+                                      🏛️ {dept}
+                                    </span>
+                                  )}
+                                </div>
+                              );
                             })()}
 
                             {/* Badges row */}
