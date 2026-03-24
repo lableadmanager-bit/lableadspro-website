@@ -58,6 +58,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "grantId required" }, { status: 400 });
     }
 
+    // Cap favorites at 500 per user
+    const { count } = await supabaseAdmin
+      .from("favorites")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+
+    if ((count ?? 0) >= 500) {
+      return NextResponse.json(
+        { error: "Favorites limit reached (500 max). Remove some to add new ones." },
+        { status: 400 }
+      );
+    }
+
     const { error } = await supabaseAdmin
       .from("favorites")
       .upsert(
