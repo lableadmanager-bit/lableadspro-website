@@ -1026,16 +1026,27 @@ export default function DatabasePage() {
                         </button>
                       </div>
 
-                      {/* Export CSV - only in favorites mode */}
+                      {/* Export CSV - Pro subscribers only, favorites mode */}
                       {favoritesOnly && results.length > 0 && (
-                        <button
-                          onClick={exportFavoritesCSV}
-                          className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] text-[var(--color-gray-500)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-colors"
-                          title="Export favorites as CSV"
-                        >
-                          <Download size={14} />
-                          Export CSV
-                        </button>
+                        planTier === "pro" ? (
+                          <button
+                            onClick={exportFavoritesCSV}
+                            className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] text-[var(--color-gray-500)] hover:border-[var(--color-brand)] hover:text-[var(--color-brand)] transition-colors"
+                            title="Export favorites as CSV"
+                          >
+                            <Download size={14} />
+                            Export CSV
+                          </button>
+                        ) : (
+                          <span
+                            className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border border-[var(--color-gray-200)] text-[var(--color-gray-400)] cursor-default"
+                            title="Upgrade to Pro to export your favorites"
+                          >
+                            <Download size={14} />
+                            Export CSV
+                            <span className="text-xs bg-[var(--color-brand-light)] text-[var(--color-brand)] px-1.5 py-0.5 rounded-full font-medium">Pro</span>
+                          </span>
+                        )
                       )}
 
                     <select
