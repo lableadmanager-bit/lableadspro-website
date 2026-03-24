@@ -314,8 +314,8 @@ export default function DatabasePage() {
 
   const exportFavoritesCSV = () => {
     if (results.length === 0) return;
-    // Cap exports at 50 rows per download
-    const maxExport = 50;
+    // Export up to 500 (matches favorites cap)
+    const maxExport = 500;
     const headers = ["PI Name", "Email", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
     const exportResults = results.slice(0, maxExport);
     const rows = exportResults.map((g) => [
