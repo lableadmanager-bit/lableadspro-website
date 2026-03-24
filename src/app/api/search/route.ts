@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
       page = 1,
       sort = "relevance",
       pageSize = 20,
+      favoriteGrantIds,
     } = body;
 
     const offset = (page - 1) * pageSize;
@@ -141,6 +142,14 @@ export async function POST(req: NextRequest) {
     }
     if (filters.piName) {
       q = q.ilike("pi_name", `%${filters.piName}%`);
+    }
+
+    // Favorites filter: restrict to specific grant IDs
+    if (favoriteGrantIds?.length) {
+      q = q.in("grant_id", favoriteGrantIds);
+    } else if (favoriteGrantIds && favoriteGrantIds.length === 0) {
+      // User has no favorites but toggled favorites-only — return empty
+      return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
     }
 
     // Sort

@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, Star } from "lucide-react";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
@@ -171,6 +171,9 @@ export default function DatabasePage() {
   const [activitySearch, setActivitySearch] = useState("");
   const activityDropdownRef = useRef<HTMLDivElement>(null);
   const [activePiFilter, setActivePiFilter] = useState<string | null>(null);
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [togglingFav, setTogglingFav] = useState<Set<string>>(new Set());
 
   // Get user session and subscription
   useEffect(() => {
@@ -186,6 +189,16 @@ export default function DatabasePage() {
         if (data.subscribedStates) {
           setSubscribedStates(data.subscribedStates);
           setPlanTier(data.planTier);
+        }
+      })
+      .catch(() => {});
+
+    // Fetch user's favorites
+    fetch("/api/favorites")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.favorites) {
+          setFavoriteIds(new Set(data.favorites.map((f: { grant_id: string }) => f.grant_id)));
         }
       })
       .catch(() => {});
@@ -256,7 +269,7 @@ export default function DatabasePage() {
     }, 400);
     return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, filters, sort, activePiFilter]);
+  }, [query, filters, sort, activePiFilter, favoritesOnly]);
 
   const doSearch = useCallback(
     async (p: number = 1) => {
@@ -281,6 +294,7 @@ export default function DatabasePage() {
             },
             page: p,
             sort,
+            favoriteGrantIds: favoritesOnly ? Array.from(favoriteIds) : undefined,
           }),
         });
         const data: SearchResponse = await res.json();
@@ -294,8 +308,36 @@ export default function DatabasePage() {
         setLoading(false);
       }
     },
-    [query, filters, sort, activePiFilter]
+    [query, filters, sort, activePiFilter, favoritesOnly, favoriteIds]
   );
+
+  const toggleFavorite = async (grantId: string) => {
+    setTogglingFav((prev) => new Set(prev).add(grantId));
+    const isFav = favoriteIds.has(grantId);
+    try {
+      const res = await fetch("/api/favorites", {
+        method: isFav ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ grantId }),
+      });
+      if (res.ok) {
+        setFavoriteIds((prev) => {
+          const next = new Set(prev);
+          if (isFav) next.delete(grantId);
+          else next.add(grantId);
+          return next;
+        });
+      }
+    } catch {
+      console.error("Failed to toggle favorite");
+    } finally {
+      setTogglingFav((prev) => {
+        const next = new Set(prev);
+        next.delete(grantId);
+        return next;
+      });
+    }
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -910,8 +952,27 @@ export default function DatabasePage() {
                     <p className="text-sm text-[var(--color-gray-500)]">
                       {loading
                         ? "Searching..."
-                        : `${total.toLocaleString()} result${total !== 1 ? "s" : ""} found`}
+                        : favoritesOnly
+                          ? `${total.toLocaleString()} result${total !== 1 ? "s" : ""} · showing favorites only`
+                          : `${total.toLocaleString()} result${total !== 1 ? "s" : ""} found`}
                     </p>
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => {
+                          const newVal = !favoritesOnly;
+                          setFavoritesOnly(newVal);
+                          userHasInteracted.current = true;
+                          if (newVal) setHasSearched(true);
+                        }}
+                        className={`inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg border transition-colors ${
+                          favoritesOnly
+                            ? "bg-amber-50 border-amber-300 text-amber-700"
+                            : "border-[var(--color-gray-300)] text-[var(--color-gray-500)] hover:border-[var(--color-gray-500)]"
+                        }`}
+                      >
+                        <Star size={14} className={favoritesOnly ? "fill-amber-400 text-amber-400" : ""} />
+                        Favorites{favoriteIds.size > 0 ? ` (${favoriteIds.size})` : ""}
+                      </button>
                     <select
                       value={sort}
                       onChange={(e) => {
@@ -923,6 +984,7 @@ export default function DatabasePage() {
                       <option value="date">Sort: Newest</option>
                       <option value="amount">Sort: Highest Award</option>
                     </select>
+                    </div>
                   </div>
 
                   {/* Active PI filter pill */}
@@ -971,15 +1033,32 @@ export default function DatabasePage() {
                             key={grant.id}
                             className="bg-white rounded-xl border border-[var(--color-gray-100)] p-6 hover:shadow-md transition-shadow"
                           >
-                            {/* Title */}
-                            <button
-                              onClick={() => toggleExpanded(grant.id)}
-                              className="text-left w-full group"
-                            >
-                              <h3 className="text-base font-semibold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors leading-snug">
-                                {grant.title}
-                              </h3>
-                            </button>
+                            {/* Title + Favorite */}
+                            <div className="flex items-start gap-3">
+                              <button
+                                onClick={() => toggleExpanded(grant.id)}
+                                className="text-left flex-1 group"
+                              >
+                                <h3 className="text-base font-semibold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors leading-snug">
+                                  {grant.title}
+                                </h3>
+                              </button>
+                              <button
+                                onClick={() => toggleFavorite(grant.grant_id)}
+                                disabled={togglingFav.has(grant.grant_id)}
+                                className={`shrink-0 p-1.5 rounded-lg transition-colors ${
+                                  favoriteIds.has(grant.grant_id)
+                                    ? "text-amber-400 hover:text-amber-500"
+                                    : "text-[var(--color-gray-300)] hover:text-amber-400"
+                                } disabled:opacity-50`}
+                                title={favoriteIds.has(grant.grant_id) ? "Remove from favorites" : "Add to favorites"}
+                              >
+                                <Star
+                                  size={18}
+                                  className={favoriteIds.has(grant.grant_id) ? "fill-amber-400" : ""}
+                                />
+                              </button>
+                            </div>
 
                             {/* PI & Institution */}
                             <p className="text-sm text-[var(--color-gray-500)] mt-2">
@@ -1154,6 +1233,19 @@ export default function DatabasePage() {
                   <p className="text-[var(--color-gray-500)] max-w-md mx-auto">
                     Enter a keyword, PI name, institution, or research topic above to explore our database of 525,600 grants from NIH, NSF, DOD, and more.
                   </p>
+                  {favoriteIds.size > 0 && (
+                    <button
+                      onClick={() => {
+                        setFavoritesOnly(true);
+                        setHasSearched(true);
+                        userHasInteracted.current = true;
+                      }}
+                      className="mt-6 inline-flex items-center gap-2 text-sm font-medium px-4 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 transition-colors"
+                    >
+                      <Star size={16} className="fill-amber-400 text-amber-400" />
+                      View My Favorites ({favoriteIds.size})
+                    </button>
+                  )}
                 </div>
               )}
             </div>
