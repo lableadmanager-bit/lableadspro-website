@@ -394,13 +394,29 @@ export default function DatabasePage() {
     userHasInteracted.current = true;
     setFilters((prev) => {
       const removing = prev.agencies.includes(ag);
+      let nihInstitutes = prev.nihInstitutes;
+      
+      // Clear NIH institutes when NIH is unchecked
+      if (ag === "nih" && removing) {
+        nihInstitutes = [];
+      }
+      // Sync VA agency checkbox with VA Medical Centers NIH sub-institute
+      if (ag === "va") {
+        if (removing) {
+          nihInstitutes = nihInstitutes.filter((n) => n !== "VA Medical Centers");
+        } else {
+          if (!nihInstitutes.includes("VA Medical Centers")) {
+            nihInstitutes = [...nihInstitutes, "VA Medical Centers"];
+          }
+        }
+      }
+      
       return {
         ...prev,
         agencies: removing
           ? prev.agencies.filter((a) => a !== ag)
           : [...prev.agencies, ag],
-        // Clear NIH institutes when NIH is unchecked
-        nihInstitutes: ag === "nih" && removing ? [] : prev.nihInstitutes,
+        nihInstitutes,
       };
     });
   };

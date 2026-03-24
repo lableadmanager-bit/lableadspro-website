@@ -94,7 +94,19 @@ export async function POST(req: NextRequest) {
       q = q.in("state", filters.states);
     }
     if (filters.agencies?.length) {
-      q = q.in("source", filters.agencies);
+      const hasVa = filters.agencies.includes("va");
+      const nonVaAgencies = filters.agencies.filter((a: string) => a !== "va");
+      
+      if (hasVa && nonVaAgencies.length > 0) {
+        // VA + other agencies: source IN (others) OR institution matches VA
+        q = q.or(`source.in.(${nonVaAgencies.map((a: string) => `"${a}"`).join(",")}),institution.ilike.%veteran%,institution.ilike.%VA medical%`);
+      } else if (hasVa && nonVaAgencies.length === 0) {
+        // VA only: filter to VA institutions
+        q = q.or("institution.ilike.%veteran%,institution.ilike.%VA medical%");
+      } else {
+        // No VA selected: normal source filter
+        q = q.in("source", filters.agencies);
+      }
     }
     if (filters.nihInstitutes?.length) {
       const vaFilter = filters.nihInstitutes.includes("VA Medical Centers");
