@@ -69,7 +69,18 @@ export async function POST(req: NextRequest) {
       metadata,
       subscription_data: { metadata },
       allow_promotion_codes: true,
-      customer_email: undefined,
+      custom_fields: [
+        {
+          key: "first_name",
+          label: { type: "custom", custom: "First Name" },
+          type: "text",
+        },
+        {
+          key: "last_name",
+          label: { type: "custom", custom: "Last Name" },
+          type: "text",
+        },
+      ],
       success_url: `${origin}/checkout/success`,
       cancel_url: `${origin}/checkout`,
     });

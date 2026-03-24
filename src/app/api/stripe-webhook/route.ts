@@ -148,6 +148,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
+  // Extract first/last name from Stripe custom_fields
+  const customFields = (session as any).custom_fields as Array<{
+    key: string;
+    text?: { value: string };
+  }> | undefined;
+  const firstName = customFields?.find((f) => f.key === "first_name")?.text?.value || null;
+  const lastName = customFields?.find((f) => f.key === "last_name")?.text?.value || null;
+
   const metadata = session.metadata || {};
   const states = metadata.states ? metadata.states.split(",") : [];
   const planTier = metadata.plan_tier || "standard";
@@ -192,6 +200,9 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
         plan_tier: planTier,
         subscribed_states: states,
         status: "active",
+        first_name: firstName,
+        last_name: lastName,
+        email,
       });
       if (insertError) {
         console.error("Error inserting subscription:", insertError.message);
@@ -225,7 +236,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     resetLink,
   });
 
-  console.log(`[SUBSCRIPTION] ${email} | plan: ${planTier} | states: ${states.join(",")}`);
+  const nameStr = [firstName, lastName].filter(Boolean).join(" ") || "unknown";
+  console.log(`[SUBSCRIPTION] ${nameStr} <${email}> | plan: ${planTier} | states: ${states.join(",")}`);
 }
 
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
