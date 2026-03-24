@@ -322,9 +322,9 @@ export default function DatabasePage() {
       g.state || "",
       `"${(g.title || "").replace(/"/g, '""')}"`,
       (g.source || "").toUpperCase(),
-      g.award_amount ? String(g.award_amount) : "",
+      g.award_amount ? formatCurrency(g.award_amount) : "",
       g.award_date || "",
-      (g.equipment_tags || []).join("; "),
+      `"${(g.equipment_tags || []).join("; ")}"`,
       g.grant_id || "",
     ]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
