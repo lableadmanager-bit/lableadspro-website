@@ -44,10 +44,10 @@ export default function Header() {
             Database
           </a>
           <a
-            href="/#cta"
+            href="/#pricing"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
           >
-            Get Early Access
+            Sign Up
           </a>
         </nav>
 
@@ -92,11 +92,11 @@ export default function Header() {
             Database
           </a>
           <a
-            href="/#cta"
+            href="/#pricing"
             onClick={() => setMobileOpen(false)}
             className="block text-center text-sm font-semibold text-white bg-[var(--color-brand)] px-5 py-2.5 rounded-lg"
           >
-            Get Early Access
+            Sign Up
           </a>
         </div>
       </div>
