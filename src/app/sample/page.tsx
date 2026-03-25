@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trackConversion, trackEvent } from "@/lib/analytics";
 
 const STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" }, { code: "AZ", name: "Arizona" },
@@ -58,6 +59,14 @@ export default function SampleReport() {
         throw new Error(data.error || "Failed to send sample report");
       }
       setSubmitted(true);
+      // Track conversion — sample report downloaded
+      trackConversion('SAMPLE_DOWNLOAD', { 
+        state: selectedStates.join(','),
+      });
+      trackEvent('sample_report_submitted', {
+        states: selectedStates.join(','),
+        state_count: selectedStates.length,
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {

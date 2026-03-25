@@ -329,23 +329,24 @@ export default function DatabasePage() {
     const maxExport = 500;
     const headers = ["PI Name", "Email", "Phone", "Department", "Building", "Room", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
     const exportResults = results.slice(0, maxExport);
+    const csvQuote = (val: string) => `"${val.replace(/"/g, '""')}"`;
     const rows = exportResults.map((g) => [
-      g.pi_name || "",
-      g.pis?.email || g.pi_email || "",
-      g.pis?.phone || "",
-      g.pis?.department || "",
-      g.pis?.building || "",
-      g.pis?.room || "",
-      g.institution || "",
-      g.state || "",
-      `"${(g.title || "").replace(/"/g, '""')}"`,
-      (g.source || "").toUpperCase(),
-      g.award_amount ? formatCurrency(g.award_amount) : "",
-      g.award_date || "",
-      `"${(g.equipment_tags || []).join("; ")}"`,
-      g.grant_id || "",
+      csvQuote(g.pi_name || ""),
+      csvQuote(g.pis?.email || g.pi_email || ""),
+      csvQuote(g.pis?.phone || ""),
+      csvQuote(g.pis?.department || ""),
+      csvQuote(g.pis?.building || ""),
+      csvQuote(g.pis?.room || ""),
+      csvQuote(g.institution || ""),
+      csvQuote(g.state || ""),
+      csvQuote(g.title || ""),
+      csvQuote((g.source || "").toUpperCase()),
+      csvQuote(g.award_amount ? formatCurrency(g.award_amount) : ""),
+      csvQuote(g.award_date || ""),
+      csvQuote((g.equipment_tags || []).join("; ")),
+      csvQuote(g.grant_id || ""),
     ]);
-    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const csv = [headers.map(csvQuote).join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
