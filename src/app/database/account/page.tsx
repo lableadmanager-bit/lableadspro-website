@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { PLANS, AUTO_UPGRADE_THRESHOLD, getEffectivePlan } from "@/lib/plans";
 import type { PlanTier } from "@/lib/plans";
-import { ArrowLeft, ExternalLink, Mail, Plus, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ExternalLink, Mail, Plus, ArrowUpRight, Eye, Download } from "lucide-react";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -36,6 +36,16 @@ const US_STATES = [
   { code: "WI", name: "Wisconsin" }, { code: "WY", name: "Wyoming" },
 ];
 
+interface ReportRow {
+  id: number;
+  report_date: string;
+  plan_tier: string;
+  states: string[];
+  grant_count: number;
+  tagged_count: number;
+  status: string;
+}
+
 interface SubscriptionData {
   planTier: PlanTier;
   subscribedStates: string[];
@@ -63,6 +73,10 @@ export default function AccountPage() {
 
   // Billing portal
   const [portalLoading, setPortalLoading] = useState(false);
+
+  // Report history
+  const [reports, setReports] = useState<ReportRow[]>([]);
+  const [reportsLoading, setReportsLoading] = useState(true);
 
   const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -99,6 +113,18 @@ export default function AccountPage() {
       } catch {
         setError("Failed to load subscription");
       }
+
+      // Fetch report history
+      try {
+        const reportsRes = await fetch("/api/reports");
+        if (reportsRes.ok) {
+          const reportsData = await reportsRes.json();
+          setReports(reportsData.reports ?? []);
+        }
+      } catch {
+        // Non-critical — silently fail
+      }
+      setReportsLoading(false);
       setLoading(false);
     }
     load();
@@ -489,6 +515,80 @@ export default function AccountPage() {
         </div>
 
         {/* Upgrade Tier Section — only for Standard users */}
+        {/* Report History Section */}
+        <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
+          <h2 className="text-lg font-semibold mb-4">Report History</h2>
+
+          {reportsLoading ? (
+            <div className="animate-pulse text-sm text-[var(--color-gray-500)]">Loading reports...</div>
+          ) : reports.length === 0 ? (
+            <p className="text-sm text-[var(--color-gray-500)]">
+              Your first report will appear here after Monday delivery.
+            </p>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--color-gray-200)]">
+                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">Date</th>
+                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">States</th>
+                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Grants</th>
+                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reports.map((r) => (
+                      <tr key={r.id} className={`border-b border-[var(--color-gray-100)] ${r.status === "failed" ? "opacity-50" : ""}`}>
+                        <td className="py-2.5 font-medium">
+                          {new Date(r.report_date + "T00:00:00").toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "2-digit",
+                          })}
+                        </td>
+                        <td className="py-2.5 text-[var(--color-gray-600)]">
+                          {r.states.join(", ")}
+                        </td>
+                        <td className="py-2.5 text-right text-[var(--color-gray-600)]">
+                          {r.grant_count}
+                        </td>
+                        <td className="py-2.5 text-right">
+                          {r.status === "failed" ? (
+                            <span className="text-xs text-red-500">Delivery failed</span>
+                          ) : (
+                            <span className="inline-flex items-center gap-3">
+                              <a
+                                href={`/api/reports/${r.id}?format=html`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
+                              >
+                                <Eye size={14} />
+                                View
+                              </a>
+                              <a
+                                href={`/api/reports/${r.id}?format=excel`}
+                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
+                              >
+                                <Download size={14} />
+                                Excel
+                              </a>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-[var(--color-gray-500)] mt-3">
+                Showing {reports.length} of {reports.length} report{reports.length !== 1 ? "s" : ""}
+              </p>
+            </>
+          )}
+        </div>
+
         {showUpgradeSection && (
           <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
             <h2 className="text-lg font-semibold mb-1">Upgrade to Pro</h2>
