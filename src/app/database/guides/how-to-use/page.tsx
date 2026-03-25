@@ -95,6 +95,8 @@ const jumpLinks = [
   { id: "agency-filter", label: "Agency Filter" },
   { id: "grant-type-filter", label: "Grant Type Filter" },
   { id: "grant-card", label: "Reading a Grant Card" },
+  { id: "new-investigator", label: "New Investigator Badges" },
+  { id: "favorites", label: "Favorites" },
   { id: "pi-contact", label: "Finding PI Contact Info" },
   { id: "pro-tips", label: "Pro Tips" },
 ];
@@ -455,9 +457,9 @@ export default function HowToUseGuide() {
             </p>
 
             <Screenshot
-              src="/guide-screenshots/database-expanded-grant.png"
-              alt="An expanded grant card showing title, PI info, institution, abstract, equipment tags, and contact details"
-              caption="An expanded grant card. Every piece of data you need to qualify a lead is right here."
+              src="/guide-screenshots/ferris-grant-top.png"
+              alt="An expanded grant card for Robert L. Ferris at UNC Chapel Hill showing title, PI email, phone number, office location, department, equipment tags, and full abstract"
+              caption="A real grant card: Robert L. Ferris at UNC Chapel Hill. Email, phone, office (450 West Drive, Room CB 7295), department, 10 equipment tags, $750K R01, and the full abstract. Everything you need to qualify and reach this lead."
             />
 
             <div className="grid gap-3">
@@ -573,7 +575,167 @@ export default function HowToUseGuide() {
           </div>
         </section>
 
-        {/* Section 7: Finding PI Contact Information */}
+        {/* Section 7: New Investigator Badges */}
+        <section id="new-investigator" className="scroll-mt-24">
+          <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
+            New Investigator Badges
+          </h2>
+          <p className="text-sm text-[var(--color-gray-500)] mb-6">
+            The highest-value leads in the database. Someone is building a lab
+            from scratch.
+          </p>
+          <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6 space-y-4">
+            <p className="text-sm text-[var(--color-gray-700)]">
+              Certain grant types signal that a PI is either starting a brand
+              new lab or transitioning to independence. These are flagged with
+              colored badges on the grant card because they represent the single
+              best moment to reach a buyer: when they need{" "}
+              <span className="font-semibold text-[var(--color-gray-900)]">
+                everything
+              </span>
+              .
+            </p>
+
+            <Screenshot
+              src="/guide-screenshots/new-investigator-expanded.png"
+              alt="Grant cards showing K99 Future New Lab and R00 New Investigator badges with equipment tags"
+              caption="K99 and R00 grants flagged with investigator badges. These PIs are building labs and buying equipment."
+            />
+
+            <div className="grid gap-3">
+              <div className="flex items-start gap-3 text-sm">
+                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800 shrink-0">
+                  R00 · New Investigator
+                </span>
+                <span className="text-[var(--color-gray-700)]">
+                  This PI just got their first faculty position and is setting up
+                  a lab from scratch. They are buying benches, microscopes,
+                  centrifuges, freezers, imaging systems — everything. This is
+                  the highest-value lead type in the database.
+                </span>
+              </div>
+              <div className="flex items-start gap-3 text-sm">
+                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800 shrink-0">
+                  K99 · Future New Lab
+                </span>
+                <span className="text-[var(--color-gray-700)]">
+                  This PI is transitioning to independence within 1-2 years. They
+                  do not have their own lab yet, but they will soon. Start the
+                  relationship now so you are first in line when the purchase
+                  orders come.
+                </span>
+              </div>
+              <div className="flex items-start gap-3 text-sm">
+                <span className="inline-block px-2 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-800 shrink-0">
+                  DP2 · New Innovator
+                </span>
+                <span className="text-[var(--color-gray-700)]">
+                  NIH New Innovator Award. Early-career PI with significant
+                  funding and an ambitious research program. High likelihood of
+                  major equipment purchases.
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-[var(--color-gray-50)] rounded-lg px-4 py-3">
+              <p className="text-xs text-[var(--color-gray-500)]">
+                <span className="font-semibold text-[var(--color-gray-700)]">
+                  The insight:
+                </span>{" "}
+                A professor who just moved to a new university or just won their
+                first independent grant needs to outfit an entire lab. That is
+                not one instrument — it is 10-20 instruments over 6-12 months.
+                These badges exist to make sure you never miss that window.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 8: Favorites */}
+        <section id="favorites" className="scroll-mt-24">
+          <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
+            Favorites
+          </h2>
+          <p className="text-sm text-[var(--color-gray-500)] mb-6">
+            Save the grants that matter most to your pipeline.
+          </p>
+          <div className="rounded-xl border border-[var(--color-gray-100)] bg-white p-6 space-y-4">
+            <p className="text-sm text-[var(--color-gray-700)]">
+              Click the{" "}
+              <span className="font-semibold text-[var(--color-gray-900)]">
+                star icon
+              </span>{" "}
+              on any grant card to save it to your favorites. The star turns gold
+              when a grant is favorited. Build a shortlist of the leads you are
+              actively working without losing them in search results.
+            </p>
+
+            <Screenshot
+              src="/guide-screenshots/ferris-grant-top.png"
+              alt="A grant card with the favorite star icon visible in the top right corner"
+              caption="The star icon on the right side of every grant card. Click it to add a grant to your favorites."
+            />
+
+            <h3 className="text-lg font-bold text-[var(--color-gray-900)] mt-6">
+              Viewing Your Favorites
+            </h3>
+            <p className="text-sm text-[var(--color-gray-700)]">
+              Click the{" "}
+              <span className="font-semibold text-[var(--color-gray-900)]">
+                &quot;★ Favorites&quot;
+              </span>{" "}
+              button above the results to toggle between all results and your
+              saved grants. When active, the button highlights and only your
+              favorited grants appear.
+            </p>
+
+            <Screenshot
+              src="/guide-screenshots/favorites-view.png"
+              alt="The Favorites filter button toggled on, showing only favorited grants"
+              caption="Click Favorites to see only the grants you have saved. Your shortlist of active leads."
+            />
+
+            <ul className="space-y-2 text-sm text-[var(--color-gray-700)]">
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  Favorites persist across sessions.
+                </span>{" "}
+                Log out, come back next week, and your favorited grants are still
+                there.
+              </li>
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  Use favorites as your working pipeline.
+                </span>{" "}
+                Star the grants you plan to follow up on this week. Unstar them
+                when you have made contact or moved on.
+              </li>
+              <li>
+                <span className="font-semibold text-[var(--color-gray-900)]">
+                  Pro subscribers get enriched favorites.
+                </span>{" "}
+                When you favorite a grant on a Pro plan, we run additional
+                enrichment on that specific grant — deeper contact verification,
+                office and building information, and expanded abstracts for
+                grants from thinner data sources. The grant you care about gets
+                our best data.
+              </li>
+            </ul>
+
+            <div className="bg-[var(--color-gray-50)] rounded-lg px-4 py-3">
+              <p className="text-xs text-[var(--color-gray-500)]">
+                <span className="font-semibold text-[var(--color-gray-700)]">
+                  Pro tip:
+                </span>{" "}
+                Favorites are also a great way to prepare for campus visits.
+                Star every grant at a university you are planning to visit, then
+                filter to favorites and you have your call sheet ready to go.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 9: Finding PI Contact Information */}
         <section id="pi-contact" className="scroll-mt-24">
           <h2 className="text-2xl font-bold text-[var(--color-gray-900)] mb-2">
             Finding PI Contact Information
