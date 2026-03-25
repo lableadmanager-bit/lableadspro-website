@@ -145,7 +145,7 @@ export default function DatabaseHubPage() {
 
       {/* Featured Database Guides */}
       <section className="px-8 mt-2 mb-4">
-        <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
+        <div className="max-w-3xl mx-auto flex flex-col gap-4">
           <Link
             href="/database/guides/how-to-use"
             className="group flex items-center gap-4 rounded-xl border border-[var(--color-brand)] bg-white px-6 py-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
