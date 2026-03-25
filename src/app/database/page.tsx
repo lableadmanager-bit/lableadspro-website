@@ -83,12 +83,7 @@ const guides = [
     description: "Public health research grants and CDC lab equipment purchasing patterns.",
     href: "/cdc-grants-guide",
   },
-  {
-    emoji: "🏷️",
-    title: "Equipment Tags We Detect",
-    description: "Every instrument our AI identifies in grant abstracts. 90+ high-value tags across 14 categories.",
-    href: "/database/guides/equipment-tags",
-  },
+
 ];
 
 /* ── molecular background ────────────────────────────────── */
@@ -148,9 +143,9 @@ export default function DatabaseHubPage() {
         </div>
       </section>
 
-      {/* How to Use - Featured */}
+      {/* Featured Database Guides */}
       <section className="px-8 mt-2 mb-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
           <Link
             href="/database/guides/how-to-use"
             className="group flex items-center gap-4 rounded-xl border border-[var(--color-brand)] bg-white px-6 py-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
@@ -162,6 +157,29 @@ export default function DatabaseHubPage() {
               </h3>
               <p className="text-sm text-[var(--color-gray-500)]">
                 A visual walkthrough of every feature, filter, and search tool at your fingertips.
+              </p>
+            </div>
+            <svg
+              className="w-5 h-5 text-[var(--color-brand)] shrink-0"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </Link>
+          <Link
+            href="/database/guides/equipment-tags"
+            className="group flex items-center gap-4 rounded-xl border border-[var(--color-brand)] bg-white px-6 py-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
+          >
+            <span className="text-3xl shrink-0">🏷️</span>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors">
+                Equipment Tags We Detect
+              </h3>
+              <p className="text-sm text-[var(--color-gray-500)]">
+                Every instrument our AI identifies in grant abstracts. 90+ high-value tags across 14 categories.
               </p>
             </div>
             <svg
