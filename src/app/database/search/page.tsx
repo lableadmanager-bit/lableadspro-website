@@ -184,13 +184,20 @@ export default function DatabasePage() {
       setUserEmail(user?.email ?? null);
     });
 
-    // Fetch subscription details
+    // Fetch subscription details and pre-select subscribed states
     fetch("/api/subscription")
       .then((res) => res.json())
       .then((data) => {
         if (data.subscribedStates) {
           setSubscribedStates(data.subscribedStates);
           setPlanTier(data.planTier);
+          // Auto-select the user's subscribed states so they see their territory by default
+          if (data.subscribedStates.length > 0 && data.subscribedStates.length < 51) {
+            setFilters((prev) => ({
+              ...prev,
+              states: prev.states.length === 0 ? data.subscribedStates : prev.states,
+            }));
+          }
         }
       })
       .catch(() => {});
@@ -452,7 +459,11 @@ export default function DatabasePage() {
   };
 
   const clearFilters = () => {
-    setFilters(defaultFilters);
+    setFilters({
+      ...defaultFilters,
+      // Keep subscribed states pre-selected after clearing
+      states: subscribedStates.length > 0 && subscribedStates.length < 51 ? subscribedStates : [],
+    });
     setActivePiFilter(null);
   };
 
