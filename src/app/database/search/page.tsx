@@ -1220,6 +1220,12 @@ export default function DatabasePage() {
                                   <td className="px-3 py-2.5 hidden xl:table-cell">
                                     {grant.equipment_tags && grant.equipment_tags.length > 0 ? (
                                       <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                        {["R00", "DP2"].includes(grant.activity_code || "") && (
+                                          <span className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded-full">🆕 New Lab</span>
+                                        )}
+                                        {grant.activity_code === "K99" && (
+                                          <span className="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded-full">🔜 Future Lab</span>
+                                        )}
                                         {grant.equipment_tags.slice(0, 3).map((tag, i) => (
                                           <span key={i} className="text-xs bg-purple-50 text-purple-700 px-1.5 py-0.5 rounded-full truncate max-w-[100px]">
                                             {tag}
@@ -1229,6 +1235,10 @@ export default function DatabasePage() {
                                           <span className="text-xs text-[var(--color-gray-400)]">+{grant.equipment_tags.length - 3}</span>
                                         )}
                                       </div>
+                                    ) : ["R00", "DP2"].includes(grant.activity_code || "") ? (
+                                      <span className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded-full ring-1 ring-orange-200">🆕 New Investigator</span>
+                                    ) : grant.activity_code === "K99" ? (
+                                      <span className="text-xs bg-amber-50 text-amber-700 px-1.5 py-0.5 rounded-full ring-1 ring-amber-200">🔜 Future New Lab</span>
                                     ) : (
                                       <span className="text-[var(--color-gray-400)]">—</span>
                                     )}
@@ -1362,8 +1372,19 @@ export default function DatabasePage() {
                                 </span>
                               )}
                               {grant.activity_code && (
-                                <span className="inline-flex items-center text-xs font-medium bg-[var(--color-gray-100)] text-[var(--color-gray-700)] px-2.5 py-1 rounded-full">
+                                <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full ${
+                                  ["R00", "DP2"].includes(grant.activity_code)
+                                    ? "bg-orange-50 text-orange-700 ring-1 ring-orange-200"
+                                    : grant.activity_code === "K99"
+                                    ? "bg-amber-50 text-amber-700 ring-1 ring-amber-200"
+                                    : "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]"
+                                }`}>
+                                  {["R00", "DP2"].includes(grant.activity_code) && "🆕 "}
+                                  {grant.activity_code === "K99" && "🔜 "}
                                   {grant.activity_code}
+                                  {grant.activity_code === "R00" && " · New Investigator"}
+                                  {grant.activity_code === "K99" && " · Future New Lab"}
+                                  {grant.activity_code === "DP2" && " · New Innovator"}
                                 </span>
                               )}
                               {grant.award_amount && (
