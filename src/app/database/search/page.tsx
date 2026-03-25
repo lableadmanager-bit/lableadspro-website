@@ -909,13 +909,13 @@ export default function DatabasePage() {
                   <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
                     {userEmail}
                   </span>
-                  <button
-                    onClick={handleManageSubscription}
+                  <a
+                    href="/database/account"
                     className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"
                   >
                     <SlidersHorizontal size={14} />
-                    Manage Plan
-                  </button>
+                    Account
+                  </a>
                   <button
                     onClick={handleLogout}
                     className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"
