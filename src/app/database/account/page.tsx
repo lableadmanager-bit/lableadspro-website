@@ -74,6 +74,9 @@ export default function AccountPage() {
   // Billing portal
   const [portalLoading, setPortalLoading] = useState(false);
 
+  // Tabs
+  const [activeTab, setActiveTab] = useState<"plan" | "reports">("plan");
+
   // Report history
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
@@ -309,6 +312,31 @@ export default function AccountPage() {
           </div>
         )}
 
+        {/* Tabs */}
+        <div className="flex gap-1 mb-6 bg-[var(--color-gray-100)] p-1 rounded-xl w-fit">
+          <button
+            onClick={() => setActiveTab("plan")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              activeTab === "plan"
+                ? "bg-white text-[var(--color-gray-900)] shadow-sm"
+                : "text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)]"
+            }`}
+          >
+            Plan Settings
+          </button>
+          <button
+            onClick={() => setActiveTab("reports")}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              activeTab === "reports"
+                ? "bg-white text-[var(--color-gray-900)] shadow-sm"
+                : "text-[var(--color-gray-500)] hover:text-[var(--color-gray-700)]"
+            }`}
+          >
+            Past Reports
+          </button>
+        </div>
+
+        {activeTab === "plan" && (<>
         {/* Current Plan Card */}
         <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -515,80 +543,6 @@ export default function AccountPage() {
         </div>
 
         {/* Upgrade Tier Section — only for Standard users */}
-        {/* Report History Section */}
-        <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
-          <h2 className="text-lg font-semibold mb-4">Report History</h2>
-
-          {reportsLoading ? (
-            <div className="animate-pulse text-sm text-[var(--color-gray-500)]">Loading reports...</div>
-          ) : reports.length === 0 ? (
-            <p className="text-sm text-[var(--color-gray-500)]">
-              Your first report will appear here after Monday delivery.
-            </p>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-[var(--color-gray-200)]">
-                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">Date</th>
-                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">States</th>
-                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Grants</th>
-                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reports.map((r) => (
-                      <tr key={r.id} className={`border-b border-[var(--color-gray-100)] ${r.status === "failed" ? "opacity-50" : ""}`}>
-                        <td className="py-2.5 font-medium">
-                          {new Date(r.report_date + "T00:00:00").toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "2-digit",
-                          })}
-                        </td>
-                        <td className="py-2.5 text-[var(--color-gray-600)]">
-                          {r.states.join(", ")}
-                        </td>
-                        <td className="py-2.5 text-right text-[var(--color-gray-600)]">
-                          {r.grant_count}
-                        </td>
-                        <td className="py-2.5 text-right">
-                          {r.status === "failed" ? (
-                            <span className="text-xs text-red-500">Delivery failed</span>
-                          ) : (
-                            <span className="inline-flex items-center gap-3">
-                              <a
-                                href={`/api/reports/${r.id}?format=html`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
-                              >
-                                <Eye size={14} />
-                                View
-                              </a>
-                              <a
-                                href={`/api/reports/${r.id}?format=excel`}
-                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
-                              >
-                                <Download size={14} />
-                                Excel
-                              </a>
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <p className="text-xs text-[var(--color-gray-500)] mt-3">
-                Showing {reports.length} of {reports.length} report{reports.length !== 1 ? "s" : ""}
-              </p>
-            </>
-          )}
-        </div>
-
         {showUpgradeSection && (
           <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
             <h2 className="text-lg font-semibold mb-1">Upgrade to Pro</h2>
@@ -663,6 +617,82 @@ export default function AccountPage() {
               </a>.
             </p>
           </div>
+        )}
+        </>)}
+
+        {activeTab === "reports" && (
+        <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
+          <h2 className="text-lg font-semibold mb-4">Report History</h2>
+
+          {reportsLoading ? (
+            <div className="animate-pulse text-sm text-[var(--color-gray-500)]">Loading reports...</div>
+          ) : reports.length === 0 ? (
+            <p className="text-sm text-[var(--color-gray-500)]">
+              Your first report will appear here after Monday delivery.
+            </p>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--color-gray-200)]">
+                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">Date</th>
+                      <th className="text-left font-medium text-[var(--color-gray-500)] pb-2">States</th>
+                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Grants</th>
+                      <th className="text-right font-medium text-[var(--color-gray-500)] pb-2">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reports.map((r) => (
+                      <tr key={r.id} className={`border-b border-[var(--color-gray-100)] ${r.status === "failed" ? "opacity-50" : ""}`}>
+                        <td className="py-2.5 font-medium">
+                          {new Date(r.report_date + "T00:00:00").toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "2-digit",
+                          })}
+                        </td>
+                        <td className="py-2.5 text-[var(--color-gray-600)]">
+                          {r.states.join(", ")}
+                        </td>
+                        <td className="py-2.5 text-right text-[var(--color-gray-600)]">
+                          {r.grant_count}
+                        </td>
+                        <td className="py-2.5 text-right">
+                          {r.status === "failed" ? (
+                            <span className="text-xs text-red-500">Delivery failed</span>
+                          ) : (
+                            <span className="inline-flex items-center gap-3">
+                              <a
+                                href={`/api/reports/${r.id}?format=html`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
+                              >
+                                <Eye size={14} />
+                                View
+                              </a>
+                              <a
+                                href={`/api/reports/${r.id}?format=excel`}
+                                className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:underline"
+                              >
+                                <Download size={14} />
+                                Excel
+                              </a>
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-[var(--color-gray-500)] mt-3">
+                Showing {reports.length} of {reports.length} report{reports.length !== 1 ? "s" : ""}
+              </p>
+            </>
+          )}
+        </div>
         )}
       </div>
 
