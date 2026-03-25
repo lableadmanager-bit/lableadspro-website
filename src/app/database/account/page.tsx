@@ -414,10 +414,23 @@ export default function AccountPage() {
                       <span className="text-[var(--color-gray-500)]">Price change</span>
                       <span className="font-medium text-[var(--color-brand)]">+${priceDiff.toLocaleString()}/mo</span>
                     </div>
+                    {/* Show savings vs regular pricing when bundle kicks in */}
+                    {newEffective.proBundle && !currentEffective.proBundle && (
+                      <div className="flex justify-between">
+                        <span className="text-[var(--color-gray-500)]">Regular price</span>
+                        <span className="text-[var(--color-gray-400)] line-through text-xs">${(PLANS.pro.pricePerState * mergedCount).toLocaleString()}/mo</span>
+                      </div>
+                    )}
                     <div className="flex justify-between font-bold pt-1.5 border-t border-[var(--color-gray-200)]">
                       <span>New monthly total</span>
                       <span>${newEffective.monthlyTotal.toLocaleString()}/mo</span>
                     </div>
+                    {/* Pro 2-state bundle notice */}
+                    {newEffective.proBundle && !currentEffective.proBundle && (
+                      <p className="text-xs text-[var(--color-brand)] font-medium mt-1">
+                        🎉 2-state Pro bundle — you&apos;re saving $50/mo vs individual pricing!
+                      </p>
+                    )}
                     {/* Auto-upgrade notice */}
                     {newEffective.autoUpgraded && !currentEffective.autoUpgraded && (
                       <p className="text-xs text-[var(--color-accent)] font-medium mt-1">
