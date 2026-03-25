@@ -6,6 +6,7 @@ import { PLANS, AUTO_UPGRADE_THRESHOLD, getEffectivePlan } from "@/lib/plans";
 import type { PlanTier } from "@/lib/plans";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { trackConversion, trackEvent } from "@/lib/analytics";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -83,6 +84,12 @@ function CheckoutContent() {
     triggerFlash();
   }
 
+  // Track pricing/checkout page view as conversion signal
+  useEffect(() => {
+    trackConversion('PRICING_VIEW', { tier: selectedTier });
+    trackEvent('view_pricing', { tier: selectedTier });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   async function handleSubscribe() {
     if (stateCount === 0) {
       setError("Please select at least one state.");
@@ -102,6 +109,18 @@ function CheckoutContent() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
       if (data.url) {
+        // Track checkout initiation
+        trackConversion('SUBSCRIPTION', {
+          tier: selectedTier,
+          states: stateCount,
+          value: effective.monthlyTotal,
+        });
+        trackEvent('begin_checkout', {
+          tier: selectedTier,
+          state_count: stateCount,
+          value: effective.monthlyTotal,
+          currency: 'USD',
+        });
         window.location.href = data.url;
       }
     } catch (e) {
