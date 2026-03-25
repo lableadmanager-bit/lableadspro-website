@@ -104,6 +104,27 @@ export default function HowItWorks() {
           </Link>
         </div>
 
+        {/* Database Video Demo */}
+        <div className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)]">
+          <div className="text-center mb-6">
+            <h3 className="text-xl md:text-2xl font-bold text-[var(--color-dark)] mb-2">
+              See Our Database in Action
+            </h3>
+            <p className="text-[var(--color-gray-500)]">
+              Watch a quick walkthrough of how reps use our database to find leads in their territory.
+            </p>
+          </div>
+          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a"
+              frameBorder="0"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full rounded-xl"
+              title="Lab Leads Pro Database Walkthrough"
+            />
+          </div>
+        </div>
+
         {/* New Lab Detection Teaser */}
         <div className="mt-12 bg-gradient-to-r from-[var(--color-dark)] to-[#1a2d4a] rounded-2xl p-8 md:p-10 text-center">
           <div className="flex justify-center mb-4">
