@@ -75,7 +75,7 @@ export default function AccountPage() {
   const [portalLoading, setPortalLoading] = useState(false);
 
   // Tabs
-  const [activeTab, setActiveTab] = useState<"plan" | "reports">("plan");
+  const [activeTab, setActiveTab] = useState<"plan" | "reports">("reports");
 
   // Report history
   const [reports, setReports] = useState<ReportRow[]>([]);
