@@ -589,8 +589,18 @@ export default function DatabasePage() {
           <input
             type="text"
             placeholder="Filter by institution..."
-            value={filters.institution}
-            onChange={(e) => setFilters((prev) => ({ ...prev, institution: e.target.value }))}
+            defaultValue={filters.institution}
+            key={filters.institution === "" ? "inst-cleared" : undefined}
+            onBlur={(e) => {
+              userHasInteracted.current = true;
+              setFilters((prev) => ({ ...prev, institution: e.target.value }));
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                userHasInteracted.current = true;
+                setFilters((prev) => ({ ...prev, institution: (e.target as HTMLInputElement).value }));
+              }
+            }}
             className="w-full pl-8 pr-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
           />
         </div>
