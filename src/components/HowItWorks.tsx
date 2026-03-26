@@ -105,7 +105,7 @@ export default function HowItWorks() {
         </div>
 
         {/* Database Video Demo */}
-        <div className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)]">
+        <div id="demo" className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)]">
           <div className="text-center mb-6">
             <h3 className="text-xl md:text-2xl font-bold text-[var(--color-dark)] mb-2">
               See Our Database in Action
