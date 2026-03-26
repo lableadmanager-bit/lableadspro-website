@@ -116,7 +116,7 @@ export default function HowItWorks() {
           </div>
           <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
             <iframe
-              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a"
+              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a?t=0&hide_owner=true&hide_share=true&hide_title=true"
               frameBorder="0"
               allowFullScreen
               className="absolute top-0 left-0 w-full h-full rounded-xl"
