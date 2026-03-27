@@ -1284,13 +1284,32 @@ export default function DatabasePage() {
                             className="bg-white rounded-xl border border-[var(--color-gray-100)] p-6 hover:shadow-md transition-shadow"
                           >
                             {/* Title + Favorite */}
+                            {(() => {
+                              // For USASpending grants (USDA, DOD, etc.) the "title" is often the full description.
+                              // Truncate long titles and show full text in the expandable abstract area.
+                              const MAX_TITLE = 150;
+                              const titleIsLong = grant.title && grant.title.length > MAX_TITLE;
+                              const displayTitle = titleIsLong
+                                ? grant.title.slice(0, MAX_TITLE).replace(/\s+\S*$/, "") + "…"
+                                : grant.title;
+                              // If the title is long and there's no separate abstract, use title as abstract
+                              const effectiveAbstract = grant.abstract && grant.abstract !== grant.title
+                                ? grant.abstract
+                                : titleIsLong
+                                  ? grant.title
+                                  : grant.abstract;
+                              // Stash for use in abstract section below
+                              (grant as any)._displayTitle = displayTitle;
+                              (grant as any)._effectiveAbstract = effectiveAbstract;
+                              return null;
+                            })()}
                             <div className="flex items-start gap-3">
                               <button
                                 onClick={() => toggleExpanded(grant.id)}
                                 className="text-left flex-1 group"
                               >
                                 <h3 className="text-base font-semibold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors leading-snug">
-                                  {grant.title}
+                                  {(grant as any)._displayTitle || grant.title}
                                 </h3>
                               </button>
                               <button
@@ -1442,32 +1461,36 @@ export default function DatabasePage() {
                             )}
 
                             {/* Abstract */}
-                            {grant.abstract && (
-                              <div className="mt-3">
-                                <p className="text-sm text-[var(--color-gray-500)] leading-relaxed">
-                                  {expanded
-                                    ? grant.abstract
-                                    : grant.abstract.slice(0, 200) +
-                                      (grant.abstract.length > 200 ? "..." : "")}
-                                </p>
-                                {grant.abstract.length > 200 && (
-                                  <button
-                                    onClick={() => toggleExpanded(grant.id)}
-                                    className="text-sm text-[var(--color-brand)] hover:underline mt-1 inline-flex items-center gap-1"
-                                  >
-                                    {expanded ? (
-                                      <>
-                                        Show less <ChevronUp size={14} />
-                                      </>
-                                    ) : (
-                                      <>
-                                        Read more <ChevronDown size={14} />
-                                      </>
-                                    )}
-                                  </button>
-                                )}
-                              </div>
-                            )}
+                            {(() => {
+                              const absText = (grant as any)._effectiveAbstract || grant.abstract;
+                              if (!absText) return null;
+                              return (
+                                <div className="mt-3">
+                                  <p className="text-sm text-[var(--color-gray-500)] leading-relaxed">
+                                    {expanded
+                                      ? absText
+                                      : absText.slice(0, 200) +
+                                        (absText.length > 200 ? "..." : "")}
+                                  </p>
+                                  {absText.length > 200 && (
+                                    <button
+                                      onClick={() => toggleExpanded(grant.id)}
+                                      className="text-sm text-[var(--color-brand)] hover:underline mt-1 inline-flex items-center gap-1"
+                                    >
+                                      {expanded ? (
+                                        <>
+                                          Show less <ChevronUp size={14} />
+                                        </>
+                                      ) : (
+                                        <>
+                                          Read more <ChevronDown size={14} />
+                                        </>
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
+                              );
+                            })()}
 
                             {/* Source link */}
                             {grant.source_url && (
