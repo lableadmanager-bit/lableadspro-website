@@ -24,10 +24,9 @@ const plans = [
     features: [
       "Everything in Standard",
       "NSF, DOD, DOE, NASA, VA, USDA & CDC grants",
-      "Full database access — all 8 agencies",
+      "Full database access across all 8 agencies",
       "New lab & faculty hire detection",
-      "Favorites with weekly enrichment",
-      "Export favorites to CSV",
+      "Favorites with weekly enrichment & CSV export",
       "Priority Monday AM delivery",
     ],
     cta: "Get Started",
