@@ -143,6 +143,21 @@ export default function DatabaseHubPage() {
         </div>
       </section>
 
+      {/* Video Demo */}
+      <section className="px-8 mt-2 mb-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative w-full rounded-xl overflow-hidden shadow-lg" style={{ paddingBottom: "56.25%" }}>
+            <iframe
+              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a?t=0&hide_owner=true&hide_share=true&hide_title=true"
+              frameBorder="0"
+              allowFullScreen
+              className="absolute top-0 left-0 w-full h-full"
+              title="Lab Leads Pro Database Walkthrough"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* Featured Database Guides */}
       <section className="px-8 mt-2 mb-4">
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
