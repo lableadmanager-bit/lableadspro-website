@@ -479,7 +479,8 @@ export default function DatabasePage() {
     filters.status !== "all" ||
     filters.amountMin ||
     filters.amountMax ||
-    filters.fiscalYear;
+    filters.fiscalYear ||
+    filters.equipmentTags.length > 0;
 
   // Only show states the user is subscribed to
   const availableStates = subscribedStates.length > 0 ? subscribedStates : US_STATES;
@@ -1128,6 +1129,27 @@ export default function DatabasePage() {
                     </div>
                   )}
 
+                  {/* Active equipment tag filter pill */}
+                  {filters.equipmentTags.length > 0 && (
+                    <div className="flex items-center gap-2 mb-4">
+                      {filters.equipmentTags.map((tag) => (
+                        <span key={tag} className="inline-flex items-center gap-1.5 text-sm bg-purple-100 text-purple-800 px-3 py-1.5 rounded-full font-medium">
+                          🏷️ {tag.replace(/-/g, " ")}
+                          <button
+                            onClick={() => setFilters((prev) => ({
+                              ...prev,
+                              equipmentTags: prev.equipmentTags.filter((t) => t !== tag),
+                            }))}
+                            className="hover:text-purple-900 ml-0.5"
+                            title="Clear tag filter"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   {/* Result cards */}
                   {loading ? (
                     <div className="space-y-4">
@@ -1446,16 +1468,31 @@ export default function DatabasePage() {
                               )}
                             </div>
 
-                            {/* Equipment tags */}
+                            {/* Equipment tags - clickable to filter */}
                             {grant.equipment_tags && grant.equipment_tags.length > 0 && (
                               <div className="flex flex-wrap gap-1.5 mt-3">
                                 {grant.equipment_tags.map((tag, i) => (
-                                  <span
+                                  <button
                                     key={i}
-                                    className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      userHasInteracted.current = true;
+                                      setFilters((prev) => ({
+                                        ...prev,
+                                        equipmentTags: prev.equipmentTags.includes(tag)
+                                          ? prev.equipmentTags
+                                          : [tag],
+                                      }));
+                                    }}
+                                    className={`text-xs px-2 py-0.5 rounded-full transition-colors cursor-pointer ${
+                                      filters.equipmentTags.includes(tag)
+                                        ? "bg-purple-200 text-purple-900 ring-1 ring-purple-400"
+                                        : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                                    }`}
+                                    title={`Show all grants tagged "${tag.replace(/-/g, " ")}"`}
                                   >
                                     {tag}
-                                  </span>
+                                  </button>
                                 ))}
                               </div>
                             )}
