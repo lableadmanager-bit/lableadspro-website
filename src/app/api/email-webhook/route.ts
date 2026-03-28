@@ -1,65 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
 /**
  * Resend Webhook Handler
  * 
  * Receives bounce, complaint, and delivery status events from Resend.
- * Auto-suppresses bounced and complained emails so we never hit them again.
+ * Auto-suppresses bounced and complained emails in Supabase.
+ * Logs all events to Supabase for analytics.
  * 
- * Resend webhook events we care about:
- * - email.bounced: Hard bounce (address doesn't exist)
- * - email.complained: Recipient marked as spam
- * 
- * Events we log but don't suppress:
- * - email.delivered: Successful delivery
- * - email.delivery_delayed: Temporary issue
- * - email.opened: Recipient opened
- * - email.clicked: Recipient clicked a link
- * 
- * Setup: In Resend dashboard → Webhooks → Add endpoint:
- *   URL: https://lableadspro.com/api/email-webhook
- *   Events: email.bounced, email.complained, email.delivered, email.opened, email.clicked
- * 
- * Security: Verify webhook signature using Resend's svix signing secret.
+ * Events:
+ * - email.bounced → auto-suppress
+ * - email.complained → auto-suppress
+ * - email.delivered → log only
+ * - email.opened → log only
+ * - email.clicked → log only
  */
 
-const SUPPRESSION_FILE = path.join(process.cwd(), "..", "data", "email-marketing", "suppression-list.json");
-const WEBHOOK_LOG_FILE = path.join(process.cwd(), "..", "data", "email-marketing", "webhook-events.jsonl");
-const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET || "";
-
-// Events that should auto-suppress the email address
 const SUPPRESS_EVENTS = ["email.bounced", "email.complained"];
 
-function addToSuppressionList(email: string, reason: string) {
-  const dir = path.dirname(SUPPRESSION_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-
-  let list: { email: string; reason: string; suppressed_at: string }[] = [];
-  if (fs.existsSync(SUPPRESSION_FILE)) {
-    try {
-      list = JSON.parse(fs.readFileSync(SUPPRESSION_FILE, "utf-8"));
-    } catch {
-      list = [];
-    }
-  }
-
-  const normalized = email.toLowerCase();
-  if (!list.some((entry) => entry.email === normalized)) {
-    list.push({
-      email: normalized,
-      reason: reason,
-      suppressed_at: new Date().toISOString(),
-    });
-    fs.writeFileSync(SUPPRESSION_FILE, JSON.stringify(list, null, 2) + "\n");
-  }
-}
-
-function logEvent(event: Record<string, unknown>) {
-  const dir = path.dirname(WEBHOOK_LOG_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.appendFileSync(WEBHOOK_LOG_FILE, JSON.stringify(event) + "\n");
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 export async function POST(request: NextRequest) {
@@ -67,25 +30,46 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const eventType = body?.type as string;
     const data = body?.data || {};
-    const recipientEmail = (data?.email_id ? data?.to?.[0] : data?.to?.[0]) || data?.to?.[0] || "";
+    const recipientEmail = data?.to?.[0] || data?.email || "";
+    const emailId = data?.email_id || "";
 
-    // Log every event
-    logEvent({
-      type: eventType,
-      email: recipientEmail,
-      timestamp: new Date().toISOString(),
-      data: data,
-    });
+    if (!eventType) {
+      return NextResponse.json({ error: "Missing event type" }, { status: 400 });
+    }
+
+    const supabase = getSupabase();
+
+    // Log the event to Supabase
+    if (supabase) {
+      try {
+        await supabase.from("email_webhook_events").insert({
+          event_type: eventType,
+          email: recipientEmail,
+          email_id: emailId,
+          payload: body,
+          created_at: new Date().toISOString(),
+        });
+      } catch {
+        // Don't fail if logging fails — the suppression is what matters
+      }
+    }
 
     // Auto-suppress bounces and complaints
-    if (SUPPRESS_EVENTS.includes(eventType) && recipientEmail) {
-      addToSuppressionList(recipientEmail, eventType);
+    if (SUPPRESS_EVENTS.includes(eventType) && recipientEmail && supabase) {
+      await supabase.from("email_suppressions").upsert(
+        {
+          email: recipientEmail.toLowerCase(),
+          reason: eventType,
+          suppressed_at: new Date().toISOString(),
+        },
+        { onConflict: "email" }
+      );
       console.log(`[email-webhook] Suppressed ${recipientEmail} - reason: ${eventType}`);
     }
 
-    return NextResponse.json({ received: true });
+    return NextResponse.json({ received: true, event: eventType });
   } catch (err) {
-    console.error("[email-webhook] Error processing webhook:", err);
+    console.error("[email-webhook] Error:", err);
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
 }
