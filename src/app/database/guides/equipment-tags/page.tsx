@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   title:
     "Equipment Tags We Detect | Lab Leads Pro",
   description:
-    "Every piece of lab equipment our AI identifies in federal grant abstracts. 90+ high-value instrument tags across 14 categories, from microscopy to clinical diagnostics.",
+    "Every piece of lab equipment our AI identifies in federal grant abstracts. Nearly 100 high-value instrument tags across 14 categories, from microscopy to clinical diagnostics.",
   keywords:
     "lab equipment tags, grant equipment detection, microscopy, mass spectrometry, flow cytometry, sequencing, chromatography, spectroscopy, lab instrument classification, federal grant analysis",
   openGraph: {
     title: "Equipment Tags We Detect | Lab Leads Pro",
     description:
-      "90+ instrument tags across 14 categories. See exactly what our AI looks for in 525,000+ federal grant abstracts.",
+      "Nearly 100 instrument tags across 14 categories. See exactly what our AI looks for in 525,000+ federal grant abstracts.",
     url: "https://lableadspro.com/database/guides/equipment-tags",
     siteName: "Lab Leads Pro",
     type: "article",
@@ -96,6 +96,8 @@ const categories: Category[] = [
       { name: "Slide Scanner", description: "Digitizes glass slides for pathology and histology. Whole-slide imaging for remote review and AI analysis." },
       { name: "Calcium Imaging System", description: "Specialized fluorescence imaging for tracking neuronal activity via calcium indicators." },
       { name: "Animal Imaging System", description: "In vivo imaging of live animals using bioluminescence, fluorescence, or X-ray. Preclinical drug development." },
+      { name: "Atomic Force Microscope (AFM)", description: "Nanometer-scale surface imaging and force measurement. Biophysics, materials science, and single-molecule studies.", price: "$100K-$500K" },
+      { name: "Laser Capture Microdissection (LCM)", description: "Isolates specific cell populations from tissue sections using a laser. Enables genomic analysis of pure cell types from heterogeneous tissues.", price: "$100K-$300K" },
     ],
   },
   {
@@ -112,6 +114,8 @@ const categories: Category[] = [
       { name: "Raman Spectrometer", description: "Identifies materials by their molecular vibrations. Non-destructive, minimal sample prep. Forensics, pharmaceuticals, geology." },
       { name: "Microplate Reader", description: "Reads 96- or 384-well plates for absorbance, fluorescence, or luminescence. Core instrument for any assay-based research.", price: "$30K-$150K" },
       { name: "Luminometer", description: "Measures light output from bioluminescent or chemiluminescent reactions. Reporter gene assays, ATP detection." },
+      { name: "NMR Spectrometer", description: "Nuclear magnetic resonance. Determines molecular structure and dynamics in solution. Structural biology, chemistry, metabolomics. One of the most expensive instruments a lab can buy.", price: "$500K-$2M+" },
+      { name: "X-Ray Diffractometer (XRD)", description: "Determines crystal structure and material composition by X-ray scattering. Materials science, chemistry, geology, and pharmaceutical analysis.", price: "$100K-$500K" },
     ],
   },
   {
@@ -159,6 +163,7 @@ const categories: Category[] = [
       { name: "Capillary Electrophoresis", description: "Separates DNA, RNA, or proteins by size in a capillary. Used for Sanger sequencing readout and fragment analysis." },
       { name: "Western Blot Imaging System", description: "Detects and quantifies specific proteins in a sample. Chemiluminescent and fluorescent imaging systems.", price: "$20K-$80K" },
       { name: "Electroporator", description: "Delivers electrical pulses to open cell membranes for transfection. Essential for gene editing (CRISPR) workflows." },
+      { name: "Thermal Cycler (PCR Machine)", description: "Amplifies DNA through repeated heating and cooling cycles. The foundational instrument in molecular biology — every lab that works with DNA has one.", price: "$5K-$15K" },
     ],
   },
   {
@@ -186,6 +191,7 @@ const categories: Category[] = [
       { name: "Automated Cell Counter", description: "Replaces manual hemocytometer counting with image-based or impedance-based automated counts. Faster and more reproducible." },
       { name: "Bioreactor", description: "Controlled environment for growing mammalian or insect cells at scale. Upstream bioprocessing for antibodies, vaccines, cell therapies." },
       { name: "Fermenter", description: "Microbial growth at scale. Biofuel research, enzyme production, industrial biotech, and recombinant protein manufacturing." },
+      { name: "3D Bioprinter", description: "Deposits living cells in precise 3D patterns to build tissue constructs. Tissue engineering, organ-on-chip, regenerative medicine, and drug testing.", price: "$50K-$500K" },
     ],
   },
   {
@@ -234,6 +240,8 @@ const categories: Category[] = [
       { name: "Microtome", description: "Cuts extremely thin tissue sections (as thin as 1 micron) for microscopy. Histology and pathology standard." },
       { name: "Cryostat", description: "A microtome mounted inside a freezer chamber. Cuts frozen tissue sections for rapid histological analysis.", price: "$30K-$80K" },
       { name: "Vibratome", description: "Cuts tissue sections without freezing or paraffin embedding. Preserves native tissue architecture for electrophysiology and imaging." },
+      { name: "Microinjection System", description: "Precisely delivers DNA, RNA, proteins, or drugs into individual cells or embryos. Essential for C. elegans transgenics, zebrafish embryo work, and IVF research.", price: "$20K-$80K" },
+      { name: "Cryogenic Storage System", description: "Liquid nitrogen storage for long-term preservation of cells, tissues, and biological samples. Biobanks, stem cell labs, and cell therapy manufacturing.", price: "$20K-$100K" },
     ],
   },
   {
@@ -295,7 +303,7 @@ const categories: Category[] = [
 /* -- tier 2 items --------------------------------------------------------- */
 
 const tier2Items = [
-  "CO2 incubator", "LN2 storage", "Milli-Q water system", "PCR thermocycler",
+  "CO2 incubator", "LN2 storage", "Milli-Q water system",
   "-80\u00B0C freezer", "UV crosslinker", "Analytical balance", "Autoclave",
   "Bead beater", "Benchtop centrifuge", "Biosafety cabinet", "Cell culture hood",
   "Chiller/circulator", "Cold room", "Controlled-rate freezer", "Cryo freezer",
@@ -368,7 +376,7 @@ export default function EquipmentTagsGuide() {
             </p>
             <p>
               We organize these signals into 14 equipment categories covering
-              90+ high-value instruments (typically $20K+) plus 45 common lab
+              nearly 100 high-value instruments (typically $20K+) plus 45 common lab
               equipment items. Each tag maps directly to the kinds of instruments
               that sales reps sell.
             </p>
