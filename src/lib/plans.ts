@@ -19,7 +19,7 @@ export const PLANS: Record<PlanTier, Plan> = {
   standard: {
     tier: "standard",
     name: "Lab Leads Standard",
-    priceId: "price_1TCsii1UBk0N5M65WjOYmLpY",
+    priceId: "price_1THQUB0TyUCXdeWQEx4hWupL",
     pricePerState: 99,
     description: "NIH grant intelligence + database access for your territory. The foundation every rep needs.",
     features: [
@@ -34,7 +34,7 @@ export const PLANS: Record<PlanTier, Plan> = {
   pro: {
     tier: "pro",
     name: "Lab Leads Pro",
-    priceId: "price_1TCsix1UBk0N5M65nBv2GFC2",
+    priceId: "price_1THQU90TyUCXdeWQChBoHS78",
     pricePerState: 149,
     description: "The complete package. 8 agencies + new lab detection + enriched favorites. Everything you need to hit President's Club.",
     features: [
@@ -55,7 +55,7 @@ export const VALID_PRICE_IDS = new Set(
 export const AUTO_UPGRADE_THRESHOLD = 3; // 3+ states = auto Pro at Standard price
 
 export const PRO_TWO_STATE_BUNDLE = 248; // Pro: 2 states for $248 (vs $298, exactly $50 off)
-export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1TCtKJ1UBk0N5M65QOspIUk7"; // $248 flat monthly
+export const PRO_TWO_STATE_BUNDLE_PRICE_ID = "price_1THQU70TyUCXdeWQ7FwMYxlP"; // $248 flat monthly
 
 export function getEffectivePlan(
   selectedTier: PlanTier,
