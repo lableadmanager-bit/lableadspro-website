@@ -81,6 +81,24 @@ export default function CTA() {
         <p className="mt-6 text-sm text-gray-500">
           No spam. No nonsense. Just early access to better leads.
         </p>
+
+        <div className="mt-8 pt-8 border-t border-white/10">
+          <p className="text-gray-400 mb-3">Prefer a live walkthrough?</p>
+          <a
+            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-colors border border-white/20"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            Request a Demo
+          </a>
+        </div>
         <iframe
           ref={iframeRef}
           name="hidden-iframe"

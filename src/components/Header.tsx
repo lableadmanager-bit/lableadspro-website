@@ -44,6 +44,14 @@ export default function Header() {
             Database
           </a>
           <a
+            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors"
+          >
+            Request a Demo
+          </a>
+          <a
             href="/#pricing"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
           >
@@ -90,6 +98,15 @@ export default function Header() {
           </a>
           <a href="/database" onClick={() => setMobileOpen(false)} className="block text-sm text-[var(--color-gray-700)]">
             Database
+          </a>
+          <a
+            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileOpen(false)}
+            className="block text-sm text-[var(--color-gray-700)]"
+          >
+            Request a Demo
           </a>
           <a
             href="/#pricing"

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 
 const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET || "default-unsubscribe-secret";
-const SUPPRESSION_FILE = path.join(process.cwd(), "..", "data", "email-marketing", "suppression-list.json");
 
 function generateToken(email: string): string {
   return crypto.createHmac("sha256", UNSUBSCRIBE_SECRET).update(email.toLowerCase()).digest("hex");
@@ -15,24 +13,33 @@ function verifyToken(email: string, token: string): boolean {
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(token));
 }
 
-function addToSuppressionList(email: string) {
-  const dir = path.dirname(SUPPRESSION_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
+}
 
-  let list: { email: string; unsubscribed_at: string }[] = [];
-  if (fs.existsSync(SUPPRESSION_FILE)) {
-    try {
-      list = JSON.parse(fs.readFileSync(SUPPRESSION_FILE, "utf-8"));
-    } catch {
-      list = [];
-    }
+async function addToSuppressionList(email: string) {
+  const supabase = getSupabase();
+  if (!supabase) {
+    console.error("Supabase not configured — cannot suppress email");
+    return;
   }
 
   const normalized = email.toLowerCase();
-  if (!list.some((entry) => entry.email === normalized)) {
-    list.push({ email: normalized, unsubscribed_at: new Date().toISOString() });
-    fs.writeFileSync(SUPPRESSION_FILE, JSON.stringify(list, null, 2) + "\n");
-  }
+
+  // Add to email_suppressions
+  await supabase.from("email_suppressions").upsert(
+    { email: normalized, reason: "unsubscribed", suppressed_at: new Date().toISOString() },
+    { onConflict: "email" }
+  );
+
+  // Also mark as unsubscribed in drip_contacts if they exist
+  await supabase
+    .from("drip_contacts")
+    .update({ status: "unsubscribed" })
+    .eq("email", normalized);
 }
 
 export async function GET(request: NextRequest) {
@@ -52,9 +59,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid token" }, { status: 403 });
   }
 
-  addToSuppressionList(email);
+  await addToSuppressionList(email);
 
-  // Redirect to the unsubscribe confirmation page
   return NextResponse.redirect(new URL("/unsubscribe", request.url));
 }
 
@@ -75,7 +81,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 403 });
     }
 
-    addToSuppressionList(email);
+    await addToSuppressionList(email);
 
     return NextResponse.json({ success: true, message: "Successfully unsubscribed" });
   } catch {
