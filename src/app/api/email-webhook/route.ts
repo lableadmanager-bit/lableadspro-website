@@ -56,15 +56,33 @@ export async function POST(request: NextRequest) {
 
     // Auto-suppress bounces and complaints
     if (SUPPRESS_EVENTS.includes(eventType) && recipientEmail && supabase) {
-      await supabase.from("email_suppressions").upsert(
-        {
-          email: recipientEmail.toLowerCase(),
-          reason: eventType,
-          suppressed_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      );
-      console.log(`[email-webhook] Suppressed ${recipientEmail} - reason: ${eventType}`);
+      const normalizedEmail = recipientEmail.toLowerCase();
+      const bounceType = data?.bounce?.type || "";
+      const isHardBounce = bounceType === "Permanent";
+      const isComplaint = eventType === "email.complained";
+
+      if (isHardBounce || isComplaint) {
+        // Permanent bounce or complaint — suppress forever
+        await supabase.from("email_suppressions").upsert(
+          {
+            email: normalizedEmail,
+            reason: eventType,
+            suppressed_at: new Date().toISOString(),
+          },
+          { onConflict: "email" }
+        );
+
+        await supabase
+          .from("drip_contacts")
+          .update({ status: "bounced" })
+          .eq("email", normalizedEmail);
+
+        console.log(`[email-webhook] Hard suppressed ${recipientEmail} - ${bounceType} ${eventType}`);
+      } else {
+        // Transient/soft bounce — log it but don't suppress
+        // These often resolve as domain reputation builds
+        console.log(`[email-webhook] Soft bounce ${recipientEmail} - ${bounceType} ${eventType} (not suppressed)`);
+      }
     }
 
     return NextResponse.json({ received: true, event: eventType });

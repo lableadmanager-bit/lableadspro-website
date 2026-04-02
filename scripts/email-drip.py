@@ -132,14 +132,16 @@ def supabase_request(path, method="GET", data=None, params=None):
 
 
 def fetch_active_contacts():
-    """Fetch all active contacts from Supabase."""
+    """Fetch all active contacts from Supabase, shuffled for fair A/B distribution."""
+    import random
     contacts = supabase_request("drip_contacts", params={
         "select": "*",
         "status": "eq.active",
         "enrolled_at": "not.is.null",
-        "order": "id.asc",
     })
-    return contacts or []
+    result = contacts or []
+    random.shuffle(result)
+    return result
 
 
 def fetch_suppressed_emails():
