@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GuideSchema from "@/components/GuideSchema";
+import GuidesCrossLinks from "@/components/GuidesCrossLinks";
 
 export const metadata: Metadata = {
   title:
@@ -656,6 +657,8 @@ export default function USDAGrantsGuide() {
             </table>
           </div>
         </section>
+        <GuidesCrossLinks currentSlug="usda-grants-guide" />
+
 
         {/* CTA */}
         <section className="rounded-2xl bg-gradient-to-b from-[var(--color-dark)] to-[#0D1F3C] p-10 text-center">

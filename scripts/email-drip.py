@@ -25,7 +25,10 @@ import os
 import sys
 import urllib.request
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+# Use ET for daily counters so it matches what George sees in Resend
+ET = timezone(timedelta(hours=-4))  # EDT
 from pathlib import Path
 
 # --- Configuration ---
@@ -65,7 +68,7 @@ DAILY_COUNTER_FILE = DATA_DIR / "daily-send-count.json"
 # Sequence definitions
 SEQUENCES = {
     "cold-grinder": {
-        "days": [0, 3, 6, 10, 14],
+        "days": [0, 7, 14, 21, 28],
         "template_prefix": "cold-grinder",
         "subjects": [
             "Fresh Leads",
@@ -76,7 +79,7 @@ SEQUENCES = {
         ],
     },
     "cold-broken-promises": {
-        "days": [0, 3, 6, 10, 14],
+        "days": [0, 7, 14, 21, 28],
         "template_prefix": "cold-broken-promises",
         "subjects": [
             "Fresh Leads",
@@ -351,7 +354,7 @@ def main():
     parser.add_argument("--per-run", type=int, default=0, help="Max emails per cron run (0 = use max-sends)")
     args = parser.parse_args()
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(ET)
     print(f"[{now.isoformat()}] Email drip engine starting...")
     print(f"  Template dir: {TEMPLATE_DIR}")
     print(f"  Supabase: {'connected' if SUPABASE_URL else 'NOT CONFIGURED'}")

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GuideSchema from "@/components/GuideSchema";
+import GuidesCrossLinks from "@/components/GuidesCrossLinks";
 
 export const metadata: Metadata = {
   title:
@@ -434,6 +435,8 @@ export default function NIHReporterGuide() {
             </p>
           </div>
         </article>
+        <GuidesCrossLinks currentSlug="nih-reporter-guide" />
+
 
         {/* CTA */}
         <section className="py-16 bg-gray-50">

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GuideSchema from "@/components/GuideSchema";
+import GuidesCrossLinks from "@/components/GuidesCrossLinks";
 
 export const metadata: Metadata = {
   title: "DOE Research Grants Guide for Lab Equipment Sales | Lab Leads Pro",
@@ -959,6 +960,8 @@ export default function DOEGrantsGuide() {
             </table>
           </div>
         </section>
+        <GuidesCrossLinks currentSlug="doe-grants-guide" />
+
 
         {/* CTA */}
         <section className="rounded-2xl bg-gradient-to-b from-[var(--color-dark)] to-[#0D1F3C] p-10 text-center">
