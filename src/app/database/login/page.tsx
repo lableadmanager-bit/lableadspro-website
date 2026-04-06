@@ -4,8 +4,9 @@ import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getSiteUrl } from "@/lib/site-url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lableadspro.com";
+const SITE_URL = getSiteUrl();
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

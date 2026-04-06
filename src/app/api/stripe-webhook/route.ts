@@ -24,13 +24,22 @@ const STATE_NAMES: Record<string, string> = {
   WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming", DC: "District of Columbia",
 };
 
+function generateReadablePassword(): string {
+  const words = ["Grant", "Leads", "Alpha", "Delta", "Atlas", "Ember", "Rapid", "Prime", "Orbit", "Pulse", "Spark", "Crest", "Forge", "Storm", "Swift"];
+  const word1 = words[Math.floor(Math.random() * words.length)];
+  const word2 = words[Math.floor(Math.random() * words.length)];
+  const num = Math.floor(Math.random() * 9000) + 1000;
+  return `${word1}-${word2}-${num}`;
+}
+
 function buildWelcomeEmail(params: {
   planTier: string;
   planName: string;
   states: string[];
-  resetLink: string;
+  email: string;
+  tempPassword: string;
 }): string {
-  const { planTier, planName, states, resetLink } = params;
+  const { planTier, planName, states, email, tempPassword } = params;
   const stateList = states.map(s => STATE_NAMES[s.toUpperCase()] || s).join(", ");
   const tierLabel = planTier.charAt(0).toUpperCase() + planTier.slice(1);
 
@@ -61,6 +70,25 @@ function buildWelcomeEmail(params: {
             </td></tr>
           </table>
 
+          <!-- Login credentials -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;margin:24px 0;">
+            <tr><td style="padding:20px;">
+              <p style="margin:0 0 8px;color:#0f172a;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Your Login</p>
+              <p style="margin:0 0 4px;color:#374151;font-size:15px;"><strong>Email:</strong> ${email}</p>
+              <p style="margin:0 0 4px;color:#374151;font-size:15px;"><strong>Temporary password:</strong> ${tempPassword}</p>
+              <p style="margin:8px 0 0;color:#6b7280;font-size:13px;">You can change your password after logging in.</p>
+            </td></tr>
+          </table>
+
+          <!-- CTA Button -->
+          <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
+            <tr><td align="center">
+              <a href="${SITE_URL}/database/login" style="display:inline-block;background-color:#16a34a;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">
+                Log In to Your Database
+              </a>
+            </td></tr>
+          </table>
+
           <!-- Stats -->
           <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
             <tr>
@@ -75,35 +103,18 @@ function buildWelcomeEmail(params: {
             </tr>
           </table>
 
-          <!-- CTA Button -->
-          <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
-            <tr><td align="center">
-              <a href="${resetLink}" style="display:inline-block;background-color:#16a34a;color:#ffffff;font-size:16px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">
-                Set Your Password &amp; Access Your Database
-              </a>
-            </td></tr>
-          </table>
-
-          <p style="margin:0 0 8px;color:#6b7280;font-size:13px;line-height:1.5;text-align:center;">
-            This link expires in 24 hours. If it expires, use the forgot password option on the <a href="${SITE_URL}/database/login" style="color:#16a34a;text-decoration:none;font-weight:500;">login page</a>.
-          </p>
-
-          <p style="margin:16px 0 8px;color:#374151;font-size:14px;line-height:1.6;">
-            Once you set your password, you can log in at <a href="${SITE_URL}/database" style="color:#16a34a;text-decoration:none;font-weight:500;">${SITE_URL}/database</a> anytime.
-          </p>
-
           <!-- Weekly report note -->
           <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e5e7eb;margin-top:24px;">
             <tr><td style="padding-top:20px;">
               <p style="margin:0;color:#6b7280;font-size:14px;line-height:1.6;">
-                📬 <strong>Your first weekly report arrives Monday morning</strong> - fresh grants and PI contacts delivered straight to your inbox.
+                📬 <strong>Your first weekly report arrives Monday morning</strong> — fresh grants and PI contacts delivered straight to your inbox.
               </p>
             </td></tr>
           </table>
         </td></tr>
         <!-- Footer -->
         <tr><td style="background-color:#f8fafc;padding:24px 40px;text-align:center;border-top:1px solid #e5e7eb;">
-          <p style="margin:0;color:#9ca3af;font-size:13px;">Lab Leads Pro - Grant intelligence for lab suppliers</p>
+          <p style="margin:0;color:#9ca3af;font-size:13px;">Lab Leads Pro — Grant intelligence for lab equipment sales</p>
         </td></tr>
       </table>
     </td></tr>
@@ -116,9 +127,9 @@ async function sendWelcomeEmail(email: string, params: {
   planTier: string;
   planName: string;
   states: string[];
-  resetLink: string;
+  tempPassword: string;
 }) {
-  const html = buildWelcomeEmail(params);
+  const html = buildWelcomeEmail({ ...params, email });
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -165,8 +176,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     ? (autoUpgraded ? "Lab Leads Pro (Auto-Upgraded)" : "Lab Leads Pro")
     : "Lab Leads Standard";
 
-  // Create Supabase Auth user
-  const tempPassword = crypto.randomBytes(24).toString("base64url");
+  // Create Supabase Auth user with a readable temporary password
+  const tempPassword = generateReadablePassword();
   const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
     email,
     password: tempPassword,
@@ -213,28 +224,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
-  // Generate password reset link
-  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-    type: "recovery",
-    email,
-    options: { redirectTo: `${SITE_URL}/auth/callback?type=recovery` },
-  });
-
-  if (linkError) {
-    console.error("Error generating reset link:", linkError.message);
-    return;
-  }
-
-  // Use the action_link directly - it goes through Supabase's /auth/v1/verify endpoint
-  // which validates the token, creates a session, then redirects to our set-password page
-  const resetLink = linkData?.properties?.action_link || `${SITE_URL}/database/login`;
-
-  // Send welcome email
+  // Send welcome email with temporary password
   await sendWelcomeEmail(email, {
     planTier,
     planName,
     states,
-    resetLink,
+    tempPassword,
   });
 
   const nameStr = [firstName, lastName].filter(Boolean).join(" ") || "unknown";
