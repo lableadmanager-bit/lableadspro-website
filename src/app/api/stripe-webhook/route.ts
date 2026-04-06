@@ -3,11 +3,12 @@ import { stripe } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import crypto from "crypto";
 import Stripe from "stripe";
+import { getSiteUrl } from "@/lib/site-url";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET!;
 const FROM_EMAIL = "Lab Leads Pro <freshleads@lableadspro.com>";
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lableadspro.com";
+const SITE_URL = getSiteUrl();
 
 const STATE_NAMES: Record<string, string> = {
   AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
@@ -216,7 +217,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
     type: "recovery",
     email,
-    options: { redirectTo: `${SITE_URL}/database/set-password` },
+    options: { redirectTo: `${SITE_URL}/auth/callback?type=recovery` },
   });
 
   if (linkError) {
