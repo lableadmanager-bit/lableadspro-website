@@ -31,15 +31,15 @@ export default function DemoThankYouPage() {
               <ul className="text-gray-300 space-y-3">
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">✓</span>
-                  <span>A live walkthrough of the grant database — we&apos;ll search your territory together</span>
+                  <span>A live walkthrough of the grant database for your territory</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">✓</span>
-                  <span>A look at the weekly reports — what lands in your inbox every Monday</span>
+                  <span>A look at the weekly reports that land in your inbox every Monday</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="text-[var(--color-accent)] mt-1">✓</span>
-                  <span>Answers to any questions you have about coverage, pricing, or workflow</span>
+                  <span>Answers to any questions about coverage, pricing, or how it fits your workflow</span>
                 </li>
               </ul>
             </div>
