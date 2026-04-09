@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { trackConversion, trackEvent } from "@/lib/analytics";
@@ -58,7 +59,6 @@ export default function SampleReport() {
         const data = await res.json();
         throw new Error(data.error || "Failed to send sample report");
       }
-      setSubmitted(true);
       // Track conversion — sample report downloaded
       trackConversion('SAMPLE_DOWNLOAD', { 
         state: selectedStates.join(','),
@@ -67,6 +67,8 @@ export default function SampleReport() {
         states: selectedStates.join(','),
         state_count: selectedStates.length,
       });
+      // Redirect to thank-you page (enables URL-based conversion tracking)
+      window.location.href = '/sample/thank-you';
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
     } finally {

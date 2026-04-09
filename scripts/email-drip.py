@@ -135,7 +135,8 @@ def supabase_request(path, method="GET", data=None, params=None):
 
 
 def fetch_active_contacts():
-    """Fetch all active contacts from Supabase, shuffled for fair A/B distribution."""
+    """Fetch all active contacts from Supabase, shuffled for fair A/B distribution.
+    Prioritizes follow-ups (step > 0) over new contacts (step 0)."""
     import random
     contacts = supabase_request("drip_contacts", params={
         "select": "*",
@@ -143,8 +144,13 @@ def fetch_active_contacts():
         "enrolled_at": "not.is.null",
     })
     result = contacts or []
-    random.shuffle(result)
-    return result
+    # Split into follow-ups and new contacts, shuffle each, then combine
+    # This ensures follow-ups get sent first within each batch
+    followups = [c for c in result if c.get("step", 0) > 0]
+    new_contacts = [c for c in result if c.get("step", 0) == 0]
+    random.shuffle(followups)
+    random.shuffle(new_contacts)
+    return followups + new_contacts
 
 
 def fetch_suppressed_emails():
