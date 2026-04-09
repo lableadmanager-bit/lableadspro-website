@@ -5,10 +5,10 @@ export default function CheckoutSuccessPage() {
         <div className="text-6xl mb-6">🎉</div>
         <h1 className="text-4xl font-bold mb-4">Welcome to Lab Leads Pro!</h1>
         <p className="text-xl text-gray-300 mb-3">
-          Check your email to set up your database login.
+          Check your email for your database login.
         </p>
         <p className="text-base text-gray-400 mb-3">
-          We just sent you an email with a link to create your password and access your grant database.
+          We just sent you an email with a link to the database and a temporary password so you can log in right away.
         </p>
         <p className="text-lg text-[var(--color-accent)] font-medium mb-10">
           Your first weekly report arrives Monday morning.
