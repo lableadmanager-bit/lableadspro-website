@@ -73,7 +73,7 @@ export default function Hero() {
             See How It Works
           </a>
           <a
-            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            href="/demo"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-green-500/20"

@@ -44,7 +44,7 @@ export default function Header() {
             Database
           </a>
           <a
-            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            href="/demo"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors"
@@ -100,7 +100,7 @@ export default function Header() {
             Database
           </a>
           <a
-            href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+            href="/demo"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileOpen(false)}

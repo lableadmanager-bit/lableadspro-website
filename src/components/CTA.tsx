@@ -10,7 +10,7 @@ export default function CTA() {
         </p>
 
         <a
-          href="https://calendar.app.google/xKb3rVrYvAfdt1Zt6"
+          href="/demo"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
