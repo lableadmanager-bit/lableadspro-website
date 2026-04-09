@@ -139,8 +139,8 @@ export default function RootLayout({
             });
             gtag('config', 'G-DVCRLHGJWV');
 
-            // Google Ads remarketing tag — uncomment and add AW-ID when account is created
-            // gtag('config', 'AW-XXXXXXXXXX');
+            // Google Ads conversion + remarketing tag
+            gtag('config', 'AW-18071547440');
           `}
         </Script>
       </head>
