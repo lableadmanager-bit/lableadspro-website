@@ -252,7 +252,13 @@ def get_subject(sequence: str, step: int, contact: dict) -> str:
 
 
 def should_send(contact: dict, now: datetime) -> bool:
-    """Determine if a contact should receive their next email."""
+    """Determine if a contact should receive their next email.
+    
+    Step 0 (first email): triggers based on enrolled_at + days[0]
+    Step 1+ (follow-ups): triggers based on last_sent_at + 7 days
+    This ensures follow-ups are spaced from when the previous email was
+    actually sent, not from enrollment date.
+    """
     sequence = contact["sequence"]
     step = contact["step"]
     seq_config = SEQUENCES.get(sequence)
@@ -263,17 +269,24 @@ def should_send(contact: dict, now: datetime) -> bool:
     if step >= len(seq_config["days"]):
         return False
 
-    enrolled_at = datetime.fromisoformat(contact["enrolled_at"].replace("Z", "+00:00"))
-    target_day = seq_config["days"][step]
-    days_since_enrollment = (now - enrolled_at).total_seconds() / 86400
-
-    if days_since_enrollment < target_day:
-        return False
-
-    if contact.get("last_sent_at"):
+    if step == 0:
+        # First email: use enrollment date
+        enrolled_at = datetime.fromisoformat(contact["enrolled_at"].replace("Z", "+00:00"))
+        target_day = seq_config["days"][step]
+        days_since_enrollment = (now - enrolled_at).total_seconds() / 86400
+        if days_since_enrollment < target_day:
+            return False
+    else:
+        # Follow-up emails: compare calendar dates, not exact timestamps
+        # e.g. sent April 3 → eligible April 10 (7 calendar days later)
+        if not contact.get("last_sent_at"):
+            return False
         last_sent = datetime.fromisoformat(contact["last_sent_at"].replace("Z", "+00:00"))
-        hours_since_last = (now - last_sent).total_seconds() / 3600
-        if hours_since_last < 20:
+        step_interval = seq_config["days"][step] - seq_config["days"][step - 1]
+        last_sent_date = last_sent.date()
+        now_date = now.date()
+        days_between = (now_date - last_sent_date).days
+        if days_between < step_interval:
             return False
 
     return True

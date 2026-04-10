@@ -133,14 +133,20 @@ export default function RootLayout({
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
             gtag('js', new Date());
             gtag('consent', 'default', {
               analytics_storage: 'granted',
             });
-            gtag('config', 'G-DVCRLHGJWV');
 
-            // Google Ads conversion + remarketing tag
+            // Google Ads tag loads immediately (conversion tracking must be instant)
             gtag('config', 'AW-18071547440');
+
+            // GA4 config delayed 5s to filter email scanner bots
+            // Bots click links and leave in <3s, never triggering GA4 pageview
+            setTimeout(function() {
+              gtag('config', 'G-DVCRLHGJWV');
+            }, 5000);
           `}
         </Script>
       </head>
