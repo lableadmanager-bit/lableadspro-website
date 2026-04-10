@@ -82,7 +82,7 @@ interface Grant {
   source_url: string | null;
   equipment_tags: string[] | null;
   department: string | null;
-  pis: { email: string | null; phone: string | null; department: string | null; office_location: string | null; building: string | null; room: string | null } | null;
+  pis: { email: string | null; phone: string | null; department: string | null; office_location: string | null; building: string | null; room: string | null; r1_faculty: Array<{ profile_url: string | null; title: string | null; rank: string | null; full_name: string | null; r1_universities: { name: string } | null }> | null } | null;
 }
 
 interface SearchResponse {
@@ -1237,6 +1237,16 @@ export default function DatabasePage() {
                                       {(grant.pis?.building || grant.pis?.room) && (
                                         <span className="text-xs text-[var(--color-gray-500)] block">📍 {[grant.pis.building, grant.pis.room ? `Rm ${grant.pis.room}` : null].filter(Boolean).join(", ")}</span>
                                       )}
+                                      {grant.pis?.r1_faculty?.[0]?.profile_url && (
+                                        <a
+                                          href={grant.pis.r1_faculty[0].profile_url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-xs text-[var(--color-brand)] hover:underline inline-flex items-center gap-0.5"
+                                        >
+                                          Profile <ExternalLink size={10} />
+                                        </a>
+                                      )}
                                     </div>
                                   </td>
                                   <td className="px-3 py-2.5 text-[var(--color-gray-600)] max-w-[180px] truncate">
@@ -1540,6 +1550,23 @@ export default function DatabasePage() {
                                 View source <ExternalLink size={14} />
                               </a>
                             )}
+                            {/* Faculty Profile link */}
+                            {(() => {
+                              const faculty = grant.pis?.r1_faculty?.[0];
+                              if (faculty?.profile_url) {
+                                return (
+                                  <a
+                                    href={faculty.profile_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 text-sm text-[var(--color-brand)] hover:underline mt-3 ml-4"
+                                  >
+                                    Faculty profile <ExternalLink size={14} />
+                                  </a>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                         );
                       })}
