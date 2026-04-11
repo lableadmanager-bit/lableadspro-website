@@ -271,7 +271,7 @@ def should_send(contact: dict, now: datetime) -> bool:
 
     if step == 0:
         # First email: use enrollment date
-        enrolled_at = datetime.fromisoformat(contact["enrolled_at"].replace("Z", "+00:00"))
+        enrolled_at = datetime.fromisoformat(contact["enrolled_at"][:26].replace("Z", "+00:00"))
         target_day = seq_config["days"][step]
         days_since_enrollment = (now - enrolled_at).total_seconds() / 86400
         if days_since_enrollment < target_day:
@@ -281,7 +281,7 @@ def should_send(contact: dict, now: datetime) -> bool:
         # e.g. sent April 3 → eligible April 10 (7 calendar days later)
         if not contact.get("last_sent_at"):
             return False
-        last_sent = datetime.fromisoformat(contact["last_sent_at"].replace("Z", "+00:00"))
+        last_sent = datetime.fromisoformat(contact["last_sent_at"][:26].replace("Z", "+00:00"))
         step_interval = seq_config["days"][step] - seq_config["days"][step - 1]
         last_sent_date = last_sent.date()
         now_date = now.date()
