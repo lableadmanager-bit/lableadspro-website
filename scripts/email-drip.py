@@ -251,6 +251,15 @@ def get_subject(sequence: str, step: int, contact: dict) -> str:
     return subject
 
 
+def _parse_dt(s):
+    """Parse ISO datetime string, handling truncated microseconds from Supabase."""
+    import re
+    s = s.replace("Z", "+00:00")
+    # Strip fractional seconds entirely — they cause issues with varying lengths
+    s = re.sub(r'\.\d+', '', s)
+    return datetime.fromisoformat(s)
+
+
 def should_send(contact: dict, now: datetime) -> bool:
     """Determine if a contact should receive their next email.
     
@@ -271,7 +280,7 @@ def should_send(contact: dict, now: datetime) -> bool:
 
     if step == 0:
         # First email: use enrollment date
-        enrolled_at = datetime.fromisoformat(contact["enrolled_at"][:26].replace("Z", "+00:00"))
+        enrolled_at = _parse_dt(contact["enrolled_at"])
         target_day = seq_config["days"][step]
         days_since_enrollment = (now - enrolled_at).total_seconds() / 86400
         if days_since_enrollment < target_day:
@@ -281,7 +290,7 @@ def should_send(contact: dict, now: datetime) -> bool:
         # e.g. sent April 3 → eligible April 10 (7 calendar days later)
         if not contact.get("last_sent_at"):
             return False
-        last_sent = datetime.fromisoformat(contact["last_sent_at"][:26].replace("Z", "+00:00"))
+        last_sent = _parse_dt(contact["last_sent_at"])
         step_interval = seq_config["days"][step] - seq_config["days"][step - 1]
         last_sent_date = last_sent.date()
         now_date = now.date()

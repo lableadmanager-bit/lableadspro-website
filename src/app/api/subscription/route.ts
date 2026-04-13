@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     // Fetch billing details from Stripe
     let currentPeriodEnd: string | null = null;
     let monthlyTotal: number | null = null;
-    if (subscription.stripe_subscription_id) {
+    if (subscription.stripe_subscription_id && subscription.stripe_subscription_id.startsWith("sub_")) {
       try {
         const stripeSub = await stripe.subscriptions.retrieve(subscription.stripe_subscription_id);
         // current_period_end exists at runtime but was removed from v20+ types
@@ -100,7 +100,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "No active subscription" }, { status: 403 });
     }
 
-    if (!subscription.stripe_subscription_id) {
+    if (!subscription.stripe_subscription_id || !subscription.stripe_subscription_id.startsWith("sub_")) {
       return NextResponse.json({ error: "No Stripe subscription found" }, { status: 400 });
     }
 
