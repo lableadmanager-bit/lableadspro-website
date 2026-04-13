@@ -82,7 +82,7 @@ interface Grant {
   source_url: string | null;
   equipment_tags: string[] | null;
   department: string | null;
-  pis: { email: string | null; phone: string | null; department: string | null; office_location: string | null; building: string | null; room: string | null; r1_faculty: Array<{ profile_url: string | null; title: string | null; rank: string | null; full_name: string | null; r1_universities: { name: string } | null }> | null } | null;
+  pis: { email: string | null; phone: string | null; department: string | null; office_location: string | null; building: string | null; room: string | null; faculty_profile_url: string | null; r1_faculty: Array<{ profile_url: string | null; title: string | null; rank: string | null; full_name: string | null; r1_universities: { name: string } | null }> | null } | null;
 }
 
 interface SearchResponse {
@@ -1237,9 +1237,9 @@ export default function DatabasePage() {
                                       {(grant.pis?.building || grant.pis?.room) && (
                                         <span className="text-xs text-[var(--color-gray-500)] block">📍 {[grant.pis.building, grant.pis.room ? `Rm ${grant.pis.room}` : null].filter(Boolean).join(", ")}</span>
                                       )}
-                                      {grant.pis?.r1_faculty?.[0]?.profile_url && (
+                                      {(grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url) && (
                                         <a
-                                          href={grant.pis.r1_faculty[0].profile_url}
+                                          href={(grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url)!}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="text-xs text-[var(--color-brand)] hover:underline inline-flex items-center gap-0.5"
@@ -1552,11 +1552,11 @@ export default function DatabasePage() {
                             )}
                             {/* Faculty Profile link */}
                             {(() => {
-                              const faculty = grant.pis?.r1_faculty?.[0];
-                              if (faculty?.profile_url) {
+                              const profileUrl = grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url;
+                              if (profileUrl) {
                                 return (
                                   <a
-                                    href={faculty.profile_url}
+                                    href={profileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-sm text-[var(--color-brand)] hover:underline mt-3 ml-4"

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Build the query
-        let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: "exact" });
+        let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,faculty_profile_url,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: "exact" });
 
     // Full-text search
     if (query.trim()) {
