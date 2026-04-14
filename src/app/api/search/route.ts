@@ -57,17 +57,20 @@ export async function POST(req: NextRequest) {
       console.error("Auth check failed in search API");
     }
 
-    // Build the query
-    let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,faculty_profile_url,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: "exact" });
+    // Build the query — use estimated count to avoid expensive exact counts that timeout
+    let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,faculty_profile_url,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: "estimated" });
 
-    // Full-text search
+    // Full-text search — use prefix matching for better partial word results
     if (query.trim()) {
-      // Convert user query to tsquery format
-      const tsquery = query
+      // Convert user query: each word becomes a prefix search term joined with AND
+      const words = query
         .trim()
         .split(/\s+/)
         .map((word: string) => word.replace(/[^\w]/g, ""))
-        .filter(Boolean)
+        .filter(Boolean);
+      // Add :* for prefix matching on the last word (allows partial typing)
+      const tsquery = words
+        .map((w: string, i: number) => i === words.length - 1 ? `${w}:*` : w)
         .join(" & ");
       q = q.textSearch("search_vector", tsquery);
     }
