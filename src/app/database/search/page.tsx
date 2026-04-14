@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
+import InstitutionAutocomplete from "@/components/InstitutionAutocomplete";
 import Footer from "@/components/Footer";
 import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, Star, LayoutGrid, Table, Download } from "lucide-react";
 
@@ -586,26 +587,13 @@ export default function DatabasePage() {
         <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
           Institution
         </label>
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-gray-400)]" />
-          <input
-            type="text"
-            placeholder="Filter by institution..."
-            defaultValue={filters.institution}
-            key={filters.institution === "" ? "inst-cleared" : undefined}
-            onBlur={(e) => {
-              userHasInteracted.current = true;
-              setFilters((prev) => ({ ...prev, institution: e.target.value }));
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                userHasInteracted.current = true;
-                setFilters((prev) => ({ ...prev, institution: (e.target as HTMLInputElement).value }));
-              }
-            }}
-            className="w-full pl-8 pr-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-          />
-        </div>
+        <InstitutionAutocomplete
+          value={filters.institution}
+          onChange={(val) => {
+            userHasInteracted.current = true;
+            setFilters((prev) => ({ ...prev, institution: val }));
+          }}
+        />
       </div>
 
       {/* Agency filter */}
