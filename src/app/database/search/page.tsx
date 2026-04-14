@@ -1243,9 +1243,9 @@ export default function DatabasePage() {
                                           href={(grant.pis?.faculty_profile_url || grant.pis?.r1_faculty?.[0]?.profile_url)!}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-xs text-[var(--color-brand)] hover:underline inline-flex items-center gap-0.5"
+                                          className="text-xs text-[var(--color-accent)] hover:underline inline-flex items-center gap-0.5 font-medium"
                                         >
-                                          Profile <ExternalLink size={10} />
+                                          🔗 Faculty Profile <ExternalLink size={10} />
                                         </a>
                                       )}
                                     </div>
@@ -1562,7 +1562,7 @@ export default function DatabasePage() {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-1 text-sm text-[var(--color-brand)] hover:underline mt-3 ml-4"
                                   >
-                                    Faculty profile <ExternalLink size={14} />
+                                    🔗 Faculty Profile <ExternalLink size={14} />
                                   </a>
                                 );
                               }
