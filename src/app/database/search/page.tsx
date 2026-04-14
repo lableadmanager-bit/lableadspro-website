@@ -116,7 +116,7 @@ const defaultFilters: Filters = {
   activityCodes: [],
   institution: "",
   dateFrom: "",
-  dateTo: "",
+  dateTo: new Date().toISOString().split("T")[0],
   status: "all",
   equipmentTags: [],
   amountMin: "",
@@ -593,6 +593,7 @@ export default function DatabasePage() {
             userHasInteracted.current = true;
             setFilters((prev) => ({ ...prev, institution: val }));
           }}
+          states={subscribedStates.length > 0 && subscribedStates.length < 51 ? subscribedStates : undefined}
         />
       </div>
 
@@ -795,24 +796,48 @@ export default function DatabasePage() {
         <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-2">
           Award Date
         </label>
-        <div className="space-y-2">
+        <div className="flex items-center gap-2">
           <input
-            type="date"
+            type="text"
+            inputMode="numeric"
             value={filters.dateFrom}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, dateFrom: e.target.value }))
-            }
+            onChange={(e) => {
+              userHasInteracted.current = true;
+              setFilters((prev) => ({ ...prev, dateFrom: e.target.value }));
+            }}
+            placeholder="MM/DD/YYYY"
+            maxLength={10}
+            onBlur={(e) => {
+              // Auto-format: convert MM/DD/YYYY to YYYY-MM-DD for API
+              const v = e.target.value.trim();
+              const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+              if (m) {
+                const formatted = `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+                setFilters((prev) => ({ ...prev, dateFrom: formatted }));
+              }
+            }}
             className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-            placeholder="From"
           />
+          <span className="text-[var(--color-gray-400)] text-sm">to</span>
           <input
-            type="date"
+            type="text"
+            inputMode="numeric"
             value={filters.dateTo}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, dateTo: e.target.value }))
-            }
+            onChange={(e) => {
+              userHasInteracted.current = true;
+              setFilters((prev) => ({ ...prev, dateTo: e.target.value }));
+            }}
+            placeholder="MM/DD/YYYY"
+            maxLength={10}
+            onBlur={(e) => {
+              const v = e.target.value.trim();
+              const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+              if (m) {
+                const formatted = `${m[3]}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+                setFilters((prev) => ({ ...prev, dateTo: formatted }));
+              }
+            }}
             className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
-            placeholder="To"
           />
         </div>
       </div>

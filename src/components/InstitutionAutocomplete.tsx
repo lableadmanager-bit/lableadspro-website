@@ -11,9 +11,10 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  states?: string[];
 }
 
-export default function InstitutionAutocomplete({ value, onChange, placeholder = "Filter by institution..." }: Props) {
+export default function InstitutionAutocomplete({ value, onChange, placeholder = "Filter by institution...", states }: Props) {
   const [suggestions, setSuggestions] = useState<Institution[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
@@ -28,7 +29,8 @@ export default function InstitutionAutocomplete({ value, onChange, placeholder =
       return;
     }
     try {
-      const res = await fetch(`/api/institutions?q=${encodeURIComponent(query)}&limit=8`);
+      const statesParam = states?.length ? `&states=${states.join(",")}` : "";
+      const res = await fetch(`/api/institutions?q=${encodeURIComponent(query)}&limit=8${statesParam}`);
       const data: Institution[] = await res.json();
       setSuggestions(data);
       setIsOpen(data.length > 0);
