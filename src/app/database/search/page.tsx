@@ -327,7 +327,7 @@ export default function DatabasePage() {
     if (results.length === 0) return;
     // Export up to 500 (matches favorites cap)
     const maxExport = 500;
-    const headers = ["PI Name", "Email", "Phone", "Department", "Building", "Room", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID"];
+    const headers = ["PI Name", "Email", "Phone", "Department", "Building", "Room", "Institution", "State", "Grant Title", "Agency", "Award Amount", "Award Date", "Equipment Tags", "Grant ID", "Faculty Profile URL"];
     const exportResults = results.slice(0, maxExport);
     const csvQuote = (val: string) => `"${val.replace(/"/g, '""')}"`;
     const rows = exportResults.map((g) => [
@@ -345,6 +345,7 @@ export default function DatabasePage() {
       csvQuote(g.award_date || ""),
       csvQuote((g.equipment_tags || []).join("; ")),
       csvQuote(g.grant_id || ""),
+      csvQuote(g.pis?.faculty_profile_url || g.pis?.r1_faculty?.[0]?.profile_url || ""),
     ]);
     const csv = [headers.map(csvQuote).join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -1237,9 +1238,9 @@ export default function DatabasePage() {
                                       {(grant.pis?.building || grant.pis?.room) && (
                                         <span className="text-xs text-[var(--color-gray-500)] block">📍 {[grant.pis.building, grant.pis.room ? `Rm ${grant.pis.room}` : null].filter(Boolean).join(", ")}</span>
                                       )}
-                                      {(grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url) && (
+                                      {(grant.pis?.faculty_profile_url || grant.pis?.r1_faculty?.[0]?.profile_url) && (
                                         <a
-                                          href={(grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url)!}
+                                          href={(grant.pis?.faculty_profile_url || grant.pis?.r1_faculty?.[0]?.profile_url)!}
                                           target="_blank"
                                           rel="noopener noreferrer"
                                           className="text-xs text-[var(--color-brand)] hover:underline inline-flex items-center gap-0.5"
@@ -1552,7 +1553,7 @@ export default function DatabasePage() {
                             )}
                             {/* Faculty Profile link */}
                             {(() => {
-                              const profileUrl = grant.pis?.r1_faculty?.[0]?.profile_url || grant.pis?.faculty_profile_url;
+                              const profileUrl = grant.pis?.faculty_profile_url || grant.pis?.r1_faculty?.[0]?.profile_url;
                               if (profileUrl) {
                                 return (
                                   <a
