@@ -2,11 +2,14 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function DemoPage() {
-  const [iframeError, setIframeError] = useState(false);
   const BOOKING_URL = "https://calendar.app.google/xKb3rVrYvAfdt1Zt6";
+
+  const handleBookClick = () => {
+    trackEvent("demo_booking_clicked", {});
+  };
 
   return (
     <>
@@ -51,49 +54,21 @@ export default function DemoPage() {
               </div>
             </div>
 
-            {/* Booking - iframe with fallback button */}
-            {!iframeError ? (
-              <div className="bg-gray-50 border border-gray-200 rounded-2xl p-2 md:p-4 mb-8">
-                <iframe
-                  src={BOOKING_URL}
-                  style={{ border: 0 }}
-                  width="100%"
-                  height="800"
-                  frameBorder="0"
-                  title="Book a Demo with Lab Leads Pro"
-                  className="rounded-xl"
-                  onError={() => setIframeError(true)}
-                />
-              </div>
-            ) : (
-              <div className="text-center mb-8">
-                <a
-                  href={BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold text-lg py-4 px-10 rounded-xl transition-colors"
-                >
-                  Pick a Time
-                </a>
-                <p className="text-gray-400 text-sm mt-3">
-                  Opens Google Calendar. Choose any available slot.
-                </p>
-              </div>
-            )}
-
-            {/* Also show the button always so people have both options */}
-            {!iframeError && (
-              <div className="text-center mb-8">
-                <a
-                  href={BOOKING_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold py-3 px-8 rounded-xl transition-colors"
-                >
-                  Open Booking Page
-                </a>
-              </div>
-            )}
+            {/* CTA */}
+            <div className="text-center mb-10">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleBookClick}
+                className="inline-block bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold text-lg py-4 px-10 rounded-xl transition-colors"
+              >
+                Pick a Time
+              </a>
+              <p className="text-gray-400 text-sm mt-3">
+                Opens Google Calendar. Choose any available slot.
+              </p>
+            </div>
 
             {/* Phone call note */}
             <div className="text-center">
