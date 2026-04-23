@@ -13,6 +13,8 @@ export default function CTA() {
           href="/demo"
           target="_blank"
           rel="noopener noreferrer"
+          data-cta="footer_cta_demo"
+          data-cta-label="Request a Demo"
           className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -47,12 +47,16 @@ export default function Header() {
             href="/demo"
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="header_demo"
+            data-cta-label="Request a Demo"
             className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors"
           >
             Request a Demo
           </a>
           <a
             href="/#pricing"
+            data-cta="header_signup"
+            data-cta-label="Sign Up"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
           >
             Sign Up

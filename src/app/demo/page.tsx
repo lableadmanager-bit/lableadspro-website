@@ -2,13 +2,35 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { trackEvent } from "@/lib/analytics";
+import { getStoredUtms, trackEvent } from "@/lib/analytics";
 
 export default function DemoPage() {
   const BOOKING_URL = "https://calendar.app.google/xKb3rVrYvAfdt1Zt6";
 
   const handleBookClick = () => {
     trackEvent("demo_booking_clicked", {});
+    try {
+      const payload = JSON.stringify({
+        utm: getStoredUtms(),
+        referrer: typeof document !== "undefined" ? document.referrer : "",
+      });
+      // sendBeacon survives the navigation to Google Calendar on the same tick.
+      if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+        navigator.sendBeacon(
+          "/api/demo-click",
+          new Blob([payload], { type: "application/json" }),
+        );
+      } else {
+        fetch("/api/demo-click", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch {
+      // Never block the booking flow on telemetry errors
+    }
   };
 
   return (

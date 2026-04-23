@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { trackConversion, trackEvent } from "@/lib/analytics";
+import { getStoredUtms, trackConversion, trackEvent, trackFieldBlur, trackFieldFocus } from "@/lib/analytics";
 
 const STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" }, { code: "AZ", name: "Arizona" },
@@ -53,7 +53,12 @@ export default function SampleReport() {
       const res = await fetch("/api/send-sample", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, states: selectedStates }),
+        body: JSON.stringify({
+          email,
+          states: selectedStates,
+          utm: getStoredUtms(),
+          referrer: typeof document !== "undefined" ? document.referrer : "",
+        }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -136,6 +141,8 @@ export default function SampleReport() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => trackFieldFocus("sample", "email")}
+                    onBlur={(e) => trackFieldBlur("sample", "email", e.target.value.length > 0)}
                     placeholder="you@company.com"
                     required
                     className="w-full px-4 py-3 rounded-xl border border-[var(--color-gray-300)] text-[var(--color-dark)] placeholder-[var(--color-gray-500)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent"
