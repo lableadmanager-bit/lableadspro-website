@@ -6,7 +6,7 @@ import { PLANS, AUTO_UPGRADE_THRESHOLD, getEffectivePlan } from "@/lib/plans";
 import type { PlanTier } from "@/lib/plans";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { trackConversion, trackEvent } from "@/lib/analytics";
+import { trackConversion, trackEvent, trackFieldBlur, trackFieldFocus } from "@/lib/analytics";
 
 const US_STATES = [
   { code: "AL", name: "Alabama" }, { code: "AK", name: "Alaska" },
@@ -236,6 +236,8 @@ function CheckoutContent() {
                 placeholder="Search states…"
                 value={stateSearch}
                 onChange={(e) => setStateSearch(e.target.value)}
+                onFocus={() => trackFieldFocus("checkout", "state_search")}
+                onBlur={(e) => trackFieldBlur("checkout", "state_search", e.target.value.length > 0)}
                 className="w-full bg-[var(--color-gray-50)] border border-[var(--color-gray-200)] rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-[var(--color-brand)] placeholder-[var(--color-gray-400)] text-[var(--color-dark)]"
               />
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-64 overflow-y-auto pr-1">

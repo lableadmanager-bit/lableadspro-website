@@ -62,12 +62,16 @@ export default function Hero() {
         <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
             href="/sample"
+            data-cta="hero_sample"
+            data-cta-label="Free Sample Report"
             className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[var(--color-gray-50)] text-[var(--color-gray-700)] font-semibold rounded-xl text-lg transition-colors border border-[var(--color-gray-300)]"
           >
             Free Sample Report
           </a>
           <a
             href="#how-it-works"
+            data-cta="hero_how_it_works"
+            data-cta-label="See How It Works"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
           >
             See How It Works
@@ -76,6 +80,8 @@ export default function Hero() {
             href="/demo"
             target="_blank"
             rel="noopener noreferrer"
+            data-cta="hero_demo"
+            data-cta-label="Request a Demo"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-green-500/20"
           >
             Request a Demo

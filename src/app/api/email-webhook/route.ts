@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { isLikelyBotUA } from "@/lib/request-context";
+
+const BOT_TIMING_WINDOW_MS = 3000;
 
 /**
  * Resend Webhook Handler
@@ -25,6 +28,61 @@ function getSupabase() {
   return createClient(url, key);
 }
 
+type ResendData = Record<string, unknown>;
+
+function extractEventUserAgent(eventType: string, data: ResendData): string | null {
+  const bucketKey = eventType === "email.opened" ? "open" : eventType === "email.clicked" ? "click" : null;
+  if (bucketKey) {
+    const bucket = data[bucketKey];
+    if (bucket && typeof bucket === "object") {
+      const ua = (bucket as Record<string, unknown>).userAgent ?? (bucket as Record<string, unknown>).user_agent;
+      if (typeof ua === "string") return ua;
+    }
+  }
+  const topUa = data.user_agent ?? data.userAgent;
+  return typeof topUa === "string" ? topUa : null;
+}
+
+function extractEventTimestamp(eventType: string, data: ResendData, fallbackIso: string): number {
+  const bucketKey = eventType === "email.opened" ? "open" : eventType === "email.clicked" ? "click" : null;
+  if (bucketKey) {
+    const bucket = data[bucketKey];
+    if (bucket && typeof bucket === "object") {
+      const ts = (bucket as Record<string, unknown>).timestamp;
+      if (typeof ts === "string") {
+        const parsed = Date.parse(ts);
+        if (!Number.isNaN(parsed)) return parsed;
+      }
+    }
+  }
+  const parsed = Date.parse(fallbackIso);
+  return Number.isNaN(parsed) ? Date.now() : parsed;
+}
+
+async function isFastScannerClick(
+  supabase: SupabaseClient,
+  eventType: string,
+  emailId: string,
+  eventMs: number,
+): Promise<boolean> {
+  if (!emailId) return false;
+  if (eventType !== "email.opened" && eventType !== "email.clicked") return false;
+
+  const { data: deliveries } = await supabase
+    .from("email_webhook_events")
+    .select("created_at")
+    .eq("email_id", emailId)
+    .eq("event_type", "email.delivered")
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  const deliveredAt = deliveries?.[0]?.created_at;
+  if (!deliveredAt) return false;
+  const deliveredMs = Date.parse(deliveredAt);
+  if (Number.isNaN(deliveredMs)) return false;
+  return eventMs - deliveredMs < BOT_TIMING_WINDOW_MS;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -38,6 +96,23 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabase();
+    const insertedAtIso = new Date().toISOString();
+
+    // Bot filter: UA blocklist + <3s-since-delivery timing on open/click events.
+    // Corporate link scanners (Outlook ATP, Mimecast, Proofpoint, Barracuda) and
+    // webhooks from messaging apps pre-fetch every link seconds after delivery.
+    // Skipping auto-suppress on these events avoids bouncing legit recipients
+    // when a scanner triggers a false positive.
+    const eventUa = extractEventUserAgent(eventType, data);
+    let isBot = isLikelyBotUA(eventUa);
+    if (!isBot && supabase) {
+      try {
+        const eventMs = extractEventTimestamp(eventType, data, insertedAtIso);
+        isBot = await isFastScannerClick(supabase, eventType, emailId, eventMs);
+      } catch (err) {
+        console.error("[email-webhook] bot-timing check failed:", err);
+      }
+    }
 
     // Log the event to Supabase
     if (supabase) {
@@ -47,15 +122,16 @@ export async function POST(request: NextRequest) {
           email: recipientEmail,
           email_id: emailId,
           payload: body,
-          created_at: new Date().toISOString(),
+          is_bot: isBot,
+          created_at: insertedAtIso,
         });
       } catch {
         // Don't fail if logging fails — the suppression is what matters
       }
     }
 
-    // Auto-suppress bounces and complaints
-    if (SUPPRESS_EVENTS.includes(eventType) && recipientEmail && supabase) {
+    // Auto-suppress bounces and complaints — but never based on a bot event.
+    if (!isBot && SUPPRESS_EVENTS.includes(eventType) && recipientEmail && supabase) {
       const normalizedEmail = recipientEmail.toLowerCase();
       const bounceType = data?.bounce?.type || "";
       const isHardBounce = bounceType === "Permanent";

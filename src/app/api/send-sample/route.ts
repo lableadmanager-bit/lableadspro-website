@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { supabaseAdmin } from "@/lib/supabase-admin";
+import {
+  extractClientIp,
+  hashIp,
+  isLikelyBotUA,
+  sanitizeUtms,
+  truncate,
+} from "@/lib/request-context";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const NEVERBOUNCE_API_KEY = process.env.NEVERBOUNCE_API_KEY;
@@ -129,7 +137,7 @@ async function sendSampleEmail(email: string, state: string): Promise<boolean> {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, states } = body;
+    const { email, states, utm, referrer: clientReferrer } = body;
 
     // Validate
     if (!email || typeof email !== "string" || !email.includes("@")) {
@@ -150,8 +158,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
+    const userAgent = request.headers.get("user-agent");
+    const referrer = truncate(
+      typeof clientReferrer === "string" ? clientReferrer : request.headers.get("referer"),
+      500,
+    );
+    const ipHash = hashIp(extractClientIp(request));
+    const utms = sanitizeUtms(utm);
+    const isBot = isLikelyBotUA(userAgent);
+
     // Verify email with NeverBounce before sending
     const verification = await verifyEmail(email.toLowerCase());
+
+    // Log the request — bot, blocked, or real — so we have a queryable audit trail
+    try {
+      await supabaseAdmin.from("sample_requests").insert({
+        email: email.toLowerCase(),
+        states: validStates,
+        state_count: validStates.length,
+        neverbounce_result: verification.result,
+        utm_source: utms.utm_source,
+        utm_medium: utms.utm_medium,
+        utm_campaign: utms.utm_campaign,
+        utm_term: utms.utm_term,
+        utm_content: utms.utm_content,
+        referrer,
+        user_agent: truncate(userAgent, 500),
+        ip_hash: ipHash,
+        is_bot: isBot,
+      });
+    } catch (err) {
+      console.error("[send-sample] Supabase log failed:", err);
+    }
+
     if (!verification.valid) {
       console.log(`[BLOCKED] ${new Date().toISOString()} | ${email.toLowerCase()} | reason: ${verification.result} | states: ${validStates.join(",")}`);
       // Return generic success to not reveal we blocked them (don't help attackers)
@@ -164,10 +203,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Log to Vercel function logs
-    console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | nb: ${verification.result} | source: sample-funnel`);
+    console.log(`[LEAD] ${new Date().toISOString()} | ${email.toLowerCase()} | states: ${validStates.join(",")} | nb: ${verification.result} | source: sample-funnel${isBot ? " | bot_ua" : ""}`);
 
-    // Notify George via Telegram
-    await notifyTelegram(email.toLowerCase(), validStates);
+    // Notify George via Telegram (skip for likely bots to reduce noise)
+    if (!isBot) {
+      await notifyTelegram(email.toLowerCase(), validStates);
+    }
 
     // Send sample reports - one email per state
     const results = await Promise.all(
