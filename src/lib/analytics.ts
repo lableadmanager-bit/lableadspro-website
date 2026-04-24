@@ -166,6 +166,34 @@ export function trackOutboundClick(url: string, location?: string) {
   });
 }
 
+export function attachHumanPageViewTracking(pageId: string) {
+  if (typeof window === 'undefined') return () => {};
+  let fired = false;
+
+  const fire = () => {
+    if (fired) return;
+    fired = true;
+    trackEvent('page_view_human', { page: pageId });
+    cleanup();
+  };
+
+  const cleanup = () => {
+    window.removeEventListener('mousemove', fire);
+    window.removeEventListener('scroll', fire);
+    window.removeEventListener('keydown', fire);
+    window.removeEventListener('touchstart', fire);
+    window.removeEventListener('pointerdown', fire);
+  };
+
+  window.addEventListener('mousemove', fire, { passive: true });
+  window.addEventListener('scroll', fire, { passive: true });
+  window.addEventListener('keydown', fire);
+  window.addEventListener('touchstart', fire, { passive: true });
+  window.addEventListener('pointerdown', fire, { passive: true });
+
+  return cleanup;
+}
+
 export function attachScrollDepthTracking(pageId: string) {
   if (typeof window === 'undefined') return () => {};
   const thresholds = [25, 50, 75, 100];
