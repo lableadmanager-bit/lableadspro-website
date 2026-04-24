@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
+  attachHumanPageViewTracking,
   attachScrollDepthTracking,
   captureUtmsFromUrl,
   markVisitorAndTrack,
@@ -19,7 +20,13 @@ export default function AnalyticsBootstrap() {
   }, []);
 
   useEffect(() => {
-    return attachScrollDepthTracking(pathname || "/");
+    const page = pathname || "/";
+    const detachScroll = attachScrollDepthTracking(page);
+    const detachHuman = attachHumanPageViewTracking(page);
+    return () => {
+      detachScroll();
+      detachHuman();
+    };
   }, [pathname]);
 
   useEffect(() => {
