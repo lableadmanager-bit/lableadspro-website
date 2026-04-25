@@ -114,9 +114,15 @@ export async function POST(req: NextRequest) {
     // included if they have at least ONE currently-active grant whose
     // activity_code is in the selected list. Postgres `IN` is OR by design.
     //
-    // We scope the subquery to the user's subscribed states when possible
-    // to keep row count manageable. The 200K limit is a safety net for
-    // all-states subscriptions; nationwide active R01s alone are ~30K.
+    // The subquery returns pi_ids that are then injected into the main
+    // pis query as `id IN (...)`. PostgREST puts that list in the URL,
+    // which has a length limit (~8KB) — so we MUST scope the subquery
+    // tightly, otherwise nationwide queries truncate silently.
+    //
+    // Scope priority: user-selected states (UI filter) > subscription
+    // states (when partial). For all-states subs with no UI state filter,
+    // we cap at 200K rows; if URL truncation is still an issue we'll
+    // need an RPC (PR-2).
     if (Array.isArray(filters.activityCodes) && filters.activityCodes.length > 0) {
       const today = new Date().toISOString().split("T")[0];
       let aq = supabaseAdmin
@@ -125,9 +131,21 @@ export async function POST(req: NextRequest) {
         .in("activity_code", filters.activityCodes)
         .gte("end_date", today)
         .not("pi_id", "is", null);
-      if (subscribedStates && subscribedStates.length < 51) {
-        aq = aq.in("state", subscribedStates);
+
+      // Determine the tightest legal state scope we can apply to this subquery.
+      let scopeStates: string[] | null = null;
+      if (filters.states?.length) {
+        // User picked specific states in UI. Intersect with their subscription.
+        scopeStates = subscribedStates
+          ? filters.states.filter((s: string) => subscribedStates!.includes(s))
+          : filters.states;
+      } else if (subscribedStates && subscribedStates.length < 51) {
+        scopeStates = subscribedStates;
       }
+      if (scopeStates && scopeStates.length > 0) {
+        aq = aq.in("state", scopeStates);
+      }
+
       const { data: matchingPis } = await aq.limit(200000);
       const piIds = Array.from(
         new Set((matchingPis || []).map((r) => r.pi_id).filter((x): x is number => x !== null))
