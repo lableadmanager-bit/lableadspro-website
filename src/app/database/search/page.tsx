@@ -67,6 +67,7 @@ interface Grant {
   source: string;
   title: string;
   abstract: string | null;
+  pi_id: number | null;
   pi_name: string | null;
   pi_email: string | null;
   institution: string | null;
@@ -172,7 +173,14 @@ export default function DatabasePage() {
   const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
   const [activitySearch, setActivitySearch] = useState("");
   const activityDropdownRef = useRef<HTMLDivElement>(null);
-  const [activePiFilter, setActivePiFilter] = useState<string | null>(null);
+  // pi_id is the canonical filter (precise, deduped). name + institution are
+  // kept for display and for the fallback path on agencies where pi_id is null
+  // (DOD/DOE/NASA/USDA/CDC — see /api/search/route.ts).
+  const [activePiFilter, setActivePiFilter] = useState<{
+    id: number | null;
+    name: string;
+    institution: string | null;
+  } | null>(null);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [togglingFav, setTogglingFav] = useState<Set<string>>(new Set());
@@ -303,7 +311,9 @@ export default function DatabasePage() {
               activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
               nihInstitutes: filters.nihInstitutes.length ? filters.nihInstitutes : undefined,
               institution: filters.institution || undefined,
-              piName: activePiFilter || undefined,
+              piId: activePiFilter?.id ?? undefined,
+              piName: activePiFilter?.name || undefined,
+              piInstitution: activePiFilter?.institution || undefined,
             },
             page: p,
             sort,
@@ -1131,7 +1141,7 @@ export default function DatabasePage() {
                   {activePiFilter && (
                     <div className="flex items-center gap-2 mb-4">
                       <span className="inline-flex items-center gap-1.5 text-sm bg-[var(--color-brand-light)] text-[var(--color-brand)] px-3 py-1.5 rounded-full font-medium">
-                        PI: {activePiFilter}
+                        PI: {activePiFilter.name}
                         <button
                           onClick={() => setActivePiFilter(null)}
                           className="hover:text-[var(--color-brand-dark)] ml-0.5"
@@ -1227,7 +1237,7 @@ export default function DatabasePage() {
                                     {grant.pi_name ? (
                                       <button
                                         type="button"
-                                        onClick={() => setActivePiFilter(grant.pi_name)}
+                                        onClick={() => setActivePiFilter({ id: grant.pi_id, name: grant.pi_name!, institution: grant.institution })}
                                         className="hover:text-[var(--color-brand)] hover:underline"
                                       >
                                         {grant.pi_name}
@@ -1382,7 +1392,7 @@ export default function DatabasePage() {
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setActivePiFilter(grant.pi_name);
+                                    setActivePiFilter({ id: grant.pi_id, name: grant.pi_name!, institution: grant.institution });
                                   }}
                                   className="font-semibold text-[var(--color-gray-900)] hover:text-[var(--color-brand)] hover:underline cursor-pointer"
                                   title={`Show all grants by ${grant.pi_name}`}

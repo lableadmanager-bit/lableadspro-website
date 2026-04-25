@@ -155,8 +155,17 @@ export async function POST(req: NextRequest) {
     if (filters.institution) {
       q = q.ilike("institution", `%${filters.institution}%`);
     }
-    if (filters.piName) {
+    // PI filter: prefer pi_id (precise, deduped) when available.
+    // Fall back to pi_name + institution ilike for agencies where pi_id is null
+    // (DOD/DOE/NASA/USDA/CDC). Institution scoping avoids cross-PI collisions
+    // (e.g. "Miao" matching both Edward Miao and Miaofang Chi).
+    if (filters.piId != null) {
+      q = q.eq("pi_id", filters.piId);
+    } else if (filters.piName) {
       q = q.ilike("pi_name", `%${filters.piName}%`);
+      if (filters.piInstitution) {
+        q = q.ilike("institution", `%${filters.piInstitution}%`);
+      }
     }
 
     // Favorites filter: restrict to specific grant IDs
