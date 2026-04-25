@@ -24,21 +24,33 @@ interface PI {
   department: string | null;
   email: string | null;
   phone: string | null;
-  active_grants_count: number | null;          // lifetime grants on record
-  currently_active_grants_count: number | null; // pre-computed (no activity filter)
-  currently_active_funding: number | null;       // pre-computed (no activity filter)
+  active_grants_count: number | null;
+  currently_active_grants_count: number | null;
+  currently_active_funding: number | null;
   faculty_profile_url: string | null;
   lab_page: string | null;
   office_location: string | null;
   building: string | null;
   room: string | null;
   last_seen: string | null;
-  total_funding: number;       // lifetime sum
+  faculty_rank: string | null;
+  faculty_title: string | null;
+  total_funding: number;
   largest_grant: number;
-  active_funding: number;      // filter-aware when activity codes set
-  active_grants_now: number;   // filter-aware when activity codes set
+  active_funding: number;
+  active_grants_now: number;
   is_filter_aware: boolean;
 }
+
+const RANK_OPTIONS: Array<{ value: string; label: string }> = [
+  { value: "professor", label: "Professor" },
+  { value: "associate_professor", label: "Associate Professor" },
+  { value: "assistant_professor", label: "Assistant Professor" },
+  { value: "chair", label: "Department Chair" },
+  { value: "research_professor", label: "Research Professor" },
+  { value: "associate_research_professor", label: "Associate Research Prof." },
+  { value: "assistant_research_professor", label: "Assistant Research Prof." },
+];
 
 const ACTIVITY_CODES = [
   "R01", "R21", "R03", "R15", "R35",
@@ -69,6 +81,7 @@ interface Filters {
   department: string;
   minGrants: string;
   activityCodes: string[];
+  ranks: string[];
 }
 
 export default function PisPage() {
@@ -83,10 +96,13 @@ export default function PisPage() {
     department: "",
     minGrants: "1",
     activityCodes: [],
+    ranks: [],
   });
   const [sort, setSort] = useState<"active_funding_desc" | "active_grants_desc" | "grants_desc" | "name_asc" | "last_seen_desc">("active_funding_desc");
   const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
   const activityDropdownRef = useRef<HTMLDivElement>(null);
+  const [rankDropdownOpen, setRankDropdownOpen] = useState(false);
+  const rankDropdownRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<PI[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -129,6 +145,9 @@ export default function PisPage() {
       if (activityDropdownRef.current && !activityDropdownRef.current.contains(e.target as Node)) {
         setActivityDropdownOpen(false);
       }
+      if (rankDropdownRef.current && !rankDropdownRef.current.contains(e.target as Node)) {
+        setRankDropdownOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -150,6 +169,7 @@ export default function PisPage() {
               department: filters.department || undefined,
               minGrants: filters.minGrants ? Number(filters.minGrants) : undefined,
               activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
+              ranks: filters.ranks.length ? filters.ranks : undefined,
             },
             page: p,
             sort,
@@ -204,7 +224,7 @@ export default function PisPage() {
 
   const clearFilters = () => {
     setQuery("");
-    setFilters({ states: [], institution: "", department: "", minGrants: "1", activityCodes: [] });
+    setFilters({ states: [], institution: "", department: "", minGrants: "1", activityCodes: [], ranks: [] });
   };
 
   const toggleActivityCode = (code: string) => {
@@ -213,6 +233,15 @@ export default function PisPage() {
       activityCodes: f.activityCodes.includes(code)
         ? f.activityCodes.filter((x) => x !== code)
         : [...f.activityCodes, code],
+    }));
+  };
+
+  const toggleRank = (value: string) => {
+    setFilters((f) => ({
+      ...f,
+      ranks: f.ranks.includes(value)
+        ? f.ranks.filter((x) => x !== value)
+        : [...f.ranks, value],
     }));
   };
 
@@ -302,7 +331,7 @@ export default function PisPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
             {/* State multi-select */}
             <div ref={stateDropdownRef} className="relative">
               <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">States</label>
@@ -370,6 +399,44 @@ export default function PisPage() {
                 onChange={(e) => setFilters((f) => ({ ...f, minGrants: e.target.value }))}
                 className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-gray-200)] focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent"
               />
+            </div>
+
+            {/* Faculty rank/title multi-select */}
+            <div ref={rankDropdownRef} className="relative">
+              <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">
+                Title <span className="text-[var(--color-gray-400)] font-normal">(R1)</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setRankDropdownOpen(!rankDropdownOpen)}
+                className="w-full px-3 py-2 text-sm text-left rounded-lg border border-[var(--color-gray-200)] bg-white flex items-center justify-between"
+              >
+                <span className="truncate">
+                  {filters.ranks.length === 0
+                    ? "Any"
+                    : filters.ranks
+                        .map((r) => RANK_OPTIONS.find((o) => o.value === r)?.label || r)
+                        .join(", ")}
+                </span>
+                <ChevronDown className="w-4 h-4 flex-shrink-0 text-[var(--color-gray-400)]" />
+              </button>
+              {rankDropdownOpen && (
+                <div className="absolute z-30 mt-1 w-72 max-h-72 overflow-y-auto bg-white border border-[var(--color-gray-200)] rounded-lg shadow-lg">
+                  {RANK_OPTIONS.map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-[var(--color-gray-50)] cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filters.ranks.includes(opt.value)}
+                        onChange={() => toggleRank(opt.value)}
+                      />
+                      <span>{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Activity codes multi-select */}
@@ -484,6 +551,12 @@ export default function PisPage() {
                         </a>
                       )}
                     </div>
+
+                    {pi.faculty_title && (
+                      <div className="text-xs font-medium text-[var(--color-brand)] mb-1">
+                        {pi.faculty_title}
+                      </div>
+                    )}
 
                     <div className="flex items-center gap-3 flex-wrap text-sm text-[var(--color-gray-500)] mb-2">
                       {pi.institution && (
