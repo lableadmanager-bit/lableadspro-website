@@ -5,7 +5,8 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import InstitutionAutocomplete from "@/components/InstitutionAutocomplete";
-import { Search, ExternalLink, Mail, Phone, ChevronDown, FlaskConical, Building2, MapPin, ArrowRight } from "lucide-react";
+import SearchModeToggle from "@/components/SearchModeToggle";
+import { Search, ExternalLink, Mail, Phone, ChevronDown, Building2, MapPin, ArrowRight } from "lucide-react";
 
 const US_STATES = [
   "AL","AK","AZ","AR","CA","CO","CT","DE","DC","FL","GA","HI","ID","IL","IN",
@@ -234,7 +235,7 @@ export default function PisPage() {
         <div className="max-w-2xl mx-auto px-6 py-32 text-center">
           <h1 className="text-2xl font-bold mb-4">Sign in required</h1>
           <p className="text-[var(--color-gray-500)] mb-6">
-            The PI database is currently in early access for select accounts. Sign in to continue.
+            Sign in to access the PI database.
           </p>
           <a
             href="/database/login"
@@ -253,24 +254,16 @@ export default function PisPage() {
       <main className="min-h-screen">
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-32 text-center">
-          <FlaskConical className="w-12 h-12 text-[var(--color-brand)] mx-auto mb-4" />
-          <h1 className="text-2xl font-bold mb-4">PI Database — Early Access</h1>
+          <h1 className="text-2xl font-bold mb-4">Active subscription required</h1>
           <p className="text-[var(--color-gray-500)] mb-6">
-            The PI database lets you flip the question: instead of searching for grants, search for the researchers behind them.
-            Filter by institution, department, and total funded grant count. We&apos;re piloting it with a small group of customers right now.
-          </p>
-          <p className="text-sm text-[var(--color-gray-500)] mb-6">
-            Want in? Email{" "}
-            <a href="mailto:info@lableadspro.com" className="text-[var(--color-brand)] hover:underline">
-              info@lableadspro.com
-            </a>
-            .
+            The PI database is included with every Lab Leads Pro subscription.
+            Choose your states to get started.
           </p>
           <a
-            href="/database/search"
-            className="inline-block px-6 py-3 bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-300)] text-[var(--color-dark)] font-semibold rounded-lg"
+            href="/#pricing"
+            className="inline-block px-6 py-3 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-lg"
           >
-            Back to grant search
+            See pricing
           </a>
         </div>
         <Footer />
@@ -282,23 +275,17 @@ export default function PisPage() {
     <main className="min-h-screen bg-[var(--color-gray-50)]">
       <Header />
       <div className="max-w-7xl mx-auto px-4 md:px-6 pt-24 pb-12">
+        {/* Mode toggle */}
+        <div className="mb-4">
+          <SearchModeToggle active="pis" />
+        </div>
+
         {/* Page heading */}
-        <div className="mb-6 flex items-end justify-between flex-wrap gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-dark)]">PI Database</h1>
-              <span className="text-xs font-bold px-2 py-1 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wide">Early Access</span>
-            </div>
-            <p className="text-sm text-[var(--color-gray-500)]">
-              Search the researchers behind the grants. Click any PI to drill into their funded grants.
-            </p>
-          </div>
-          <a
-            href="/database/search"
-            className="text-sm text-[var(--color-gray-500)] hover:text-[var(--color-brand)] flex items-center gap-1"
-          >
-            ← Search grants instead
-          </a>
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-[var(--color-dark)] mb-1">PI Database</h1>
+          <p className="text-sm text-[var(--color-gray-500)]">
+            Search the researchers behind the grants. Click any PI to drill into their funded grants.
+          </p>
         </div>
 
         {/* Filter row */}

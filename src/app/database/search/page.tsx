@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase-browser";
 import Header from "@/components/Header";
 import InstitutionAutocomplete from "@/components/InstitutionAutocomplete";
+import SearchModeToggle from "@/components/SearchModeToggle";
 import Footer from "@/components/Footer";
 import { Search, ChevronDown, ChevronUp, ExternalLink, SlidersHorizontal, X, LogOut, Mail, Star, LayoutGrid, Table, Download } from "lucide-react";
 
@@ -980,6 +981,11 @@ function DatabasePageInner() {
         {/* Hero / Search Bar */}
         <section className="bg-white border-b border-[var(--color-gray-100)]">
           <div className="max-w-6xl mx-auto px-6 py-10">
+            {userEmail && (
+              <div className="mb-4">
+                <SearchModeToggle active="grants" />
+              </div>
+            )}
             <div className="flex items-start justify-between mb-2">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-gray-900)]">
@@ -999,15 +1005,6 @@ function DatabasePageInner() {
                   <span className="text-sm text-[var(--color-gray-500)] hidden md:inline">
                     {userEmail}
                   </span>
-                  {["demo@lableadspro.com", "lableadmanager@gmail.com", "george@lableadspro.com"].includes(userEmail.toLowerCase()) && (
-                    <a
-                      href="/database/pis"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] transition-colors px-3 py-1.5 rounded-lg"
-                      title="Switch to PI search (early access)"
-                    >
-                      Search PIs
-                    </a>
-                  )}
                   <a
                     href="/database/account"
                     className="inline-flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] hover:text-[var(--color-gray-900)] transition-colors px-3 py-1.5 rounded-lg border border-[var(--color-gray-300)] hover:border-[var(--color-gray-500)]"

@@ -2,15 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
-// PI database is gated to specific accounts during prototype phase.
-// Add new emails here to grant access; refactor to a feature_flags
-// column on subscriptions when we're ready to roll out broadly.
-const PI_DATABASE_ALLOWLIST = new Set([
-  "demo@lableadspro.com",
-  "lableadmanager@gmail.com",
-  "george@lableadspro.com",
-]);
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -24,8 +15,7 @@ export async function POST(req: NextRequest) {
 
     const offset = (page - 1) * pageSize;
 
-    // --- Auth + demo allowlist gate ---
-    let userEmail: string | null = null;
+    // --- Auth + active-subscription gate ---
     let subscribedStates: string[] | null = null;
 
     try {
@@ -46,11 +36,6 @@ export async function POST(req: NextRequest) {
       if (!user) {
         return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
       }
-      userEmail = user.email ?? null;
-
-      if (!userEmail || !PI_DATABASE_ALLOWLIST.has(userEmail.toLowerCase())) {
-        return NextResponse.json({ error: "PI database access not enabled for this account" }, { status: 403 });
-      }
 
       const { data: subscription } = await supabaseAdmin
         .from("subscriptions")
@@ -59,7 +44,11 @@ export async function POST(req: NextRequest) {
         .eq("status", "active")
         .single();
 
-      if (subscription?.subscribed_states?.length) {
+      if (!subscription) {
+        return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
+      }
+
+      if (subscription.subscribed_states?.length) {
         subscribedStates = subscription.subscribed_states;
       }
     } catch {
