@@ -16,13 +16,19 @@ export async function GET(req: NextRequest) {
   }
 
   if (states.length > 0) {
-    // Filter institutions to only those in the user's subscribed states
+    // Filter institutions to only those in the user's subscribed states.
+    // Cap the row scan so per-keystroke latency stays sub-second — on a
+    // 530K-row grants table an unbounded ilike pulled tens of thousands of
+    // rows per keystroke. The top-matched institutions still surface because
+    // the trigram index returns the best matches first; the grant_count is
+    // approximate within the scan window.
     const { data, error } = await supabase
       .from("grants")
       .select("institution")
       .ilike("institution", `%${q}%`)
       .in("state", states)
-      .not("institution", "is", null);
+      .not("institution", "is", null)
+      .limit(limit * 50);
 
     if (error) {
       console.error("Institution search error:", error);
