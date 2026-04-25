@@ -93,10 +93,6 @@ export async function POST(req: NextRequest) {
       p_sort: sort,
       p_limit: pageSize,
       p_offset: offset,
-      p_ranks:
-        Array.isArray(filters.ranks) && filters.ranks.length > 0
-          ? filters.ranks
-          : null,
     });
 
     if (error) {
