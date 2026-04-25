@@ -110,18 +110,25 @@ export async function POST(req: NextRequest) {
       : 1;
     q = q.gte("currently_active_grants_count", minActive);
 
-    // Activity code filter (R01, R21, K99, etc.). Restrict to PIs who have
-    // at least one currently-active grant matching the selected codes.
-    // Subquery: pull pi_ids from grants, then filter pis to that set.
+    // Activity code filter (R01, R21, K99, etc.). OR semantics: a PI is
+    // included if they have at least ONE currently-active grant whose
+    // activity_code is in the selected list. Postgres `IN` is OR by design.
+    //
+    // We scope the subquery to the user's subscribed states when possible
+    // to keep row count manageable. The 200K limit is a safety net for
+    // all-states subscriptions; nationwide active R01s alone are ~30K.
     if (Array.isArray(filters.activityCodes) && filters.activityCodes.length > 0) {
       const today = new Date().toISOString().split("T")[0];
-      const { data: matchingPis } = await supabaseAdmin
+      let aq = supabaseAdmin
         .from("grants")
         .select("pi_id")
         .in("activity_code", filters.activityCodes)
         .gte("end_date", today)
-        .not("pi_id", "is", null)
-        .limit(50000);
+        .not("pi_id", "is", null);
+      if (subscribedStates && subscribedStates.length < 51) {
+        aq = aq.in("state", subscribedStates);
+      }
+      const { data: matchingPis } = await aq.limit(200000);
       const piIds = Array.from(
         new Set((matchingPis || []).map((r) => r.pi_id).filter((x): x is number => x !== null))
       );
