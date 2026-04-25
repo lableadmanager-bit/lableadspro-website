@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
 
     const offset = (page - 1) * pageSize;
 
-    // --- Auth + active-subscription gate ---
+    // --- Auth + Pro-tier gate ---
+    // PI database is a Pro-only feature. Standard subscribers see a
+    // "Pro upgrade required" landing on the page; the API returns 403
+    // with a code the UI can switch on.
     let subscribedStates: string[] | null = null;
 
     try {
@@ -39,13 +42,23 @@ export async function POST(req: NextRequest) {
 
       const { data: subscription } = await supabaseAdmin
         .from("subscriptions")
-        .select("subscribed_states, status")
+        .select("subscribed_states, status, plan_tier")
         .eq("user_id", user.id)
         .eq("status", "active")
         .single();
 
       if (!subscription) {
-        return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
+        return NextResponse.json(
+          { error: "Active subscription required", code: "no_subscription" },
+          { status: 403 }
+        );
+      }
+
+      if (subscription.plan_tier !== "pro") {
+        return NextResponse.json(
+          { error: "Pro plan required for PI database", code: "pro_required" },
+          { status: 403 }
+        );
       }
 
       if (subscription.subscribed_states?.length) {

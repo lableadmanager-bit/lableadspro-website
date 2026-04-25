@@ -20,11 +20,12 @@ const plans = [
     name: "Lab Leads Pro",
     price: "$149",
     period: "/state/month",
-    description: "The complete package. 8 agencies + new lab detection + enriched favorites. Everything you need to hit President's Club.",
+    description: "The complete package. 8 agencies + PI database + new lab detection. Everything you need to hit President's Club.",
     features: [
       "Everything in Standard",
       "NSF, DOD, DOE, NASA, VA, USDA & CDC grants",
       "Full database access across all 8 agencies",
+      "PI database — search by researcher, not just grant",
       "New lab & faculty hire detection",
       "Favorites with weekly enrichment & CSV export",
       "Priority Monday AM delivery",

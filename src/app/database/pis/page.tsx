@@ -73,7 +73,7 @@ interface Filters {
 
 export default function PisPage() {
   const supabaseBrowser = createSupabaseBrowserClient();
-  const [authState, setAuthState] = useState<"loading" | "anon" | "denied" | "ok">("loading");
+  const [authState, setAuthState] = useState<"loading" | "anon" | "denied" | "needs_pro" | "ok">("loading");
   const [subscribedStates, setSubscribedStates] = useState<string[]>([]);
 
   const [query, setQuery] = useState("");
@@ -112,6 +112,10 @@ export default function PisPage() {
           return;
         }
         const sub = await res.json();
+        if (sub.planTier !== "pro") {
+          setAuthState("needs_pro");
+          return;
+        }
         setSubscribedStates(sub.subscribedStates || []);
         setAuthState("ok");
       } catch {
@@ -256,8 +260,7 @@ export default function PisPage() {
         <div className="max-w-2xl mx-auto px-6 py-32 text-center">
           <h1 className="text-2xl font-bold mb-4">Active subscription required</h1>
           <p className="text-[var(--color-gray-500)] mb-6">
-            The PI database is included with every Lab Leads Pro subscription.
-            Choose your states to get started.
+            Sign up for Lab Leads Pro to access the PI database.
           </p>
           <a
             href="/#pricing"
@@ -265,6 +268,37 @@ export default function PisPage() {
           >
             See pricing
           </a>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
+  if (authState === "needs_pro") {
+    return (
+      <main className="min-h-screen">
+        <Header />
+        <div className="max-w-2xl mx-auto px-6 py-32 text-center">
+          <h1 className="text-2xl font-bold mb-4">Pro plan required</h1>
+          <p className="text-[var(--color-gray-500)] mb-6">
+            The PI database is a Lab Leads Pro feature. Upgrade your plan to flip the search
+            from grant-first to researcher-first — filter by institution, department, and active
+            funding to find the labs behind the leads.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <a
+              href="/database/account"
+              className="inline-block px-6 py-3 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-lg"
+            >
+              Upgrade to Pro
+            </a>
+            <a
+              href="/database/search"
+              className="inline-block px-6 py-3 bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-300)] text-[var(--color-dark)] font-semibold rounded-lg"
+            >
+              Back to grants
+            </a>
+          </div>
         </div>
         <Footer />
       </main>
