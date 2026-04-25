@@ -23,17 +23,29 @@ interface PI {
   department: string | null;
   email: string | null;
   phone: string | null;
-  active_grants_count: number | null;
+  active_grants_count: number | null;          // lifetime grants on record
+  currently_active_grants_count: number | null; // pre-computed (no activity filter)
+  currently_active_funding: number | null;       // pre-computed (no activity filter)
   faculty_profile_url: string | null;
   lab_page: string | null;
   office_location: string | null;
   building: string | null;
   room: string | null;
   last_seen: string | null;
-  total_funding: number;
+  total_funding: number;       // lifetime sum
   largest_grant: number;
-  active_grants_now: number;
+  active_funding: number;      // filter-aware when activity codes set
+  active_grants_now: number;   // filter-aware when activity codes set
+  is_filter_aware: boolean;
 }
+
+const ACTIVITY_CODES = [
+  "R01", "R21", "R03", "R15", "R35",
+  "U01", "U19", "U54",
+  "P01", "P30", "P50",
+  "K01", "K08", "K23", "K99", "R00",
+  "DP2",
+];
 
 function formatMoney(n: number): string {
   if (!n) return "—";
@@ -55,6 +67,7 @@ interface Filters {
   institution: string;
   department: string;
   minGrants: string;
+  activityCodes: string[];
 }
 
 export default function PisPage() {
@@ -68,8 +81,11 @@ export default function PisPage() {
     institution: "",
     department: "",
     minGrants: "1",
+    activityCodes: [],
   });
-  const [sort, setSort] = useState<"grants_desc" | "name_asc" | "last_seen_desc">("grants_desc");
+  const [sort, setSort] = useState<"active_funding_desc" | "active_grants_desc" | "grants_desc" | "name_asc" | "last_seen_desc">("active_funding_desc");
+  const [activityDropdownOpen, setActivityDropdownOpen] = useState(false);
+  const activityDropdownRef = useRef<HTMLDivElement>(null);
   const [results, setResults] = useState<PI[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -103,11 +119,14 @@ export default function PisPage() {
     })();
   }, [supabaseBrowser]);
 
-  // Close state dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (stateDropdownRef.current && !stateDropdownRef.current.contains(e.target as Node)) {
         setStateDropdownOpen(false);
+      }
+      if (activityDropdownRef.current && !activityDropdownRef.current.contains(e.target as Node)) {
+        setActivityDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handler);
@@ -129,6 +148,7 @@ export default function PisPage() {
               institution: filters.institution || undefined,
               department: filters.department || undefined,
               minGrants: filters.minGrants ? Number(filters.minGrants) : undefined,
+              activityCodes: filters.activityCodes.length ? filters.activityCodes : undefined,
             },
             page: p,
             sort,
@@ -183,7 +203,16 @@ export default function PisPage() {
 
   const clearFilters = () => {
     setQuery("");
-    setFilters({ states: [], institution: "", department: "", minGrants: "1" });
+    setFilters({ states: [], institution: "", department: "", minGrants: "1", activityCodes: [] });
+  };
+
+  const toggleActivityCode = (code: string) => {
+    setFilters((f) => ({
+      ...f,
+      activityCodes: f.activityCodes.includes(code)
+        ? f.activityCodes.filter((x) => x !== code)
+        : [...f.activityCodes, code],
+    }));
   };
 
   const visibleStates = subscribedStates.length > 0 && subscribedStates.length < 51
@@ -286,7 +315,7 @@ export default function PisPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
             {/* State multi-select */}
             <div ref={stateDropdownRef} className="relative">
               <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">States</label>
@@ -344,9 +373,9 @@ export default function PisPage() {
               />
             </div>
 
-            {/* Min grants */}
+            {/* Min active grants */}
             <div>
-              <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">Min funded grants</label>
+              <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">Min active grants</label>
               <input
                 type="number"
                 min="1"
@@ -354,6 +383,38 @@ export default function PisPage() {
                 onChange={(e) => setFilters((f) => ({ ...f, minGrants: e.target.value }))}
                 className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--color-gray-200)] focus:ring-2 focus:ring-[var(--color-brand)] focus:border-transparent"
               />
+            </div>
+
+            {/* Activity codes multi-select */}
+            <div ref={activityDropdownRef} className="relative">
+              <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">Grant types</label>
+              <button
+                type="button"
+                onClick={() => setActivityDropdownOpen(!activityDropdownOpen)}
+                className="w-full px-3 py-2 text-sm text-left rounded-lg border border-[var(--color-gray-200)] bg-white flex items-center justify-between"
+              >
+                <span className="truncate">
+                  {filters.activityCodes.length === 0 ? "Any" : filters.activityCodes.join(", ")}
+                </span>
+                <ChevronDown className="w-4 h-4 flex-shrink-0 text-[var(--color-gray-400)]" />
+              </button>
+              {activityDropdownOpen && (
+                <div className="absolute z-30 mt-1 w-full max-h-72 overflow-y-auto bg-white border border-[var(--color-gray-200)] rounded-lg shadow-lg">
+                  {ACTIVITY_CODES.map((code) => (
+                    <label
+                      key={code}
+                      className="flex items-center gap-2 px-3 py-1.5 text-sm hover:bg-[var(--color-gray-50)] cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={filters.activityCodes.includes(code)}
+                        onChange={() => toggleActivityCode(code)}
+                      />
+                      <span>{code}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -366,7 +427,9 @@ export default function PisPage() {
                 onChange={(e) => setSort(e.target.value as typeof sort)}
                 className="px-2 py-1 rounded border border-[var(--color-gray-200)] bg-white text-sm"
               >
-                <option value="grants_desc">Most funded grants</option>
+                <option value="active_funding_desc">Most active funding $</option>
+                <option value="active_grants_desc">Most active grants</option>
+                <option value="grants_desc">Most lifetime grants</option>
                 <option value="last_seen_desc">Recently seen</option>
                 <option value="name_asc">Name A–Z</option>
               </select>
@@ -475,19 +538,21 @@ export default function PisPage() {
                     </div>
                   </div>
 
-                  <div className="flex md:flex-col md:items-end items-center gap-4 md:gap-2 md:min-w-[160px]">
+                  <div className="flex md:flex-col md:items-end items-center gap-4 md:gap-2 md:min-w-[180px]">
                     <div className="grid grid-cols-2 md:grid-cols-1 gap-3 md:gap-1 md:text-right">
                       <div>
                         <div className="text-xl md:text-2xl font-bold text-[var(--color-dark)] leading-none">
-                          {formatMoney(pi.total_funding)}
+                          {formatMoney(pi.active_funding)}
                         </div>
-                        <div className="text-[10px] uppercase tracking-wide text-[var(--color-gray-500)] mt-0.5">total funding</div>
+                        <div className="text-[10px] uppercase tracking-wide text-[var(--color-gray-500)] mt-0.5">
+                          {pi.is_filter_aware ? "filtered active funding" : "active funding"}
+                        </div>
                       </div>
                       <div className="text-sm text-[var(--color-gray-700)]">
-                        <span className="font-semibold text-[var(--color-brand)]">{pi.active_grants_count ?? 0}</span>
-                        <span className="text-[var(--color-gray-500)]"> grants</span>
-                        {pi.active_grants_now > 0 && (
-                          <span className="text-[var(--color-gray-400)] ml-1.5">· {pi.active_grants_now} active</span>
+                        <span className="font-semibold text-[var(--color-brand)]">{pi.active_grants_now ?? 0}</span>
+                        <span className="text-[var(--color-gray-500)]"> active</span>
+                        {(pi.active_grants_count ?? 0) > (pi.active_grants_now ?? 0) && (
+                          <span className="text-[var(--color-gray-400)] ml-1.5">· {pi.active_grants_count} lifetime</span>
                         )}
                       </div>
                     </div>

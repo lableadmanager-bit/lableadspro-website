@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
     let q = supabase
       .from("pis")
       .select(
-        "id,name,institution,state,city,department,email,phone,active_grants_count,faculty_profile_url,office_location,building,room,last_seen,lab_page",
+        "id,name,institution,state,city,department,email,phone,active_grants_count,currently_active_grants_count,currently_active_funding,faculty_profile_url,office_location,building,room,last_seen,lab_page",
         { count: "estimated" }
       );
 
@@ -102,11 +102,33 @@ export async function POST(req: NextRequest) {
     if (filters.department) {
       q = q.ilike("department", `%${filters.department}%`);
     }
-    if (filters.minGrants && Number(filters.minGrants) > 0) {
-      q = q.gte("active_grants_count", Number(filters.minGrants));
-    } else {
-      // Default: only include PIs with at least one grant on record.
-      q = q.gte("active_grants_count", 1);
+    // Default: PIs with at least one currently-active grant. minGrants
+    // applies to the active count, not lifetime, since reps care about
+    // currently-funded labs.
+    const minActive = filters.minGrants && Number(filters.minGrants) > 0
+      ? Number(filters.minGrants)
+      : 1;
+    q = q.gte("currently_active_grants_count", minActive);
+
+    // Activity code filter (R01, R21, K99, etc.). Restrict to PIs who have
+    // at least one currently-active grant matching the selected codes.
+    // Subquery: pull pi_ids from grants, then filter pis to that set.
+    if (Array.isArray(filters.activityCodes) && filters.activityCodes.length > 0) {
+      const today = new Date().toISOString().split("T")[0];
+      const { data: matchingPis } = await supabaseAdmin
+        .from("grants")
+        .select("pi_id")
+        .in("activity_code", filters.activityCodes)
+        .gte("end_date", today)
+        .not("pi_id", "is", null)
+        .limit(50000);
+      const piIds = Array.from(
+        new Set((matchingPis || []).map((r) => r.pi_id).filter((x): x is number => x !== null))
+      );
+      if (piIds.length === 0) {
+        return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
+      }
+      q = q.in("id", piIds);
     }
 
     // Sort
@@ -114,9 +136,14 @@ export async function POST(req: NextRequest) {
       q = q.order("name", { ascending: true, nullsFirst: false });
     } else if (sort === "last_seen_desc") {
       q = q.order("last_seen", { ascending: false, nullsFirst: false });
-    } else {
-      // Default: most funded grants
+    } else if (sort === "active_grants_desc") {
+      q = q.order("currently_active_grants_count", { ascending: false, nullsFirst: false });
+    } else if (sort === "grants_desc") {
+      // Legacy sort by lifetime grant count (still exposed in UI for honesty).
       q = q.order("active_grants_count", { ascending: false, nullsFirst: false });
+    } else {
+      // Default: most active funding $$
+      q = q.order("currently_active_funding", { ascending: false, nullsFirst: false });
     }
 
     q = q.range(offset, offset + pageSize - 1);
@@ -128,38 +155,67 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Search failed" }, { status: 500 });
     }
 
-    // Roll up total funding per PI for the current result page. Single
-    // batched query against grants — ~150ms for 25 PIs in practice.
-    // award_amount coverage is 95%+ across all agencies.
+    // Roll up lifetime + filter-aware funding per PI for the current result
+    // page. award_amount coverage is 95%+ across all agencies.
+    //
+    // - lifetime totals: always computed live so the secondary "X total" is
+    //   accurate regardless of pis-table backfill freshness.
+    // - active filtered: when activityCodes filter is set, recompute the
+    //   active funding/count restricted to those grant types so the displayed
+    //   numbers reflect the filter. Otherwise use the pre-computed
+    //   currently_active_* columns directly.
     const pageIds = (data || []).map((r) => r.id).filter(Boolean) as number[];
-    const fundingByPi = new Map<number, { total: number; max: number; count: number }>();
+    const today = new Date().toISOString().split("T")[0];
+    const lifetimeByPi = new Map<number, { total: number; max: number }>();
+    const activeFilteredByPi = new Map<number, { fund: number; count: number }>();
+    const activityCodes = Array.isArray(filters.activityCodes) ? filters.activityCodes : [];
+
     if (pageIds.length > 0) {
-      const { data: grantRows, error: grantErr } = await supabaseAdmin
+      let bq = supabaseAdmin
         .from("grants")
-        .select("pi_id,award_amount,end_date")
+        .select("pi_id,award_amount,end_date,activity_code")
         .in("pi_id", pageIds);
-      if (!grantErr && grantRows) {
-        const today = new Date().toISOString().split("T")[0];
+      const { data: grantRows } = await bq;
+      if (grantRows) {
         for (const g of grantRows) {
           if (!g.pi_id) continue;
-          const slot = fundingByPi.get(g.pi_id) ?? { total: 0, max: 0, count: 0 };
+          // Lifetime: every grant on record
+          const lt = lifetimeByPi.get(g.pi_id) ?? { total: 0, max: 0 };
           if (typeof g.award_amount === "number") {
-            slot.total += g.award_amount;
-            if (g.award_amount > slot.max) slot.max = g.award_amount;
+            lt.total += g.award_amount;
+            if (g.award_amount > lt.max) lt.max = g.award_amount;
           }
-          if (g.end_date && g.end_date >= today) slot.count += 1;
-          fundingByPi.set(g.pi_id, slot);
+          lifetimeByPi.set(g.pi_id, lt);
+
+          // Filter-aware active: recompute only when activity filter is set
+          if (activityCodes.length > 0) {
+            const matchesCode = g.activity_code && activityCodes.includes(g.activity_code);
+            const isActive = g.end_date && g.end_date >= today;
+            if (matchesCode && isActive) {
+              const a = activeFilteredByPi.get(g.pi_id) ?? { fund: 0, count: 0 };
+              if (typeof g.award_amount === "number") a.fund += g.award_amount;
+              a.count += 1;
+              activeFilteredByPi.set(g.pi_id, a);
+            }
+          }
         }
       }
     }
 
     const enriched = (data || []).map((r) => {
-      const f = fundingByPi.get(r.id) ?? { total: 0, max: 0, count: 0 };
+      const lt = lifetimeByPi.get(r.id) ?? { total: 0, max: 0 };
+      const filtered = activeFilteredByPi.get(r.id);
+      // When activity filter is set, override the active stats with the
+      // filter-aware numbers so the UI tells the truth.
+      const activeFunding = filtered ? filtered.fund : (r.currently_active_funding ?? 0);
+      const activeCount = filtered ? filtered.count : (r.currently_active_grants_count ?? 0);
       return {
         ...r,
-        total_funding: f.total,
-        largest_grant: f.max,
-        active_grants_now: f.count,
+        total_funding: lt.total,
+        largest_grant: lt.max,
+        active_funding: activeFunding,
+        active_grants_now: activeCount,
+        is_filter_aware: activityCodes.length > 0,
       };
     });
 
