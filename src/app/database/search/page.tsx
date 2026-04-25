@@ -197,7 +197,10 @@ function DatabasePageInner() {
 
   // PI drilldown via URL params (from /database/pis): pre-apply the pi filter
   // on first load so users land in a pre-filtered grant view for that PI.
+  // The actual kicker effect (which calls doSearch) is declared AFTER doSearch
+  // to keep TS happy with declaration order.
   const searchParams = useSearchParams();
+  const [piDrilldownReady, setPiDrilldownReady] = useState(false);
   useEffect(() => {
     const piIdParam = searchParams.get("piId");
     const piNameParam = searchParams.get("piName");
@@ -208,6 +211,7 @@ function DatabasePageInner() {
         name: piNameParam,
         institution: piInstParam || null,
       });
+      setPiDrilldownReady(true);
     }
     // Run once on mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -360,6 +364,17 @@ function DatabasePageInner() {
     },
     [query, filters, sort, activePiFilter, favoritesOnly, favoriteIds]
   );
+
+  // PI drilldown kicker: when arriving from /database/pis with URL params,
+  // run an immediate search after the URL-param effect sets activePiFilter.
+  useEffect(() => {
+    if (!piDrilldownReady) return;
+    if (!activePiFilter) return;
+    userHasInteracted.current = true;
+    doSearch(1);
+    setPiDrilldownReady(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [piDrilldownReady, activePiFilter]);
 
   const exportFavoritesCSV = () => {
     if (results.length === 0) return;

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseAdmin } from "@/lib/supabase-admin";
-import { supabase } from "@/lib/supabase";
 
 // PI database is gated to specific accounts during prototype phase.
 // Add new emails here to grant access; refactor to a feature_flags
@@ -68,117 +67,53 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Auth error" }, { status: 401 });
     }
 
-    let q = supabase
-      .from("pis")
-      .select(
-        "id,name,institution,state,city,department,email,phone,active_grants_count,currently_active_grants_count,currently_active_funding,faculty_profile_url,office_location,building,room,last_seen,lab_page",
-        { count: "estimated" }
-      );
-
-    // Name search (ilike on the indexed name column)
-    if (query.trim()) {
-      q = q.ilike("name", `%${query.trim()}%`);
-    }
-
-    // Subscription state scope
+    // Resolve effective state scope (UI filter intersected with subscription).
     const allStatesCount = 51;
+    let effectiveStates: string[] | null = null;
     if (subscribedStates) {
       if (filters.states?.length) {
-        const allowed = filters.states.filter((s: string) => subscribedStates!.includes(s));
-        if (allowed.length === 0) {
+        const intersected = filters.states.filter((s: string) => subscribedStates!.includes(s));
+        if (intersected.length === 0) {
           return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
         }
-        q = q.in("state", allowed);
+        effectiveStates = intersected;
       } else if (subscribedStates.length < allStatesCount) {
-        q = q.in("state", subscribedStates);
+        effectiveStates = subscribedStates;
       }
     } else if (filters.states?.length) {
-      q = q.in("state", filters.states);
+      effectiveStates = filters.states;
     }
 
-    if (filters.institution) {
-      q = q.ilike("institution", `%${filters.institution}%`);
-    }
-    if (filters.department) {
-      q = q.ilike("department", `%${filters.department}%`);
-    }
-    // Default: PIs with at least one currently-active grant. minGrants
-    // applies to the active count, not lifetime, since reps care about
-    // currently-funded labs.
     const minActive = filters.minGrants && Number(filters.minGrants) > 0
       ? Number(filters.minGrants)
       : 1;
-    q = q.gte("currently_active_grants_count", minActive);
 
-    // Activity code filter (R01, R21, K99, etc.). OR semantics: a PI is
-    // included if they have at least ONE currently-active grant whose
-    // activity_code is in the selected list. Postgres `IN` is OR by design.
-    //
-    // The subquery returns pi_ids that are then injected into the main
-    // pis query as `id IN (...)`. PostgREST puts that list in the URL,
-    // which has a length limit (~8KB) — so we MUST scope the subquery
-    // tightly, otherwise nationwide queries truncate silently.
-    //
-    // Scope priority: user-selected states (UI filter) > subscription
-    // states (when partial). For all-states subs with no UI state filter,
-    // we cap at 200K rows; if URL truncation is still an issue we'll
-    // need an RPC (PR-2).
-    if (Array.isArray(filters.activityCodes) && filters.activityCodes.length > 0) {
-      const today = new Date().toISOString().split("T")[0];
-      let aq = supabaseAdmin
-        .from("grants")
-        .select("pi_id")
-        .in("activity_code", filters.activityCodes)
-        .gte("end_date", today)
-        .not("pi_id", "is", null);
-
-      // Determine the tightest legal state scope we can apply to this subquery.
-      let scopeStates: string[] | null = null;
-      if (filters.states?.length) {
-        // User picked specific states in UI. Intersect with their subscription.
-        scopeStates = subscribedStates
-          ? filters.states.filter((s: string) => subscribedStates!.includes(s))
-          : filters.states;
-      } else if (subscribedStates && subscribedStates.length < 51) {
-        scopeStates = subscribedStates;
-      }
-      if (scopeStates && scopeStates.length > 0) {
-        aq = aq.in("state", scopeStates);
-      }
-
-      const { data: matchingPis } = await aq.limit(200000);
-      const piIds = Array.from(
-        new Set((matchingPis || []).map((r) => r.pi_id).filter((x): x is number => x !== null))
-      );
-      if (piIds.length === 0) {
-        return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
-      }
-      q = q.in("id", piIds);
-    }
-
-    // Sort
-    if (sort === "name_asc") {
-      q = q.order("name", { ascending: true, nullsFirst: false });
-    } else if (sort === "last_seen_desc") {
-      q = q.order("last_seen", { ascending: false, nullsFirst: false });
-    } else if (sort === "active_grants_desc") {
-      q = q.order("currently_active_grants_count", { ascending: false, nullsFirst: false });
-    } else if (sort === "grants_desc") {
-      // Legacy sort by lifetime grant count (still exposed in UI for honesty).
-      q = q.order("active_grants_count", { ascending: false, nullsFirst: false });
-    } else {
-      // Default: most active funding $$
-      q = q.order("currently_active_funding", { ascending: false, nullsFirst: false });
-    }
-
-    q = q.range(offset, offset + pageSize - 1);
-
-    const { data, error, count } = await q;
+    // All filtering+sorting+pagination happens server-side via RPC. This
+    // avoids the URL length cap that bit us when passing thousands of
+    // pi_ids back into a PostgREST IN clause.
+    const { data, error } = await supabaseAdmin.rpc("pi_search_advanced", {
+      p_states: effectiveStates,
+      p_activity_codes:
+        Array.isArray(filters.activityCodes) && filters.activityCodes.length > 0
+          ? filters.activityCodes
+          : null,
+      p_institution: filters.institution || null,
+      p_department: filters.department || null,
+      p_name: query.trim() || null,
+      p_min_grants: minActive,
+      p_sort: sort,
+      p_limit: pageSize,
+      p_offset: offset,
+    });
 
     if (error) {
-      console.error("PI search query error:", error);
+      console.error("PI search RPC error:", error);
       return NextResponse.json({ error: "Search failed" }, { status: 500 });
     }
+
+    // RPC returns each row with total_count baked in (window function).
+    const rows = (data || []) as Array<{ total_count: number; [k: string]: unknown }>;
+    const count = rows.length > 0 ? Number(rows[0].total_count) : 0;
 
     // Roll up lifetime + filter-aware funding per PI for the current result
     // page. award_amount coverage is 95%+ across all agencies.
@@ -189,7 +124,7 @@ export async function POST(req: NextRequest) {
     //   active funding/count restricted to those grant types so the displayed
     //   numbers reflect the filter. Otherwise use the pre-computed
     //   currently_active_* columns directly.
-    const pageIds = (data || []).map((r) => r.id).filter(Boolean) as number[];
+    const pageIds = (rows || []).map((r) => Number(r.id)).filter(Boolean) as number[];
     const today = new Date().toISOString().split("T")[0];
     const lifetimeByPi = new Map<number, { total: number; max: number }>();
     const activeFilteredByPi = new Map<number, { fund: number; count: number }>();
@@ -227,15 +162,23 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const enriched = (data || []).map((r) => {
-      const lt = lifetimeByPi.get(r.id) ?? { total: 0, max: 0 };
-      const filtered = activeFilteredByPi.get(r.id);
+    const enriched = rows.map((r) => {
+      const id = Number(r.id);
+      const lt = lifetimeByPi.get(id) ?? { total: 0, max: 0 };
+      const filtered = activeFilteredByPi.get(id);
       // When activity filter is set, override the active stats with the
       // filter-aware numbers so the UI tells the truth.
-      const activeFunding = filtered ? filtered.fund : (r.currently_active_funding ?? 0);
-      const activeCount = filtered ? filtered.count : (r.currently_active_grants_count ?? 0);
+      const activeFunding = filtered
+        ? filtered.fund
+        : (Number(r.currently_active_funding) || 0);
+      const activeCount = filtered
+        ? filtered.count
+        : (Number(r.currently_active_grants_count) || 0);
+      // Strip total_count from the row before returning to the client.
+      const { total_count: _tc, ...rest } = r;
+      void _tc;
       return {
-        ...r,
+        ...rest,
         total_funding: lt.total,
         largest_grant: lt.max,
         active_funding: activeFunding,
