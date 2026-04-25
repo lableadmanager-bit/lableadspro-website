@@ -333,7 +333,7 @@ export default function PisPage() {
             {/* Department */}
             <div>
               <label className="block text-xs font-semibold text-[var(--color-gray-500)] mb-1">
-                Department <span className="text-[var(--color-gray-400)] font-normal">(partial coverage)</span>
+                Department <span className="text-[var(--color-gray-400)] font-normal">(NIH-tagged)</span>
               </label>
               <input
                 type="text"
