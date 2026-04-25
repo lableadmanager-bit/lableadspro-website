@@ -25,10 +25,21 @@ interface PI {
   phone: string | null;
   active_grants_count: number | null;
   faculty_profile_url: string | null;
+  lab_page: string | null;
   office_location: string | null;
   building: string | null;
   room: string | null;
   last_seen: string | null;
+  total_funding: number;
+  largest_grant: number;
+  active_grants_now: number;
+}
+
+function formatMoney(n: number): string {
+  if (!n) return "—";
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${Math.round(n / 1_000)}K`;
+  return `$${n.toLocaleString()}`;
 }
 
 interface PiSearchResponse {
@@ -411,6 +422,17 @@ export default function PisPage() {
                           <ExternalLink size={12} /> Profile
                         </a>
                       )}
+                      {pi.lab_page && (
+                        <a
+                          href={pi.lab_page}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs text-[var(--color-brand)] hover:underline"
+                          title="Lab page"
+                        >
+                          <ExternalLink size={12} /> Lab page
+                        </a>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-3 flex-wrap text-sm text-[var(--color-gray-500)] mb-2">
@@ -453,12 +475,21 @@ export default function PisPage() {
                     </div>
                   </div>
 
-                  <div className="flex md:flex-col md:items-end items-center gap-3 md:gap-2">
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-[var(--color-brand)] leading-none">
-                        {pi.active_grants_count ?? 0}
+                  <div className="flex md:flex-col md:items-end items-center gap-4 md:gap-2 md:min-w-[160px]">
+                    <div className="grid grid-cols-2 md:grid-cols-1 gap-3 md:gap-1 md:text-right">
+                      <div>
+                        <div className="text-xl md:text-2xl font-bold text-[var(--color-dark)] leading-none">
+                          {formatMoney(pi.total_funding)}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wide text-[var(--color-gray-500)] mt-0.5">total funding</div>
                       </div>
-                      <div className="text-xs text-[var(--color-gray-500)]">funded grants</div>
+                      <div className="text-sm text-[var(--color-gray-700)]">
+                        <span className="font-semibold text-[var(--color-brand)]">{pi.active_grants_count ?? 0}</span>
+                        <span className="text-[var(--color-gray-500)]"> grants</span>
+                        {pi.active_grants_now > 0 && (
+                          <span className="text-[var(--color-gray-400)] ml-1.5">· {pi.active_grants_now} active</span>
+                        )}
+                      </div>
                     </div>
                     <button
                       onClick={() => goToGrants(pi)}
