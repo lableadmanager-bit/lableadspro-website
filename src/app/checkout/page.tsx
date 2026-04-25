@@ -109,12 +109,9 @@ function CheckoutContent() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed");
       if (data.url) {
-        // Track checkout initiation
-        trackConversion('SUBSCRIPTION', {
-          tier: selectedTier,
-          states: stateCount,
-          value: effective.monthlyTotal,
-        });
+        // begin_checkout = user clicked Subscribe and is being sent to Stripe.
+        // The actual purchase event fires on /checkout/success after Stripe
+        // confirms payment, so we don't double-count abandoned Stripe sessions.
         trackEvent('begin_checkout', {
           tier: selectedTier,
           state_count: stateCount,
