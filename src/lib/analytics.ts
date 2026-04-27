@@ -20,7 +20,7 @@ export const GOOGLE_ADS_CONVERSIONS = {
     value: 5,
   },
   SIGNUP: {
-    id: '', // e.g., 'AW-1234567890/ghijkl' 
+    id: '', // e.g., 'AW-1234567890/ghijkl'
     label: 'signup',
     value: 25,
   },
@@ -33,6 +33,11 @@ export const GOOGLE_ADS_CONVERSIONS = {
     id: '', // e.g., 'AW-1234567890/stuvwx'
     label: 'pricing_view',
     value: 1,
+  },
+  DEMO_BOOKING_CLICKED: {
+    id: 'AW-18071547440/xhkxCMO006McELDcl6lD',
+    label: 'demo_booking_clicked',
+    value: 50,
   },
 } as const;
 

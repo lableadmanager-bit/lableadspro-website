@@ -377,6 +377,21 @@ def update_daily_send_count(now: datetime, new_sends: int):
     }, indent=2) + "\n")
 
 
+def get_first_email_count_today(now: datetime) -> int:
+    """Count how many step-0→step-1 (first-email) sends already went out today.
+
+    A first email is logged with step=1 (the post-send step value). We query
+    drip_send_log directly so the count is authoritative across runs.
+    """
+    day_start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+    rows = supabase_request("drip_send_log", params={
+        "select": "id",
+        "step": "eq.1",
+        "sent_at": f"gte.{day_start}",
+    })
+    return len(rows) if rows else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description="Lab Leads Pro Email Drip Engine")
     parser.add_argument("--dry-run", action="store_true", help="Print what would be sent without sending")
@@ -385,6 +400,7 @@ def main():
     parser.add_argument("--per-run", type=int, default=0, help="Max emails per cron run (0 = use max-sends)")
     parser.add_argument("--new-reserve", type=int, default=2, help="Step-0 new-contact slots reserved at front of each run (default: 2)")
     parser.add_argument("--skip-step-zero", action="store_true", help="Skip step=0 (first-time) sends entirely; only send follow-ups to already-validated addresses")
+    parser.add_argument("--max-new-per-day", type=int, default=0, help="Max step-0 (first-email) sends per day (0 = no separate cap)")
     args = parser.parse_args()
 
     now = datetime.now(ET)
@@ -421,6 +437,12 @@ def main():
         contacts = [c for c in contacts if c.get("step", 0) > 0]
         print(f"  --skip-step-zero: dropped {before - len(contacts)} step-0 contacts; only sending follow-ups")
 
+    new_per_day_remaining = None
+    if args.max_new_per_day > 0:
+        first_today = get_first_email_count_today(now)
+        new_per_day_remaining = max(0, args.max_new_per_day - first_today)
+        print(f"  --max-new-per-day {args.max_new_per_day}: {first_today} first-emails sent today, {new_per_day_remaining} remaining")
+
     print(f"  Loaded {len(contacts)} active contacts, {len(suppressed_emails)} suppressed emails")
 
     sends = 0
@@ -445,6 +467,11 @@ def main():
         if not should_send(contact, now):
             continue
 
+        # Step-0 daily cap (first-email throttle, separate from MAX_SENDS)
+        is_first_email = contact.get("step", 0) == 0
+        if is_first_email and new_per_day_remaining is not None and new_per_day_remaining <= 0:
+            continue
+
         sequence = contact["sequence"]
         step = contact["step"]
         seq_config = SEQUENCES[sequence]
@@ -465,6 +492,8 @@ def main():
             success, resend_email_id = send_email(email, subject, html, args.test_email)
             if success:
                 sends += 1
+                if is_first_email and new_per_day_remaining is not None:
+                    new_per_day_remaining -= 1
                 new_step = step + 1
                 completed = new_step >= len(seq_config["days"])
 
@@ -475,6 +504,8 @@ def main():
                 errors += 1
         else:
             sends += 1
+            if is_first_email and new_per_day_remaining is not None:
+                new_per_day_remaining -= 1
 
     # Update local daily counter
     if not args.dry_run and sends > 0:

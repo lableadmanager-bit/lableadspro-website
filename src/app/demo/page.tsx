@@ -2,13 +2,14 @@
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getStoredUtms, trackEvent } from "@/lib/analytics";
+import { getStoredUtms, trackConversion } from "@/lib/analytics";
 
 export default function DemoPage() {
   const BOOKING_URL = "https://calendar.app.google/xKb3rVrYvAfdt1Zt6";
 
   const handleBookClick = () => {
-    trackEvent("demo_booking_clicked", {});
+    // Fires GA4 event `demo_booking_clicked` AND Google Ads conversion AW-18071547440/xhkxCMO006McELDcl6lD
+    trackConversion("DEMO_BOOKING_CLICKED");
     try {
       const payload = JSON.stringify({
         utm: getStoredUtms(),
@@ -89,6 +90,16 @@ export default function DemoPage() {
               </a>
               <p className="text-gray-400 text-sm mt-3">
                 Opens Google Calendar. Choose any available slot.
+              </p>
+              <p className="text-gray-500 text-sm mt-6">
+                Not ready to book?{" "}
+                <a
+                  href="/sample"
+                  className="text-[var(--color-brand)] hover:underline font-medium"
+                >
+                  Grab a free sample report
+                </a>{" "}
+                first.
               </p>
             </div>
 
