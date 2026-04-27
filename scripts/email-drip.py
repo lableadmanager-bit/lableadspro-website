@@ -68,7 +68,7 @@ DAILY_COUNTER_FILE = DATA_DIR / "daily-send-count.json"
 # Sequence definitions
 SEQUENCES = {
     "cold-grinder": {
-        "days": [0, 7, 14, 21, 28],
+        "days": [0, 5, 10, 16, 22],
         "template_prefix": "cold-grinder",
         "subjects": [
             "Fresh Leads",
@@ -79,7 +79,7 @@ SEQUENCES = {
         ],
     },
     "cold-broken-promises": {
-        "days": [0, 7, 14, 21, 28],
+        "days": [0, 5, 10, 16, 22],
         "template_prefix": "cold-broken-promises",
         "subjects": [
             "Fresh Leads",
@@ -134,9 +134,13 @@ def supabase_request(path, method="GET", data=None, params=None):
         return None
 
 
-def fetch_active_contacts():
+def fetch_active_contacts(new_reserve_per_run=0):
     """Fetch all active contacts from Supabase, shuffled for fair A/B distribution.
-    Prioritizes follow-ups (step > 0) over new contacts (step 0)."""
+
+    Queue order per run: first `new_reserve_per_run` slots go to step-0 new
+    contacts, then follow-ups, then any remaining new contacts. Keeps the
+    first-email backlog flowing even when follow-up volume is heavy.
+    """
     import random
     contacts = supabase_request("drip_contacts", params={
         "select": "*",
@@ -144,13 +148,12 @@ def fetch_active_contacts():
         "enrolled_at": "not.is.null",
     })
     result = contacts or []
-    # Split into follow-ups and new contacts, shuffle each, then combine
-    # This ensures follow-ups get sent first within each batch
     followups = [c for c in result if c.get("step", 0) > 0]
     new_contacts = [c for c in result if c.get("step", 0) == 0]
     random.shuffle(followups)
     random.shuffle(new_contacts)
-    return followups + new_contacts
+    reserved = min(new_reserve_per_run, len(new_contacts))
+    return new_contacts[:reserved] + followups + new_contacts[reserved:]
 
 
 def fetch_suppressed_emails():
@@ -380,6 +383,8 @@ def main():
     parser.add_argument("--test-email", type=str, help="Send all emails to this address instead")
     parser.add_argument("--max-sends", type=int, default=50, help="Maximum emails to send per DAY (default: 50)")
     parser.add_argument("--per-run", type=int, default=0, help="Max emails per cron run (0 = use max-sends)")
+    parser.add_argument("--new-reserve", type=int, default=2, help="Step-0 new-contact slots reserved at front of each run (default: 2)")
+    parser.add_argument("--skip-step-zero", action="store_true", help="Skip step=0 (first-time) sends entirely; only send follow-ups to already-validated addresses")
     args = parser.parse_args()
 
     now = datetime.now(ET)
@@ -408,8 +413,13 @@ def main():
         return
 
     # Load from Supabase
-    contacts = fetch_active_contacts()
+    contacts = fetch_active_contacts(new_reserve_per_run=args.new_reserve)
     suppressed_emails = fetch_suppressed_emails()
+
+    if args.skip_step_zero:
+        before = len(contacts)
+        contacts = [c for c in contacts if c.get("step", 0) > 0]
+        print(f"  --skip-step-zero: dropped {before - len(contacts)} step-0 contacts; only sending follow-ups")
 
     print(f"  Loaded {len(contacts)} active contacts, {len(suppressed_emails)} suppressed emails")
 
