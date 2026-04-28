@@ -1,10 +1,26 @@
 "use client";
 
+import { useEffect } from "react";
 import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function DemoPage() {
+  // Calendly's inline embed renders in an iframe, so its built-in redirect
+  // navigates the iframe instead of the parent page. We listen for the
+  // calendly.event_scheduled postMessage and navigate the parent ourselves.
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.origin !== "https://calendly.com") return;
+      const data = e.data as { event?: string } | undefined;
+      if (data?.event === "calendly.event_scheduled") {
+        window.location.href = "/demo/thank-you";
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
+
   return (
     <>
       <Header />
