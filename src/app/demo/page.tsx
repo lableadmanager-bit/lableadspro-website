@@ -1,39 +1,10 @@
 "use client";
 
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getStoredUtms, trackConversion } from "@/lib/analytics";
 
 export default function DemoPage() {
-  const BOOKING_URL = "https://calendar.app.google/xKb3rVrYvAfdt1Zt6";
-
-  const handleBookClick = () => {
-    // Fires GA4 event `demo_booking_clicked` AND Google Ads conversion AW-18071547440/xhkxCMO006McELDcl6lD
-    trackConversion("DEMO_BOOKING_CLICKED");
-    try {
-      const payload = JSON.stringify({
-        utm: getStoredUtms(),
-        referrer: typeof document !== "undefined" ? document.referrer : "",
-      });
-      // sendBeacon survives the navigation to Google Calendar on the same tick.
-      if (typeof navigator !== "undefined" && navigator.sendBeacon) {
-        navigator.sendBeacon(
-          "/api/demo-click",
-          new Blob([payload], { type: "application/json" }),
-        );
-      } else {
-        fetch("/api/demo-click", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: payload,
-          keepalive: true,
-        }).catch(() => {});
-      }
-    } catch {
-      // Never block the booking flow on telemetry errors
-    }
-  };
-
   return (
     <>
       <Header />
@@ -77,31 +48,24 @@ export default function DemoPage() {
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="text-center mb-10">
+            {/* Calendly inline embed */}
+            <div
+              className="calendly-inline-widget mb-10"
+              data-url="https://calendly.com/george-lableadspro/30min"
+              style={{ minWidth: 320, height: 700 }}
+            />
+
+            {/* Sample-report fallback */}
+            <p className="text-gray-500 text-sm text-center mb-6">
+              Not ready to book?{" "}
               <a
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleBookClick}
-                className="inline-block bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold text-lg py-4 px-10 rounded-xl transition-colors"
+                href="/sample"
+                className="text-[var(--color-brand)] hover:underline font-medium"
               >
-                Pick a Time
-              </a>
-              <p className="text-gray-400 text-sm mt-3">
-                Opens Google Calendar. Choose any available slot.
-              </p>
-              <p className="text-gray-500 text-sm mt-6">
-                Not ready to book?{" "}
-                <a
-                  href="/sample"
-                  className="text-[var(--color-brand)] hover:underline font-medium"
-                >
-                  Grab a free sample report
-                </a>{" "}
-                first.
-              </p>
-            </div>
+                Grab a free sample report
+              </a>{" "}
+              first.
+            </p>
 
             {/* Phone call note */}
             <div className="text-center">
@@ -114,6 +78,10 @@ export default function DemoPage() {
         </section>
       </main>
       <Footer />
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="afterInteractive"
+      />
     </>
   );
 }
