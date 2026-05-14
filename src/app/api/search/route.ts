@@ -140,6 +140,12 @@ export async function POST(req: NextRequest) {
     if (filters.equipmentTags?.length) {
       q = q.overlaps("equipment_tags", filters.equipmentTags);
     }
+    if (filters.hasEquipmentTags) {
+      // Equipment_tags is NULL for unclassified or no-match grants (empty
+      // arrays were normalized to NULL on 2026-05-14). Useful for filtering
+      // out non-wet-lab grants that the classifier deemed irrelevant.
+      q = q.not("equipment_tags", "is", null);
+    }
     if (filters.amountMin) {
       q = q.gte("award_amount", filters.amountMin);
     }

@@ -107,6 +107,7 @@ interface Filters {
   dateTo: string;
   status: string;
   equipmentTags: string[];
+  hasEquipmentTags: boolean;
   amountMin: string;
   amountMax: string;
   fiscalYear: string;
@@ -122,6 +123,7 @@ const defaultFilters: Filters = {
   dateTo: new Date().toISOString().split("T")[0],
   status: "all",
   equipmentTags: [],
+  hasEquipmentTags: false,
   amountMin: "",
   amountMax: "",
   fiscalYear: "",
@@ -535,7 +537,8 @@ function DatabasePageInner() {
     filters.amountMin ||
     filters.amountMax ||
     filters.fiscalYear ||
-    filters.equipmentTags.length > 0;
+    filters.equipmentTags.length > 0 ||
+    filters.hasEquipmentTags;
 
   // Only show states the user is subscribed to
   const availableStates = subscribedStates.length > 0 ? subscribedStates : US_STATES;
@@ -911,6 +914,28 @@ function DatabasePageInner() {
           <option value="active">Active</option>
           <option value="completed">Completed</option>
         </select>
+      </div>
+
+      {/* Has equipment tags */}
+      <div>
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={filters.hasEquipmentTags}
+            onChange={(e) =>
+              setFilters((prev) => ({ ...prev, hasEquipmentTags: e.target.checked }))
+            }
+            className="mt-0.5 rounded border-[var(--color-gray-300)]"
+          />
+          <span>
+            <span className="block text-sm font-medium text-[var(--color-gray-700)]">
+              Has equipment tags
+            </span>
+            <span className="block text-xs text-[var(--color-gray-500)] mt-0.5">
+              Hide grants the classifier didn&apos;t tag (filters out non-wet-lab and unclassified grants)
+            </span>
+          </span>
+        </label>
       </div>
 
       {/* Award Amount */}

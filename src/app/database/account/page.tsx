@@ -81,6 +81,44 @@ export default function AccountPage() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [reportsLoading, setReportsLoading] = useState(true);
 
+  // Change password
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const changePassword = async () => {
+    setPasswordError("");
+    setPasswordSuccess("");
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords don't match.");
+      return;
+    }
+    setPasswordSaving(true);
+    try {
+      const supabase = createSupabaseBrowserClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        setPasswordError(error.message);
+      } else {
+        setPasswordSuccess("Password updated.");
+        setNewPassword("");
+        setConfirmPassword("");
+        if (successTimer.current) clearTimeout(successTimer.current);
+        successTimer.current = setTimeout(() => setPasswordSuccess(""), 4000);
+      }
+    } catch {
+      setPasswordError("Couldn't update password. Try again.");
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
   const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -618,6 +656,63 @@ export default function AccountPage() {
             </p>
           </div>
         )}
+
+        {/* Change password */}
+        <div className="bg-white rounded-2xl p-6 border border-[var(--color-gray-200)] mb-6">
+          <h2 className="text-lg font-semibold mb-1">Change Password</h2>
+          <p className="text-sm text-[var(--color-gray-500)] mb-4">
+            Update the password you use to sign in.
+          </p>
+
+          {passwordSuccess && (
+            <div className="mb-4 text-sm text-green-700 bg-green-50 rounded-lg px-4 py-3 border border-green-200">
+              {passwordSuccess}
+            </div>
+          )}
+          {passwordError && (
+            <div className="mb-4 text-sm text-red-600 bg-red-50 rounded-lg px-4 py-3 border border-red-200">
+              {passwordError}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-1.5">
+                New password
+              </label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="At least 8 characters"
+                className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
+                autoComplete="new-password"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-gray-700)] mb-1.5">
+                Confirm new password
+              </label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && newPassword && confirmPassword) changePassword();
+                }}
+                className="w-full px-3 py-2 text-sm border border-[var(--color-gray-300)] rounded-lg"
+                autoComplete="new-password"
+              />
+            </div>
+            <button
+              onClick={changePassword}
+              disabled={passwordSaving || !newPassword || !confirmPassword}
+              className="px-4 py-2 text-sm font-medium bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {passwordSaving ? "Updating…" : "Update password"}
+            </button>
+          </div>
+        </div>
         </>)}
 
         {activeTab === "reports" && (
