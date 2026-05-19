@@ -174,6 +174,11 @@ export default function RootLayout({
               s.parentNode.insertBefore(b, s);})(window.lintrk);
           `}
         </Script>
+        <Script
+          id="fuseai-visitor"
+          src="https://a.usbrowserspeed.com/cs?pid=ddae2e0bce828a30a7b24f94f87290780f71120eaf9f11353f234c3bd86512d3&puid=6a0cd26192402b9ac65638c6"
+          strategy="afterInteractive"
+        />
       </head>
       <body className="antialiased">
         <noscript>
