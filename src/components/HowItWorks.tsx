@@ -1,4 +1,4 @@
-import { Search, Bot, ClipboardList, Mail, Sparkles, Database } from "lucide-react";
+import { Search, Bot, ClipboardList, Mail, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -81,48 +81,20 @@ export default function HowItWorks() {
           </Link>
         </div>
 
-        {/* Database callout */}
-        <div className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)] flex flex-col md:flex-row items-center gap-6">
-          <div className="flex-shrink-0">
-            <div className="w-14 h-14 bg-[var(--color-brand-light)] rounded-xl flex items-center justify-center">
-              <Database className="w-7 h-7 text-[var(--color-brand)]" />
-            </div>
-          </div>
-          <div className="flex-1 text-center md:text-left">
-            <h3 className="text-xl font-bold text-[var(--color-dark)] mb-2">
-              Want to search the data yourself?
-            </h3>
-            <p className="text-[var(--color-gray-500)] leading-relaxed">
-              Our database covers all actively funded federal research grants and then some, currently totaling over 525,000 grants across 8 agencies. Search by state, keyword, and agency to find leads on your own schedule.
-            </p>
-          </div>
+        {/* Book a Demo CTA */}
+        <div id="demo" className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)] text-center">
+          <h3 className="text-xl md:text-2xl font-bold text-[var(--color-dark)] mb-3">
+            See it live
+          </h3>
+          <p className="text-[var(--color-gray-500)] max-w-2xl mx-auto mb-6 leading-relaxed">
+            A 15-minute walkthrough of the database, the weekly reports, and how reps are using it in your territory.
+          </p>
           <Link
-            href="/database/guides/how-to-use"
-            className="flex-shrink-0 text-sm font-semibold text-[var(--color-brand)] border-2 border-[var(--color-brand)] hover:bg-blue-50 px-6 py-2.5 rounded-lg transition-colors whitespace-nowrap"
+            href="/demo"
+            className="inline-block text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-8 py-3 rounded-lg transition-colors"
           >
-            See How It Works
+            Book a Demo
           </Link>
-        </div>
-
-        {/* Database Video Demo */}
-        <div id="demo" className="mt-12 bg-white rounded-2xl p-8 md:p-10 border border-[var(--color-gray-100)]">
-          <div className="text-center mb-6">
-            <h3 className="text-xl md:text-2xl font-bold text-[var(--color-dark)] mb-2">
-              See Our Database in Action
-            </h3>
-            <p className="text-[var(--color-gray-500)]">
-              Watch a quick walkthrough of how reps use our database to find leads in their territory.
-            </p>
-          </div>
-          <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-            <iframe
-              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a?t=0&hide_owner=true&hide_share=true&hide_title=true"
-              frameBorder="0"
-              allowFullScreen
-              className="absolute top-0 left-0 w-full h-full rounded-xl"
-              title="Lab Leads Pro Database Walkthrough"
-            />
-          </div>
         </div>
 
         {/* New Lab Detection Teaser */}

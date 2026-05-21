@@ -143,47 +143,9 @@ export default function DatabaseHubPage() {
         </div>
       </section>
 
-      {/* Video Demo */}
-      <section className="px-8 mt-2 mb-6">
-        <div className="max-w-3xl mx-auto">
-          <div className="relative w-full rounded-xl overflow-hidden shadow-lg" style={{ paddingBottom: "56.25%" }}>
-            <iframe
-              src="https://www.loom.com/embed/a1c7cdee8c34445f99dfd8166b068e0a?t=0&hide_owner=true&hide_share=true&hide_title=true"
-              frameBorder="0"
-              allowFullScreen
-              className="absolute top-0 left-0 w-full h-full"
-              title="Lab Leads Pro Database Walkthrough"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Featured Database Guides */}
       <section className="px-8 mt-2 mb-4">
         <div className="max-w-3xl mx-auto flex flex-col gap-4">
-          <Link
-            href="/database/guides/how-to-use"
-            className="group flex items-center gap-4 rounded-xl border border-[var(--color-brand)] bg-white px-6 py-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
-          >
-            <span className="text-3xl shrink-0">💻</span>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-[var(--color-gray-900)] group-hover:text-[var(--color-brand)] transition-colors">
-                How to Use the Database
-              </h3>
-              <p className="text-sm text-[var(--color-gray-500)]">
-                A visual walkthrough of every feature, filter, and search tool at your fingertips.
-              </p>
-            </div>
-            <svg
-              className="w-5 h-5 text-[var(--color-brand)] shrink-0"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </Link>
           <Link
             href="/database/guides/equipment-tags"
             className="group flex items-center gap-4 rounded-xl border border-[var(--color-brand)] bg-white px-6 py-5 hover:shadow-lg hover:shadow-blue-500/5 transition-all"
