@@ -2,8 +2,6 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Problem from "@/components/Problem";
 import WhyLabLeadsPro from "@/components/WhyLabLeadsPro";
-import HowWeAreDifferent from "@/components/HowWeAreDifferent";
-import NewLabDetection from "@/components/NewLabDetection";
 import HowItWorks from "@/components/HowItWorks";
 import Features from "@/components/Features";
 import Pricing from "@/components/Pricing";
@@ -18,8 +16,6 @@ export default function Home() {
       <Hero />
       <Problem />
       <WhyLabLeadsPro />
-      <HowWeAreDifferent />
-      <NewLabDetection />
       <HowItWorks />
       <Features />
       <Pricing />
