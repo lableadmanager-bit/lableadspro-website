@@ -49,42 +49,18 @@ export default function Hero() {
 
         {/* Subheadline */}
         <p className="animate-fade-in-up-delay-2 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Lab Leads Pro is the AI-powered lead intelligence solution
-          for <span className="whitespace-nowrap">life-science equipment sales.</span> We help you find new labs before the competition does and keep you up to date on all newly awarded grants from every federal research agency.
-          We monitor NIH, NSF, DOD, DOE, USDA, VA, CDC, and NASA so you don&apos;t have to, and deliver the latest intel straight to your inbox every Monday morning.
-        </p>
-
-        <p className="animate-fade-in-up-delay-2 text-base md:text-lg text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Subscribers also gain access to our easy-to-search, easy-to-filter grant database, including over 525,000 grants awarded to over 160,000 PIs, covering all actively funded research grants from every federal research agency.
+          We help get you in front of labs with funding before the competition.
         </p>
 
         {/* CTA */}
         <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
-            href="/sample"
-            data-cta="hero_sample"
-            data-cta-label="Free Sample Report"
-            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[var(--color-gray-50)] text-[var(--color-gray-700)] font-semibold rounded-xl text-lg transition-colors border border-[var(--color-gray-300)]"
-          >
-            Free Sample Report
-          </a>
-          <a
-            href="#how-it-works"
-            data-cta="hero_how_it_works"
-            data-cta-label="See How It Works"
+            href="/demo"
+            data-cta="hero_demo"
+            data-cta-label="Book a call to learn how"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
           >
-            See How It Works
-          </a>
-          <a
-            href="/demo"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cta="hero_demo"
-            data-cta-label="Request a Demo"
-            className="w-full sm:w-auto px-8 py-4 bg-[var(--color-accent)] hover:bg-[var(--color-accent)]/90 text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-green-500/20"
-          >
-            Request a Demo
+            Book a call to learn how
           </a>
         </div>
 
