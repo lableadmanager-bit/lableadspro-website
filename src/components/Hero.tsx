@@ -49,7 +49,7 @@ export default function Hero() {
 
         {/* Subheadline */}
         <p className="animate-fade-in-up-delay-2 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          We help get you in front of funded labs looking for your kind of equipment, before the competition does.
+          Lab Leads Pro is the AI-powered lead intelligence solution for <span className="whitespace-nowrap">life-science equipment sales.</span> We help you find new or funded labs looking for your kind of equipment, before the competition does.
         </p>
 
         {/* CTA */}
