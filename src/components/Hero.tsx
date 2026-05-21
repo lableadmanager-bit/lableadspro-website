@@ -49,18 +49,26 @@ export default function Hero() {
 
         {/* Subheadline */}
         <p className="animate-fade-in-up-delay-2 text-lg md:text-xl text-[var(--color-gray-500)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          We help get you in front of labs with funding before the competition.
+          We help get you in front of funded labs looking for your kind of equipment, before the competition does.
         </p>
 
         {/* CTA */}
         <div className="animate-fade-in-up-delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <a
+            href="/sample"
+            data-cta="hero_sample"
+            data-cta-label="Free Sample Report"
+            className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[var(--color-gray-50)] text-[var(--color-gray-700)] font-semibold rounded-xl text-lg transition-colors border border-[var(--color-gray-300)]"
+          >
+            Free Sample Report
+          </a>
+          <a
             href="/demo"
             data-cta="hero_demo"
-            data-cta-label="Book a call to learn how"
+            data-cta-label="Book a Demo"
             className="w-full sm:w-auto px-8 py-4 bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] text-white font-semibold rounded-xl text-lg transition-colors shadow-lg shadow-blue-500/20"
           >
-            Book a call to learn how
+            Book a Demo
           </a>
         </div>
 
