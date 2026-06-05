@@ -24,13 +24,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    // Companies directory (beta)
-    {
-      url: `${baseUrl}/companies`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
     // Database section
     {
       url: `${baseUrl}/database`,

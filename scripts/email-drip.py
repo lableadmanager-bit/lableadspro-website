@@ -68,7 +68,7 @@ DAILY_COUNTER_FILE = DATA_DIR / "daily-send-count.json"
 # Sequence definitions
 SEQUENCES = {
     "cold-grinder": {
-        "days": [0, 5, 10, 16, 22],
+        "days": [0, 5, 10, 15, 20],
         "template_prefix": "cold-grinder",
         "subjects": [
             "Fresh Leads",
@@ -79,7 +79,7 @@ SEQUENCES = {
         ],
     },
     "cold-broken-promises": {
-        "days": [0, 5, 10, 16, 22],
+        "days": [0, 5, 10, 15, 20],
         "template_prefix": "cold-broken-promises",
         "subjects": [
             "Fresh Leads",
