@@ -322,7 +322,7 @@ export default function CompaniesDatabasePage() {
 
           {/* Size + signal toggles */}
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            {SIZE_BUCKET_ORDER.map((b) => (
+            {[...SIZE_BUCKET_ORDER, "unknown"].map((b) => (
               <button
                 key={b}
                 onClick={() => toggleIn("sizes", b)}
@@ -332,7 +332,7 @@ export default function CompaniesDatabasePage() {
                     : "bg-white text-[var(--color-gray-700)] border-[var(--color-gray-300)] hover:border-[var(--color-brand)]"
                 }`}
               >
-                {SIZE_BUCKET_LABELS[b]}
+                {b === "unknown" ? "Size unknown" : SIZE_BUCKET_LABELS[b]}
               </button>
             ))}
             <span className="mx-1 h-5 w-px bg-[var(--color-gray-200)]" />
