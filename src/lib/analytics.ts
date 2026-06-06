@@ -34,9 +34,9 @@ export const GOOGLE_ADS_CONVERSIONS = {
     label: 'pricing_view',
     value: 1,
   },
-  DEMO_BOOKING_CLICKED: {
-    id: 'AW-18071547440/xhkxCMO006McELDcl6lD',
-    label: 'demo_booking_clicked',
+  DEMO_BOOKED: {
+    id: 'AW-18071547440/1nNxCLK6obocELDcl6lD',
+    label: 'demo_booked',
     value: 50,
   },
 } as const;

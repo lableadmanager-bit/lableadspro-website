@@ -3,15 +3,15 @@
 import { useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { trackConversion, trackEvent } from "@/lib/analytics";
+import { trackConversion } from "@/lib/analytics";
 
 export default function DemoThankYouPage() {
   useEffect(() => {
-    // Fires GA4 `demo_booked` AND Google Ads conversion AW-18071547440/xhkxCMO006McELDcl6lD.
+    // Fires GA4 `demo_booked` AND Google Ads conversion AW-18071547440/1nNxCLK6obocELDcl6lD
+    // (the "Demo Booked (Calendly thank-you)" action — BOOK_APPOINTMENT, primary for goal).
     // This page is reached only after Calendly's redirect-on-success, so every fire = completed booking.
     // LinkedIn Insight Tag (in layout.tsx) auto-detects /demo/thank-you and fires its own conversion.
-    trackConversion("DEMO_BOOKING_CLICKED");
-    trackEvent("demo_booked", {});
+    trackConversion("DEMO_BOOKED");
   }, []);
 
   return (
