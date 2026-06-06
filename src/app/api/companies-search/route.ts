@@ -81,7 +81,19 @@ export async function POST(req: NextRequest) {
 
     // --- Company filters ---
     if (filters.companyTypes?.length) q = q.in("company_type", filters.companyTypes);
-    if (filters.sizes?.length) q = q.in("employee_count_bucket", filters.sizes);
+    if (filters.sizes?.length) {
+      // "unknown" is a sentinel for companies with no size on file (NULL bucket).
+      // ~62% of rows are unknown until Apollo enrichment, so it must be includable.
+      const wantUnknown = filters.sizes.includes("unknown");
+      const buckets = filters.sizes.filter((s: string) => s !== "unknown");
+      if (wantUnknown && buckets.length) {
+        q = q.or(`employee_count_bucket.in.(${buckets.join(",")}),employee_count_bucket.is.null`);
+      } else if (wantUnknown) {
+        q = q.is("employee_count_bucket", null);
+      } else {
+        q = q.in("employee_count_bucket", buckets);
+      }
+    }
     if (filters.publicOnly) q = q.eq("is_public", true);
     if (filters.hasSbir) q = q.gt("sbir_award_count", 0);
     if (filters.hasNih) q = q.gt("nih_grant_count", 0);
