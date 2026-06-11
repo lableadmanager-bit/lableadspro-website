@@ -54,6 +54,7 @@ const NIH_INSTITUTES = [
 ];
 
 const ACTIVITY_CODES = [
+  "S10",
   "R00","R01","R21","R03","R15","R35","R43","R44",
   "U01","U19","U54",
   "P01","P30","P50",
