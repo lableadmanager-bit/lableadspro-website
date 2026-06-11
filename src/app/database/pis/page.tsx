@@ -41,6 +41,7 @@ interface PI {
 }
 
 const ACTIVITY_CODES = [
+  "S10",
   "R01", "R21", "R03", "R15", "R35",
   "U01", "U19", "U54",
   "P01", "P30", "P50",
