@@ -57,8 +57,29 @@ export async function POST(req: NextRequest) {
       console.error("Auth check failed in search API");
     }
 
-    // Build the query — use estimated count to avoid expensive exact counts that timeout
-    let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,faculty_profile_url,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: "estimated" });
+    // Count mode: estimated is fast but the planner badly under-counts when
+    // selective filters combine (e.g. several activity codes + an equipment
+    // tag), making the total look like it ignores all but one filter. When any
+    // selective filter is present the result set is small enough for an exact
+    // count; fall back to estimated only for broad/unfiltered searches.
+    const hasSelectiveFilter = Boolean(
+      filters.activityCodes?.length ||
+      filters.equipmentTags?.length ||
+      filters.hasEquipmentTags ||
+      filters.institution ||
+      filters.nihInstitutes?.length ||
+      filters.piId != null ||
+      filters.piName ||
+      filters.amountMin ||
+      filters.amountMax ||
+      filters.fiscalYear ||
+      (Array.isArray(favoriteGrantIds) && favoriteGrantIds.length) ||
+      query.trim()
+    );
+    const countMode = hasSelectiveFilter ? "exact" : "estimated";
+
+    // Build the query
+    let q = supabase.from("grants").select("id,grant_id,source,title,abstract,pi_name,pi_email,institution,city,state,award_amount,award_date,start_date,end_date,status,agency,activity_code,fiscal_year,source_url,equipment_tags,pi_id,department,country,pis(email,phone,department,office_location,building,room,faculty_profile_url,r1_faculty(profile_url,title,rank,full_name,r1_universities(name)))", { count: countMode });
 
     // Full-text search — use prefix matching for better partial word results
     if (query.trim()) {
