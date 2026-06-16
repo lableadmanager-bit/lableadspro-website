@@ -11,6 +11,8 @@ import {
   MapPin,
   ChevronDown,
   Building2,
+  Star,
+  Download,
 } from "lucide-react";
 import {
   CompanyBeta,
@@ -20,6 +22,7 @@ import {
   companyTypeLabel,
   cleanCity,
   sizeSignal,
+  formatUsd,
 } from "@/lib/companies";
 
 const US_STATES = [
@@ -67,6 +70,11 @@ export default function CompaniesDatabasePage() {
   const [hasSearched, setHasSearched] = useState(false);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Favorites (separate from grant/PI favorites)
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [togglingFav, setTogglingFav] = useState<Set<number>>(new Set());
+
   // Auth bootstrap + subscription state load
   useEffect(() => {
     (async () => {
@@ -84,6 +92,15 @@ export default function CompaniesDatabasePage() {
         const sub = await res.json();
         setSubscribedStates(sub.subscribedStates || []);
         setAuthState("ok");
+        // Load this user's company favorites
+        fetch("/api/company-favorites")
+          .then((r) => (r.ok ? r.json() : { favorites: [] }))
+          .then((d) => {
+            if (d.favorites) {
+              setFavoriteIds(new Set(d.favorites.map((f: { company_id: number }) => f.company_id)));
+            }
+          })
+          .catch(() => {});
       } catch {
         setAuthState("denied");
       }
@@ -121,6 +138,7 @@ export default function CompaniesDatabasePage() {
             page: p,
             sort,
             pageSize: PAGE_SIZE,
+            favoriteCompanyIds: favoritesOnly ? Array.from(favoriteIds) : undefined,
           }),
         });
         if (res.status === 401 || res.status === 403) {
@@ -138,7 +156,7 @@ export default function CompaniesDatabasePage() {
         setLoading(false);
       }
     },
-    [filters, sort]
+    [filters, sort, favoritesOnly, favoriteIds]
   );
 
   // Debounced auto-search
@@ -150,7 +168,7 @@ export default function CompaniesDatabasePage() {
       if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, sort, authState]);
+  }, [filters, sort, favoritesOnly, authState]);
 
   const toggleIn = (key: "states" | "companyTypes" | "sizes", value: string) => {
     setFilters((f) => ({
@@ -161,6 +179,100 @@ export default function CompaniesDatabasePage() {
 
   const clearFilters = () =>
     setFilters({ states: [], companyTypes: [], sizes: [], publicOnly: false, hasSbir: false, hasNih: false });
+
+  const toggleFavorite = async (companyId: number) => {
+    setTogglingFav((prev) => new Set(prev).add(companyId));
+    const isFav = favoriteIds.has(companyId);
+    try {
+      const res = await fetch("/api/company-favorites", {
+        method: isFav ? "DELETE" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ companyId }),
+      });
+      if (res.ok) {
+        setFavoriteIds((prev) => {
+          const next = new Set(prev);
+          if (isFav) next.delete(companyId);
+          else next.add(companyId);
+          return next;
+        });
+      }
+    } catch {
+      console.error("Failed to toggle company favorite");
+    } finally {
+      setTogglingFav((prev) => {
+        const next = new Set(prev);
+        next.delete(companyId);
+        return next;
+      });
+    }
+  };
+
+  const [exporting, setExporting] = useState(false);
+  const exportCSV = async () => {
+    if (results.length === 0 || exporting) return;
+    setExporting(true);
+    // Pull the full matching set (capped at 500) rather than just the visible page.
+    let exportRows: CompanyBeta[] = results;
+    try {
+      const res = await fetch("/api/companies-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filters: {
+            states: filters.states.length ? filters.states : undefined,
+            companyTypes: filters.companyTypes.length ? filters.companyTypes : undefined,
+            sizes: filters.sizes.length ? filters.sizes : undefined,
+            publicOnly: filters.publicOnly || undefined,
+            hasSbir: filters.hasSbir || undefined,
+            hasNih: filters.hasNih || undefined,
+          },
+          page: 1,
+          sort,
+          pageSize: 500,
+          favoriteCompanyIds: favoritesOnly ? Array.from(favoriteIds) : undefined,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.results) && data.results.length) exportRows = data.results;
+      }
+    } catch {
+      // fall back to the visible page on failure
+    }
+
+    const headers = [
+      "Company", "Type", "Size", "Public", "Ticker", "Street", "City", "State",
+      "Website", "LinkedIn", "SBIR Awards", "SBIR Total", "NIH Grants", "Description",
+    ];
+    const q = (val: string) => `"${(val || "").replace(/"/g, '""')}"`;
+    const rows = exportRows.map((c) => [
+      q(c.name),
+      q(companyTypeLabel(c.company_type)),
+      q(c.employee_count_bucket ? (SIZE_BUCKET_LABELS[c.employee_count_bucket] || "") : ""),
+      q(c.is_public ? "Yes" : "No"),
+      q(c.ticker || ""),
+      q(c.primary_street?.trim() || ""),
+      q(cleanCity(c.primary_city)),
+      q(c.primary_state || ""),
+      q(c.website || ""),
+      q(c.linkedin_url || ""),
+      q(c.sbir_award_count != null ? String(c.sbir_award_count) : ""),
+      q(formatUsd(c.sbir_total_usd) || ""),
+      q(c.nih_grant_count != null ? String(c.nih_grant_count) : ""),
+      q(c.description || ""),
+    ]);
+    const csv = [headers.map(q).join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const scope = favoritesOnly ? "favorites" : "companies";
+    a.download = `lab-leads-pro-${scope}-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setExporting(false);
+  };
 
   const visibleStates =
     subscribedStates.length > 0 && subscribedStates.length < 51
@@ -353,14 +465,41 @@ export default function CompaniesDatabasePage() {
                 {t.label}
               </button>
             ))}
+            <span className="mx-1 h-5 w-px bg-[var(--color-gray-200)]" />
+            <button
+              onClick={() => setFavoritesOnly((v) => !v)}
+              className={`inline-flex items-center gap-1.5 text-sm rounded-full px-3 py-1.5 border transition-colors ${
+                favoritesOnly
+                  ? "bg-[var(--color-brand)] text-white border-[var(--color-brand)]"
+                  : "bg-white text-[var(--color-gray-700)] border-[var(--color-gray-300)] hover:border-[var(--color-brand)]"
+              }`}
+            >
+              <Star className="w-3.5 h-3.5" fill={favoritesOnly ? "currentColor" : "none"} />
+              Favorites{favoriteIds.size > 0 ? ` (${favoriteIds.size})` : ""}
+            </button>
           </div>
         </div>
 
-        {/* Results count */}
+        {/* Results toolbar: count + export */}
         {hasSearched && !loading && (
-          <div className="mb-4 text-sm text-[var(--color-gray-500)]">
-            {total.toLocaleString()} {total === 1 ? "company" : "companies"} matched
-            {filters.states.length > 0 && ` in ${filters.states.join(", ")}`}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="text-sm text-[var(--color-gray-500)]">
+              {favoritesOnly
+                ? `${total.toLocaleString()} saved ${total === 1 ? "company" : "companies"}`
+                : `${total.toLocaleString()} ${total === 1 ? "company" : "companies"} matched`}
+              {filters.states.length > 0 && ` in ${filters.states.join(", ")}`}
+            </div>
+            {results.length > 0 && (
+              <button
+                onClick={exportCSV}
+                disabled={exporting}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand)] border border-[var(--color-brand)] rounded-lg px-3 py-1.5 hover:bg-blue-50 transition-colors disabled:opacity-50"
+                title="Export results to CSV (up to 500)"
+              >
+                <Download className="w-4 h-4" />
+                {exporting ? "Exporting…" : "Export CSV"}
+              </button>
+            )}
           </div>
         )}
 
@@ -384,7 +523,13 @@ export default function CompaniesDatabasePage() {
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.map((c) => (
-              <CompanyCard key={c.id} c={c} />
+              <CompanyCard
+                key={c.id}
+                c={c}
+                isFav={favoriteIds.has(c.id)}
+                toggling={togglingFav.has(c.id)}
+                onToggleFav={() => toggleFavorite(c.id)}
+              />
             ))}
           </div>
         )}
@@ -417,7 +562,17 @@ export default function CompaniesDatabasePage() {
   );
 }
 
-function CompanyCard({ c }: { c: CompanyBeta }) {
+function CompanyCard({
+  c,
+  isFav,
+  toggling,
+  onToggleFav,
+}: {
+  c: CompanyBeta;
+  isFav: boolean;
+  toggling: boolean;
+  onToggleFav: () => void;
+}) {
   const city = cleanCity(c.primary_city);
   const size = sizeSignal(c);
   const location = [c.primary_street?.trim(), city, c.primary_state].filter(Boolean).join(", ");
@@ -429,11 +584,24 @@ function CompanyCard({ c }: { c: CompanyBeta }) {
           <Building2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--color-gray-400)]" />
           {c.name}
         </h3>
-        {c.is_public && c.ticker && (
-          <span className="shrink-0 text-xs font-semibold text-[var(--color-brand)] bg-[var(--color-brand-light)] rounded px-1.5 py-0.5">
-            {c.ticker}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 shrink-0">
+          {c.is_public && c.ticker && (
+            <span className="text-xs font-semibold text-[var(--color-brand)] bg-[var(--color-brand-light)] rounded px-1.5 py-0.5">
+              {c.ticker}
+            </span>
+          )}
+          <button
+            onClick={onToggleFav}
+            disabled={toggling}
+            aria-label={isFav ? "Remove from favorites" : "Save to favorites"}
+            title={isFav ? "Remove from favorites" : "Save to favorites"}
+            className={`p-1 rounded-md transition-colors disabled:opacity-50 ${
+              isFav ? "text-amber-500" : "text-[var(--color-gray-400)] hover:text-amber-500"
+            }`}
+          >
+            <Star className="w-4 h-4" fill={isFav ? "currentColor" : "none"} />
+          </button>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-3">
