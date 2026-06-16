@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { supabase } from "@/lib/supabase";
+import { logUserActivity } from "@/lib/log-activity";
 
 const VIEW_COLUMNS =
   "id,name,website,linkedin_url,company_type,is_public,ticker,employee_count_bucket,sbir_total_usd,sbir_latest_award_year,sbir_award_count,nih_grant_count,primary_state,primary_city,primary_street,total_sites,description";
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
 
     // --- Auth + subscription gate (account holders only) ---
     let subscribedStates: string[] | null = null;
+    let activityUserId: string | null = null;
     try {
       const supabaseAuth = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -53,6 +55,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "No active subscription" }, { status: 403 });
       }
       subscribedStates = subscription.subscribed_states ?? [];
+      activityUserId = user.id;
     } catch {
       return NextResponse.json({ error: "Auth check failed" }, { status: 401 });
     }
@@ -123,6 +126,8 @@ export async function POST(req: NextRequest) {
       console.error("Companies search query error:", error);
       return NextResponse.json({ error: "Search failed" }, { status: 500 });
     }
+
+    await logUserActivity(activityUserId, "company_search");
 
     return NextResponse.json({
       results: data || [],

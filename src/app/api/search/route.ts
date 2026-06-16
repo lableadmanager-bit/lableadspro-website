@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { supabase } from "@/lib/supabase";
+import { logUserActivity } from "@/lib/log-activity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
     // --- Subscription-based state filtering ---
     // Get the user's session from cookies to find their subscription
     let subscribedStates: string[] | null = null;
+    let activityUserId: string | null = null;
 
     try {
       const supabaseAuth = createServerClient(
@@ -40,6 +42,7 @@ export async function POST(req: NextRequest) {
       const { data: { user } } = await supabaseAuth.auth.getUser();
 
       if (user) {
+        activityUserId = user.id;
         // Look up their subscription using admin client (bypasses RLS)
         const { data: subscription } = await supabaseAdmin
           .from("subscriptions")
@@ -225,6 +228,8 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+
+    await logUserActivity(activityUserId, "grant_search");
 
     return NextResponse.json({
       results: data || [],
