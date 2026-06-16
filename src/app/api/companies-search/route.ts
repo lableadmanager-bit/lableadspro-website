@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       page = 1,
       sort = "name",
       pageSize = 60,
+      favoriteCompanyIds,
     } = body;
 
     const offset = (page - 1) * pageSize;
@@ -77,6 +78,14 @@ export async function POST(req: NextRequest) {
     } else {
       // Active subscription but zero states on file -> nothing to show.
       return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
+    }
+
+    // --- Favorites-only filter ---
+    if (Array.isArray(favoriteCompanyIds)) {
+      if (favoriteCompanyIds.length === 0) {
+        return NextResponse.json({ results: [], total: 0, page, pageSize, totalPages: 0 });
+      }
+      q = q.in("id", favoriteCompanyIds);
     }
 
     // --- Company filters ---
