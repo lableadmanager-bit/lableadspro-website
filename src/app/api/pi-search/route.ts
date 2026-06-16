@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseAdmin } from "@/lib/supabase-admin";
+import { logUserActivity } from "@/lib/log-activity";
 
 export async function POST(req: NextRequest) {
   try {
@@ -20,6 +21,7 @@ export async function POST(req: NextRequest) {
     // "Pro upgrade required" landing on the page; the API returns 403
     // with a code the UI can switch on.
     let subscribedStates: string[] | null = null;
+    let activityUserId: string | null = null;
 
     try {
       const supabaseAuth = createServerClient(
@@ -64,6 +66,7 @@ export async function POST(req: NextRequest) {
       if (subscription.subscribed_states?.length) {
         subscribedStates = subscription.subscribed_states;
       }
+      activityUserId = user.id;
     } catch {
       console.error("Auth check failed in pi-search API");
       return NextResponse.json({ error: "Auth error" }, { status: 401 });
@@ -172,6 +175,8 @@ export async function POST(req: NextRequest) {
         is_filter_aware: activityCodesSet,
       };
     });
+
+    await logUserActivity(activityUserId, "pi_search");
 
     return NextResponse.json({
       results: enriched,
