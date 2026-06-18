@@ -54,7 +54,7 @@ export default function Header() {
             Request a Demo
           </a>
           <a
-            href="/#pricing"
+            href="/checkout"
             data-cta="header_signup"
             data-cta-label="Sign Up"
             className="text-sm font-semibold text-white bg-[var(--color-brand)] hover:bg-[var(--color-brand-dark)] px-5 py-2.5 rounded-lg transition-colors"
@@ -113,7 +113,7 @@ export default function Header() {
             Request a Demo
           </a>
           <a
-            href="/#pricing"
+            href="/checkout"
             onClick={() => setMobileOpen(false)}
             className="block text-center text-sm font-semibold text-white bg-[var(--color-brand)] px-5 py-2.5 rounded-lg"
           >
