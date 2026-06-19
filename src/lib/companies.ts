@@ -224,6 +224,8 @@ export function bestFundingRound(c: {
     const year = c.apollo_round_date ? new Date(c.apollo_round_date).getFullYear() : null;
     const amt = c.apollo_round_amount ? formatUsd(c.apollo_round_amount) : null;
     const total = c.apollo_total_funding ? formatUsd(c.apollo_total_funding) : null;
+    // Suppress badge with no dollar context — "💰 Other · 2007" with no amount is misleading
+    if (!amt && !total) return null;
     const label = [c.apollo_round_type, amt].filter(Boolean).join(" · ") || "Funding";
     return year ? { label, year, total } : null;
   }
