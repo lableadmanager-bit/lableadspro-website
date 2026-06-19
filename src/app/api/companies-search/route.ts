@@ -5,7 +5,13 @@ import { supabase } from "@/lib/supabase";
 import { logUserActivity } from "@/lib/log-activity";
 
 const VIEW_COLUMNS =
-  "id,name,website,linkedin_url,company_type,is_public,ticker,employee_count_bucket,sbir_total_usd,sbir_latest_award_year,sbir_award_count,nih_grant_count,primary_state,primary_city,primary_street,total_sites,description";
+  "id,name,website,domain,linkedin_url,company_type,is_public,ticker," +
+  "employee_count,employee_count_bucket,sbir_total_usd,sbir_latest_award_year,sbir_award_count," +
+  "nih_grant_count,nih_grant_total_usd,description,founded_year,phone," +
+  "annual_revenue_usd,apollo_total_funding,apollo_round_type,apollo_round_date,apollo_round_amount," +
+  "headcount_6m_growth,headcount_12m_growth,apollo_enriched_at," +
+  "primary_state,primary_city,primary_street,primary_zip,total_sites," +
+  "round_date,round_amount_usd,round_type,grant_date,grant_amount_usd,grant_agency";
 
 const ALL_STATES_COUNT = 51; // 50 + DC; subscriptions never include territories
 
@@ -109,12 +115,18 @@ export async function POST(req: NextRequest) {
     if (filters.publicOnly) q = q.eq("is_public", true);
     if (filters.hasSbir) q = q.gt("sbir_award_count", 0);
     if (filters.hasNih) q = q.gt("nih_grant_count", 0);
+    if (filters.hasFunding) q = q.not("apollo_round_date", "is", null);
+    if (filters.fundingStages?.length) q = q.in("apollo_round_type", filters.fundingStages);
 
     // --- Sort ---
     if (sort === "size") {
       q = q.order("employee_count_bucket", { ascending: false, nullsFirst: false });
     } else if (sort === "recent_sbir") {
       q = q.order("sbir_latest_award_year", { ascending: false, nullsFirst: false });
+    } else if (sort === "recent_funding") {
+      q = q.order("apollo_round_date", { ascending: false, nullsFirst: false });
+    } else if (sort === "revenue") {
+      q = q.order("annual_revenue_usd", { ascending: false, nullsFirst: false });
     } else {
       q = q.order("name", { ascending: true });
     }

@@ -23,6 +23,8 @@ import {
   cleanCity,
   sizeSignal,
   formatUsd,
+  growthLabel,
+  bestFundingRound,
 } from "@/lib/companies";
 
 const US_STATES = [
@@ -32,7 +34,7 @@ const US_STATES = [
   "VT","VA","WA","WV","WI","WY",
 ];
 
-type SortKey = "name" | "size" | "recent_sbir";
+type SortKey = "name" | "size" | "recent_sbir" | "recent_funding" | "revenue";
 
 interface Filters {
   states: string[];
@@ -41,6 +43,8 @@ interface Filters {
   publicOnly: boolean;
   hasSbir: boolean;
   hasNih: boolean;
+  hasFunding: boolean;
+  fundingStages: string[];
 }
 
 const PAGE_SIZE = 60;
@@ -57,6 +61,8 @@ export default function CompaniesDatabasePage() {
     publicOnly: false,
     hasSbir: false,
     hasNih: false,
+    hasFunding: false,
+    fundingStages: [],
   });
   const [sort, setSort] = useState<SortKey>("name");
   const [stateDropdownOpen, setStateDropdownOpen] = useState(false);
@@ -134,6 +140,8 @@ export default function CompaniesDatabasePage() {
               publicOnly: filters.publicOnly || undefined,
               hasSbir: filters.hasSbir || undefined,
               hasNih: filters.hasNih || undefined,
+              hasFunding: filters.hasFunding || undefined,
+              fundingStages: filters.fundingStages.length ? filters.fundingStages : undefined,
             },
             page: p,
             sort,
@@ -178,7 +186,7 @@ export default function CompaniesDatabasePage() {
   };
 
   const clearFilters = () =>
-    setFilters({ states: [], companyTypes: [], sizes: [], publicOnly: false, hasSbir: false, hasNih: false });
+    setFilters({ states: [], companyTypes: [], sizes: [], publicOnly: false, hasSbir: false, hasNih: false, hasFunding: false, fundingStages: [] });
 
   const toggleFavorite = async (companyId: number) => {
     setTogglingFav((prev) => new Set(prev).add(companyId));
@@ -396,6 +404,8 @@ export default function CompaniesDatabasePage() {
                 <option value="name">Name (A-Z)</option>
                 <option value="size">Size (largest first)</option>
                 <option value="recent_sbir">Most recent SBIR award</option>
+                <option value="recent_funding">Most recently funded</option>
+                <option value="revenue">Revenue (highest first)</option>
               </select>
             </div>
 
@@ -452,6 +462,7 @@ export default function CompaniesDatabasePage() {
               { key: "publicOnly" as const, label: "Public" },
               { key: "hasSbir" as const, label: "Has SBIR" },
               { key: "hasNih" as const, label: "Has NIH" },
+              { key: "hasFunding" as const, label: "Has Funding" },
             ].map((t) => (
               <button
                 key={t.key}
@@ -575,21 +586,17 @@ function CompanyCard({
 }) {
   const city = cleanCity(c.primary_city);
   const size = sizeSignal(c);
-  const location = [c.primary_street?.trim(), city, c.primary_state].filter(Boolean).join(", ");
-
-  // Funding signal helpers
-  const roundYear = c.round_date ? new Date(c.round_date).getFullYear() : null;
-  const roundLabel = c.round_amount_usd
-    ? formatUsd(c.round_amount_usd)
-    : roundYear
-    ? "undisclosed"
-    : null;
+  const location = [city, c.primary_state].filter(Boolean).join(", ");
+  const funding = bestFundingRound(c);
+  const growth = growthLabel(c.headcount_6m_growth, c.headcount_12m_growth);
+  const revenue = c.annual_revenue_usd ? formatUsd(c.annual_revenue_usd) : null;
   const grantYear = c.grant_date ? new Date(c.grant_date).getFullYear() : null;
   const grantLabel = c.grant_amount_usd ? formatUsd(c.grant_amount_usd) : null;
-  const hasFunding = roundYear || grantYear || (c.sbir_award_count && c.sbir_award_count > 0);
+  const hasSbirSignal = c.sbir_award_count && c.sbir_award_count > 0;
 
   return (
     <div className="group rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 hover:border-[var(--color-brand)] hover:shadow-lg hover:shadow-blue-500/5 transition-all flex flex-col">
+      {/* Header */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <h3 className="font-bold text-[var(--color-dark)] leading-snug flex items-start gap-1.5">
           <Building2 className="w-4 h-4 mt-0.5 shrink-0 text-[var(--color-gray-400)]" />
@@ -615,6 +622,7 @@ function CompanyCard({
         </div>
       </div>
 
+      {/* Type + size + growth pills */}
       <div className="flex flex-wrap gap-1.5 mb-3">
         <span className="text-xs font-medium text-[var(--color-gray-700)] bg-[var(--color-gray-50)] border border-[var(--color-gray-100)] rounded-full px-2 py-0.5">
           {companyTypeLabel(c.company_type)}
@@ -624,40 +632,73 @@ function CompanyCard({
             {size}
           </span>
         )}
+        {growth && (
+          <span className={`text-xs font-medium rounded-full px-2 py-0.5 border ${
+            growth.startsWith("↑")
+              ? "text-emerald-700 bg-emerald-50 border-emerald-100"
+              : "text-red-600 bg-red-50 border-red-100"
+          }`}>
+            {growth}
+          </span>
+        )}
+        {revenue && (
+          <span className="text-xs font-medium text-sky-700 bg-sky-50 border border-sky-100 rounded-full px-2 py-0.5">
+            ~{revenue} revenue
+          </span>
+        )}
+        {c.founded_year && (
+          <span className="text-xs font-medium text-[var(--color-gray-500)] bg-[var(--color-gray-50)] border border-[var(--color-gray-100)] rounded-full px-2 py-0.5">
+            Est. {c.founded_year}
+          </span>
+        )}
       </div>
 
-      {hasFunding && (
-        <div className="flex flex-wrap gap-1.5 mb-3">
-          {roundYear && roundLabel && (
-            <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
-              💰 {roundLabel} · {roundYear}
-            </span>
-          )}
-          {grantYear && grantLabel && (
-            <span className="text-xs font-medium text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5">
-              🏛 {c.grant_agency} {grantLabel} · {grantYear}
-            </span>
-          )}
-          {c.sbir_award_count && c.sbir_award_count > 0 && (
-            <span className="text-xs font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
-              SBIR {c.sbir_award_count > 1 ? `×${c.sbir_award_count}` : ""}{c.sbir_total_usd ? ` · ${formatUsd(c.sbir_total_usd)}` : ""}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Funding signals */}
+      <div className="flex flex-wrap gap-1.5 mb-3">
+        {funding && (
+          <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
+            💰 {funding.label} · {funding.year}
+            {funding.total ? ` (${funding.total} total)` : ""}
+          </span>
+        )}
+        {grantYear && grantLabel && (
+          <span className="text-xs font-medium text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5">
+            🏛 {c.grant_agency} {grantLabel} · {grantYear}
+          </span>
+        )}
+        {hasSbirSignal && (
+          <span className="text-xs font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
+            SBIR {c.sbir_award_count! > 1 ? `×${c.sbir_award_count}` : ""}{c.sbir_total_usd ? ` · ${formatUsd(c.sbir_total_usd)}` : ""}
+          </span>
+        )}
+      </div>
 
+      {/* Location */}
       {location && (
-        <p className="flex items-start gap-1.5 text-sm text-[var(--color-gray-500)] mb-2">
-          <MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+        <p className="flex items-center gap-1.5 text-sm text-[var(--color-gray-500)] mb-2">
+          <MapPin className="w-3.5 h-3.5 shrink-0" />
           <span>{location}</span>
         </p>
       )}
 
+      {/* Description */}
       {c.description && (
         <p className="text-sm text-[var(--color-gray-500)] line-clamp-2 mb-3">{c.description}</p>
       )}
 
-      <div className="mt-auto flex items-center gap-3 pt-2">
+      {/* Links */}
+      <div className="mt-auto flex items-center gap-3 pt-2 border-t border-[var(--color-gray-50)]">
+        {c.linkedin_url && (
+          <a
+            href={c.linkedin_url.startsWith("http") ? c.linkedin_url : `https://${c.linkedin_url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0A66C2] hover:underline"
+          >
+            <Linkedin className="w-3.5 h-3.5" />
+            LinkedIn
+          </a>
+        )}
         {c.website && (
           <a
             href={c.website.startsWith("http") ? c.website : `https://${c.website}`}
@@ -667,17 +708,6 @@ function CompanyCard({
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Website
-          </a>
-        )}
-        {c.linkedin_url && (
-          <a
-            href={c.linkedin_url.startsWith("http") ? c.linkedin_url : `https://${c.linkedin_url}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-brand)] hover:underline"
-          >
-            <Linkedin className="w-3.5 h-3.5" />
-            LinkedIn
           </a>
         )}
       </div>

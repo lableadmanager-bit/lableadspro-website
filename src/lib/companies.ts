@@ -25,10 +25,22 @@ export interface CompanyBeta {
   primary_street: string | null;
   primary_zip: string | null;
   total_sites: number | null;
-  // Funding signals
+  // Apollo enrichment
+  founded_year: number | null;
+  phone: string | null;
+  annual_revenue_usd: number | null;
+  apollo_total_funding: number | null;
+  apollo_round_type: string | null;
+  apollo_round_date: string | null;
+  apollo_round_amount: number | null;
+  headcount_6m_growth: number | null;
+  headcount_12m_growth: number | null;
+  apollo_enriched_at: string | null;
+  // EDGAR funding signals
   round_date: string | null;
   round_amount_usd: number | null;
   round_type: string | null;
+  // State grant funding
   grant_date: string | null;
   grant_amount_usd: number | null;
   grant_agency: string | null;
@@ -183,5 +195,43 @@ export function sizeSignal(c: {
   if (c.is_public) return c.ticker ? `Public (${c.ticker})` : "Public";
   const sbir = formatUsd(c.sbir_total_usd);
   if (sbir) return `${sbir} lifetime SBIR`;
+  return null;
+}
+
+// Headcount growth label for a card badge.
+export function growthLabel(growth6m: number | null, growth12m: number | null): string | null {
+  const g = growth6m ?? growth12m;
+  if (g === null) return null;
+  const pct = Math.round(g * 100);
+  if (pct === 0) return null;
+  const arrow = pct > 0 ? "↑" : "↓";
+  const label = growth6m !== null ? "6mo" : "12mo";
+  return `${arrow}${Math.abs(pct)}% headcount ${label}`;
+}
+
+// Best available funding signal: prefer Apollo (comprehensive), fall back to EDGAR point-in-time.
+export function bestFundingRound(c: {
+  apollo_round_type: string | null;
+  apollo_round_date: string | null;
+  apollo_round_amount: number | null;
+  apollo_total_funding: number | null;
+  round_date: string | null;
+  round_amount_usd: number | null;
+  round_type: string | null;
+}): { label: string; year: number; total: string | null } | null {
+  // Apollo data first
+  if (c.apollo_round_date || c.apollo_round_type) {
+    const year = c.apollo_round_date ? new Date(c.apollo_round_date).getFullYear() : null;
+    const amt = c.apollo_round_amount ? formatUsd(c.apollo_round_amount) : null;
+    const total = c.apollo_total_funding ? formatUsd(c.apollo_total_funding) : null;
+    const label = [c.apollo_round_type, amt].filter(Boolean).join(" · ") || "Funding";
+    return year ? { label, year, total } : null;
+  }
+  // EDGAR fallback
+  if (c.round_date) {
+    const year = new Date(c.round_date).getFullYear();
+    const amt = c.round_amount_usd ? formatUsd(c.round_amount_usd) : "undisclosed";
+    return { label: amt ?? "Funding", year, total: null };
+  }
   return null;
 }
