@@ -577,6 +577,17 @@ function CompanyCard({
   const size = sizeSignal(c);
   const location = [c.primary_street?.trim(), city, c.primary_state].filter(Boolean).join(", ");
 
+  // Funding signal helpers
+  const roundYear = c.round_date ? new Date(c.round_date).getFullYear() : null;
+  const roundLabel = c.round_amount_usd
+    ? formatUsd(c.round_amount_usd)
+    : roundYear
+    ? "undisclosed"
+    : null;
+  const grantYear = c.grant_date ? new Date(c.grant_date).getFullYear() : null;
+  const grantLabel = c.grant_amount_usd ? formatUsd(c.grant_amount_usd) : null;
+  const hasFunding = roundYear || grantYear || (c.sbir_award_count && c.sbir_award_count > 0);
+
   return (
     <div className="group rounded-2xl border border-[var(--color-gray-100)] bg-white p-5 hover:border-[var(--color-brand)] hover:shadow-lg hover:shadow-blue-500/5 transition-all flex flex-col">
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -614,6 +625,26 @@ function CompanyCard({
           </span>
         )}
       </div>
+
+      {hasFunding && (
+        <div className="flex flex-wrap gap-1.5 mb-3">
+          {roundYear && roundLabel && (
+            <span className="text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
+              💰 {roundLabel} · {roundYear}
+            </span>
+          )}
+          {grantYear && grantLabel && (
+            <span className="text-xs font-medium text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-2 py-0.5">
+              🏛 {c.grant_agency} {grantLabel} · {grantYear}
+            </span>
+          )}
+          {c.sbir_award_count && c.sbir_award_count > 0 && (
+            <span className="text-xs font-medium text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5">
+              SBIR {c.sbir_award_count > 1 ? `×${c.sbir_award_count}` : ""}{c.sbir_total_usd ? ` · ${formatUsd(c.sbir_total_usd)}` : ""}
+            </span>
+          )}
+        </div>
+      )}
 
       {location && (
         <p className="flex items-start gap-1.5 text-sm text-[var(--color-gray-500)] mb-2">

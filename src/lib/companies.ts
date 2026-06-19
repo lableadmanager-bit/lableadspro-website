@@ -25,6 +25,13 @@ export interface CompanyBeta {
   primary_street: string | null;
   primary_zip: string | null;
   total_sites: number | null;
+  // Funding signals
+  round_date: string | null;
+  round_amount_usd: number | null;
+  round_type: string | null;
+  grant_date: string | null;
+  grant_amount_usd: number | null;
+  grant_agency: string | null;
 }
 
 // US states + DC + PR present in the beta cohort, with current company counts (snapshot 2026-06-05).
